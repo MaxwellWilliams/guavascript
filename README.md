@@ -1,2 +1,25 @@
-# guavascript
-CMSI 488 Compilers repository for Allen, Anson, Evan and Max's group project.
+![Guavascript Logo] (/images/Guavascript logo.png)
+
+## Introduction
+
+[Introduction]
+
+## Features
+
+* [Features]
+
+## Example Programs
+
+This example program does [...].
+
+Guavascript:
+
+```
+...
+```
+
+Javascript:
+
+```javascript
+...
+```

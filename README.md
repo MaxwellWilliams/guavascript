@@ -2,21 +2,6 @@
 
 ## Introduction
 
-[Introduction]
-
-## Features
-
-* [Features]
-
-## Example Programs
-
-This example program does [...].
-
-Guavascript:
-![Guavascript Logo] (/images/Guavascript logo.png)
-
-## Introduction
-
 Guavascript is a strongly and statically typed language that compiles down to Javascript. With type inference, first class functions, and other features Guavascript is packed with tools to make a programmer's job easier.
 
 Guavascript is a strongly and statically typed language that is likely to get banned by Trump for being too fruity.

@@ -1,3 +1,10 @@
+__TODO: Delete this note before final submission.__ To do:
+
+* Fix #3 (the Iki subgrammar). We extended (+=) the language when he really wanted us to override (:=) it.
+* Finish introduction
+* Finish examples
+* Write Ohm grammar for guavascript and test against examples
+
 ![Guavascript Logo] (/images/Guavascript logo.png)
 
 ## Introduction
@@ -70,24 +77,24 @@ fibonacci(x) {
 
 
 fib x y z
-a = 0, b = 1, c
-if x < 3
-ret 1
-while --x > 0
-	c = a + b, a = b, b = c
-match a
-	1 > ret 2.424
-	2 > ret 5.135
-	_ > ret 4.135
-ret c
+	a = 0, b = 1, c
+	if x < 3
+		ret 1
+	while --x > 0
+		c = a + b, a = b, b = c
+	match a
+		1 > ret 2.424
+		2 > ret 5.135
+		_ > ret 4.135
+	ret c
 
 function fibonacci(x) {
-var a = 0, b = 1, c;
-if (x < 3) return 1;
-while (--x > 0) {
-c = a + b, a = b, b = c;
-}
-return c;
+	var a = 0, b = 1, c;
+	if (x < 3) return 1;
+	while (--x > 0) {
+		c = a + b, a = b, b = c;
+	}
+	return c;
 }							
 ```
 

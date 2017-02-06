@@ -2,7 +2,8 @@ Guavascript {
     Program     = Block
     Block       = Statement+
     Statement   = Block
-                | id "=" Expression                               -- assignmentStatement
+                | id assignOp Expression                          -- varAssignStatement
+                | "class" id Block                                -- classStatement
                 | "match" id "with" Match ("|" Match)*            -- matchStatement
                 | "if" Expression Statement ("else" Statement)?   -- ifElseStatement
                 | "while" Expression Statement                    -- whileStatement
@@ -10,7 +11,11 @@ Guavascript {
     Match       = Expression "->" Statement
     Expression  = "finish me later"
 
-    keyword     = ("true" | "false" | "match" | "with" | "if"
+    assignOp    = "=" | "+=" | "-=" | "*=" | "/="
+    addOp       = "+" | "-"
+    mulOp       = "*" | "//" | "/" | "%"
+    relOp       = "<=" | "<" | "==" | "!=" | ">=" | ">"
+    keyword     = ("class" | "true" | "false" | "match" | "with" | "if"
                 | "else" | "while" | "for" | "in") ~idrest
     id          = ~keyword letter idrest*
     idrest      = "_" | alnum

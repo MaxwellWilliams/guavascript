@@ -1,0 +1,20 @@
+Guavascript {
+    Program     = Block
+    Block       = Statement+
+    Statement   = Block
+                | id "=" Expression                               -- assignmentStatement
+                | "match" id "with" Match ("|" Match)*            -- matchStatement
+                | "if" Expression Statement ("else" Statement)?   -- ifElseStatement
+                | "while" Expression Statement                    -- whileStatement
+                | "for" id "in" id Statement                      -- forInStatement
+    Match       = Expression "->" Statement
+    Expression  = "finish me later"
+
+    keyword     = ("true" | "false" | "match" | "with" | "if"
+                | "else" | "while" | "for" | "in") ~idrest
+    id          = ~keyword letter idrest*
+    idrest      = "_" | alnum
+
+    space       += comment
+    comment     = "#" (~"\n" any)* "\n"
+}

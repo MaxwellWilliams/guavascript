@@ -47,9 +47,7 @@ kill your computer either. With our compiler Guavascript becomes Javascript.
 * List (Heterogeneous allowed): `[1, 2, 3, 4, 5]`, `[“I”, 8, 50.4, “guavas”]`
 * Tuple (Heterogeneous allowed): `(30, 0.5, “guava”)`
 * Dictionary: `{key:“value”, bestColor:“Guava”, worstLanguage: “php”}`
-* Comments:
- *  `(‘) Single line comment` or `:) Single line comment`
- * ```
+* Comments: `(‘) Single line comment`, `:) Single line comment`, or ```
 =) Multi-line
 comments make
 you look cool,

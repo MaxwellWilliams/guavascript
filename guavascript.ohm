@@ -2,11 +2,11 @@ Guavascript {
     Program     = Block
     Block       = Statement+
     Statement   = Exp                                             -- varAssignStatement
-                | "class" id Block                                -- classStatement
-                | "match" id "with" Match ("|" Match)*            -- matchStatement
-                | "if" Exp Block ("else" Block)?                  -- ifElseStatement
-                | "while" Exp Block                               -- whileStatement
-                | "for" id "in" id Block                          -- forInStatement
+                | "class" id "{" Block "}"                        -- classStatement
+                | "match" IdExp "with" Match ("|" Match)*         -- matchStatement
+                | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
+                | "while" Exp "{" Block "}"                       -- whileStatement
+                | "for" id "in" IdExp "{" Block "}"               -- forInStatement
     Match       = Exp "->" Block
 
     Exp         = id assignOp BoolOrExp                           -- assignExp
@@ -17,6 +17,8 @@ Guavascript {
                 | RelExp
     RelExp      = AddExp relOp AddExp                             -- relExp
                 | AddExp
+                | InExp
+    InExp       = IdExp "in" IdExp
     AddExp      = AddExp addOp MulExp                             -- addExp
                 | MulExp
     MulExp      = MulExp mulOp ExponExp                           -- mulExp
@@ -58,6 +60,6 @@ Guavascript {
     id          = ~keyword letter idrest*
     idrest      = "_" | alnum
 
-    space       += comment
+    space      += comment
     comment     = "#" (~"\n" any)* "\n"
 }

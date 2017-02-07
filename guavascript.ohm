@@ -1,7 +1,8 @@
 Guavascript {
     Program     = Block
     Block       = Statement+
-    Statement   = Exp                                             -- varAssignStatement
+    Statement   = Exp "?" Block ":" Block                         -- conditionalStatement
+                | Exp                                             -- expStatement
                 | "class" id "{" Block "}"                        -- classStatement
                 | ("match" IdExp "with" "|"? Match
                   ("|" Match)* ("|" "_" "->" Block))              -- matchStatement

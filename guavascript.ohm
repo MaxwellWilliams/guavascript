@@ -3,7 +3,8 @@ Guavascript {
     Block       = Statement+
     Statement   = Exp                                             -- varAssignStatement
                 | "class" id "{" Block "}"                        -- classStatement
-                | "match" IdExp "with" Match ("|" Match)*         -- matchStatement
+                | ("match" IdExp "with" "|"? Match
+                  ("|" Match)* ("|" "_" "->" Block))              -- matchStatement
                 | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
                 | "while" Exp "{" Block "}"                       -- whileStatement
                 | "for" id "in" IdExp "{" Block "}"               -- forInStatement

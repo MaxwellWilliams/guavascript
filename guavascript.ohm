@@ -30,7 +30,7 @@ Guavascript {
                 | intLit | floatLit | stringLit)
 
     IdExp       = id ("." id)* (Arguments | IdSelector)* idPostOp?
-    Arguments   = VarExp ("," VarExp)*
+    Arguments   = "(" (VarExp ("," VarExp)*)? ")"
     IdSelector  = "[" VarExp "]"
     idPostOp    = "++" | "--"
 

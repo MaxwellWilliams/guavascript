@@ -1,14 +1,13 @@
 Guavascript {
     Program     = Block
     Block       = Statement+
-    Statement   = Block
-                | Exp                                             -- varAssignStatement
+    Statement   = Exp                                             -- varAssignStatement
                 | "class" id Block                                -- classStatement
                 | "match" id "with" Match ("|" Match)*            -- matchStatement
-                | "if" Exp Statement ("else" Statement)?          -- ifElseStatement
-                | "while" Exp Statement                           -- whileStatement
-                | "for" id "in" id Statement                      -- forInStatement
-    Match       = Exp "->" Statement
+                | "if" Exp Block ("else" Block)?                  -- ifElseStatement
+                | "while" Exp Block                               -- whileStatement
+                | "for" id "in" id Block                          -- forInStatement
+    Match       = Exp "->" Block
 
     Exp         = id assignOp BoolOrExp                           -- assignExp
                 | BoolOrExp
@@ -29,12 +28,12 @@ Guavascript {
                 | "(" Exp ")"                                     -- parenExp
     VarExp      = (IdExp | List | Tuple | Dictionary | boolLit
                 | intLit | floatLit | stringLit)
-    
-    IdExp       = id ("." id)* (Arguments | IdSelector)+ idPostOp?
+
+    IdExp       = id ("." id)* (Arguments | IdSelector)* idPostOp?
     Arguments   = VarExp ("," VarExp)*
     IdSelector  = "[" VarExp "]"
     idPostOp    = "++" | "--"
-    
+
     List        = "[" (VarExp ("," VarExp)*)? "]"
     Tuple       = "(" (VarExp ("," VarExp)*)? ")"
     Dictionary  = "{" (IdValuePair ("," IdValuePair)*)? "}"

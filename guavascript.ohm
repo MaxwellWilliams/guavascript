@@ -25,14 +25,20 @@ Guavascript {
     ExponExp    = PrefixExp exponOp AddExp                        -- exponExp
                 | PrefixExp
     PrefixExp   = prefixOp? Exp1
-    Exp1        = boolLit
-                | intLit
-                | floatLit
-                | stringLit
-                | VarExp
+    Exp1        = VarExp
                 | "(" Exp ")"                                     -- parenExp
-    VarExp      = id ("." id)* ("(" Arguments ")")?
+    VarExp      = (IdExp | List | Tuple | Dictionary | boolLit
+                | intLit | floatLit | stringLit)
+    
+    IdExp       = id ("." id)* IdPost+
+    IdPost      = Arguments | IdSelector
     Arguments   = VarExp ("," VarExp)*
+    IdSelector  = "[" VarExp "]"
+    
+    List        = "[" (VarExp ("," VarExp)*)? "]"
+    Tuple       = "(" (VarExp ("," VarExp)*)? ")"
+    Dictionary  = "{" (IdValuePair ("," IdValuePair)*)? "}"
+    IdValuePair = id ":" VarExp
 
     orOp        = "||"
     andOp       = "&&"

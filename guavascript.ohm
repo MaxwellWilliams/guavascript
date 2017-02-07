@@ -2,19 +2,49 @@ Guavascript {
     Program     = Block
     Block       = Statement+
     Statement   = Block
-                | id assignOp Expression                          -- varAssignStatement
+                | id assignOp Exp	                              -- varAssignStatement
                 | "class" id Block                                -- classStatement
                 | "match" id "with" Match ("|" Match)*            -- matchStatement
-                | "if" Expression Statement ("else" Statement)?   -- ifElseStatement
-                | "while" Expression Statement                    -- whileStatement
+                | "if" Exp Statement ("else" Statement)?          -- ifElseStatement
+                | "while" Exp Statement             	          -- whileStatement
                 | "for" id "in" id Statement                      -- forInStatement
-    Match       = Expression "->" Statement
-    Expression  = "finish me later"
+    Match       = Exp "->" Statement
 
+    Exp		    = id assignOp BoolOrExp							  -- assignExp
+    			| BoolOrExp
+    BoolOrExp	= BoolOrExp orOp BoolAndExp						  -- boolOrExp
+    			| BoolAndExp
+    BoolAndExp	= BoolAndExp andOp RelExp					      -- boolAndExp
+    			| RelExp
+    RelExp		= AddExp relOp AddExp							  -- relExp
+    			| AddExp
+    AddExp	   	= MulExp addOp MulExp							  -- addExp
+    		    | MulExp
+    MulExp      = MulExp mulOp PrefixExp						  -- mulExp
+    		    | PrefixExp
+    PrefixExp	= prefixOp Exp1
+    Exp1		= boolLit
+    		    | intLit
+                | floatLit
+                | stringLit
+                | VarExp
+                | "(" Exp ")"									  -- parenExp
+    VarExp	  	= id ("." id)* ("(" Arguments ")")?
+    Arguments	= VarExp ("," VarExp)*
+
+	orOp		= "||"
+    andOp	    = "&&"
     assignOp    = "=" | "+=" | "-=" | "*=" | "/="
     addOp       = "+" | "-"
     mulOp       = "*" | "//" | "/" | "%"
     relOp       = "<=" | "<" | "==" | "!=" | ">=" | ">"
+    prefixOp	= "-" | "!"
+
+    boolLit		= "True" | "False"
+    intLit		= ~floatLit digit+
+    floatLit	= digit+ "." digit+
+    stringLit   = "\"" alnum+ "\""
+
     keyword     = ("class" | "true" | "false" | "match" | "with" | "if"
                 | "else" | "while" | "for" | "in") ~idrest
     id          = ~keyword letter idrest*

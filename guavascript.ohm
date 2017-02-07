@@ -2,7 +2,7 @@ Guavascript {
     Program     = Block
     Block       = Statement+
     Statement   = Block
-                | id assignOp Exp                                 -- varAssignStatement
+                | Exp                                             -- varAssignStatement
                 | "class" id Block                                -- classStatement
                 | "match" id "with" Match ("|" Match)*            -- matchStatement
                 | "if" Exp Statement ("else" Statement)?          -- ifElseStatement
@@ -18,9 +18,11 @@ Guavascript {
                 | RelExp
     RelExp      = AddExp relOp AddExp                             -- relExp
                 | AddExp
-    AddExp      = MulExp addOp MulExp                             -- addExp
+    AddExp      = AddExp addOp MulExp                             -- addExp
                 | MulExp
-    MulExp      = MulExp mulOp PrefixExp                          -- mulExp
+    MulExp      = MulExp mulOp ExponExp                           -- mulExp
+                | ExponExp
+    ExponExp    = PrefixExp exponOp AddExp                        -- exponExp
                 | PrefixExp
     PrefixExp   = prefixOp? Exp1
     Exp1        = boolLit
@@ -34,11 +36,12 @@ Guavascript {
 
     orOp        = "||"
     andOp       = "&&"
+    exponOp     = "**"
     assignOp    = "=" | "+=" | "-=" | "*=" | "/="
     addOp       = "+" | "-"
     mulOp       = "*" | "//" | "/" | "%"
     relOp       = "<=" | "<" | "==" | "!=" | ">=" | ">"
-    prefixOp    = "-" | "!"
+    prefixOp    = "-" | "!" | "++" | "--"
 
     boolLit     = "True" | "False"
     intLit      = ~floatLit digit+

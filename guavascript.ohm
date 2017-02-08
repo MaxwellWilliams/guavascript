@@ -2,13 +2,15 @@ Guavascript {
     Program     = Block
     Block       = Statement+
     Statement   = Exp "?" Block ":" Block                         -- conditionalStatement
-                | Exp                                             -- expStatement
-                | "class" id "{" Block "}"                        -- classStatement
+                | id "(" (Param ("," Param)*)? ")" "{" Block "}"  -- funcDeclStatement
+                | "class" classId "{" Block "}"                   -- classDeclStatement
                 | ("match" IdExp "with" "|"? Match
                   ("|" Match)* ("|" "_" "->" Block))              -- matchStatement
                 | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
                 | "while" Exp "{" Block "}"                       -- whileStatement
                 | "for" id "in" IdExp "{" Block "}"               -- forInStatement
+                | Exp                                             -- expStatement
+    Param       = id ("=" VarExp)?
     Match       = Exp "->" Block
 
     Exp         = id assignOp BoolOrExp                           -- assignExp
@@ -57,8 +59,11 @@ Guavascript {
 
     keyword     = ("class" | "true" | "false" | "match" | "with" | "if"
                 | "else" | "while" | "for" | "in" | "this") ~idrest
-    id          = ~keyword letter idrest*
+    id          = ~keyword lower idrest*                          -- identifier
+                | constId
     idrest      = "_" | alnum
+    constId     = ~keyword upper+
+    classId     = upper idrest*
 
     space      += comment
     comment     = "#" (~"\n" any)* "\n"

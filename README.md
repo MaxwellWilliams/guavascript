@@ -1,10 +1,10 @@
 __TODO: Delete this note before final submission.__ To do:
 
-* Fix #3 (the Iki subgrammar). We extended (+=) the language when he really wanted us to override (:=) it.
+* Verify expression precedence is correct
 * Finish introduction
  * List other key points to include here:
-* Finish examples
-* Write Ohm grammar for guavascript and test against examples
+* Finish examples with Javascript equivalents
+* Test Ohm grammar with examples and correct mistakes
 
 ![Guavascript Logo] (/images/Guavascript logo.png)
 

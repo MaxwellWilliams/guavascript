@@ -51,7 +51,16 @@ and annoy Toal (=
 ```
 
 ## Example Programs
-Printing (Guavascript):            Printing(Javascript):
+Guavascript on the left, Javascript on the right
+
+Printing
 ```
-print('hello, world!')             console.log(‘hello, world!’)
+print('hello, world!')                      console.log(‘hello, world!’)
+```
+
+Variable Declarations
+```
+name = "guav                                let name = “guav”
+age = 21                                    var age = 21
+female = true                               let female = true
 ```

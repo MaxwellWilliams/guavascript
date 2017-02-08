@@ -55,7 +55,7 @@ Guavascript {
     boolLit     = "True" | "False"
     intLit      = ~floatLit digit+
     floatLit    = digit+ "." digit+
-    stringLit   = "\"" alnum+ "\""
+    stringLit   = "\"" ("\\\"" | (~"\"" any))* "\""
 
     keyword     = ("class" | "true" | "false" | "match" | "with" | "if"
                 | "else" | "while" | "for" | "in" | "this") ~idrest

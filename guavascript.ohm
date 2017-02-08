@@ -45,7 +45,7 @@ Guavascript {
 
     orOp        = "||"
     andOp       = "&&"
-    exponOp     = "**"
+    exponOp     = "^"
     assignOp    = "=" | "+=" | "-=" | "*=" | "/="
     addOp       = "+" | "-"
     mulOp       = "*" | "//" | "/" | "%"

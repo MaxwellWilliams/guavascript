@@ -54,13 +54,45 @@ and annoy Toal (=
 Guavascript on the left, Javascript on the right
 
 Printing
+
 ```
 print('hello, world!')                      console.log(‘hello, world!’)
 ```
 
 Variable Declarations
+
 ```
 name = "guav                                let name = “guav”
 age = 21                                    var age = 21
 female = true                               let female = true
+```
+
+Constant Declarations
+
+```
+FEET_IN_METER = 3.28084                     const FEET_IN_METER = 3.28084
+```
+
+Arithmetic
+
+```
+((2 + 3) * (6 - 1) ** 2) / 4                ((2 + 3) * Math.pow((6 - 1), 2)) / 4
+```
+
+Functions
+
+```
+multiply (x, y) {                           var multiply = (x, y) => {
+   return x * y                                return x * y;
+}                                           }
+```
+
+```
+count_by_two (n) {                          let count_by_two = (n) => {
+   for i in range(n) {                         for (i = 0; i < n; i++) {
+      if (i % 2 == 0) {                           if (i % 2 === 0) {
+         print(i)                                    console.log(i);
+      }                                           }
+   }                                           }
+}                                           }
 ```

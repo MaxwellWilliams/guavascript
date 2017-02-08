@@ -51,7 +51,7 @@ and annoy Toal (=
 ```
 
 ## Example Programs
-Printing (Guavascript):			Printing(Javascript):
+Printing (Guavascript):            Printing(Javascript):
 ```
-print('hello, world!')			console.log(‘hello, world!’)
+print('hello, world!')             console.log(‘hello, world!’)
 ```

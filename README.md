@@ -53,13 +53,13 @@ and annoy Toal (=
 ## Example Programs
 Guavascript on the left, Javascript on the right
 
-Printing
+__Printing__
 
 ```
 print('hello, world!')                      console.log(‘hello, world!’)
 ```
 
-Variable Declarations
+__Variable Declarations__
 
 ```
 name = "guav                                let name = “guav”
@@ -67,19 +67,19 @@ age = 21                                    var age = 21
 female = true                               let female = true
 ```
 
-Constant Declarations
+__Constant Declarations__
 
 ```
 FEET_IN_METER = 3.28084                     const FEET_IN_METER = 3.28084
 ```
 
-Arithmetic
+__Arithmetic__
 
 ```
 ((2 + 3) * (6 - 1) ** 2) / 4                ((2 + 3) * Math.pow((6 - 1), 2)) / 4
 ```
 
-Functions
+__Functions__
 
 ```
 multiply (x, y) {                           var multiply = (x, y) => {

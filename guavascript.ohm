@@ -56,7 +56,7 @@ Guavascript {
     stringLit   = "\"" alnum+ "\""
 
     keyword     = ("class" | "true" | "false" | "match" | "with" | "if"
-                | "else" | "while" | "for" | "in") ~idrest
+                | "else" | "while" | "for" | "in" | "this") ~idrest
     id          = ~keyword letter idrest*
     idrest      = "_" | alnum
 

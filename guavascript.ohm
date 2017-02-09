@@ -3,18 +3,17 @@ Guavascript {
     Block       = Statement+
     Statement   = Exp "?" Block ":" Block                         -- conditionalStatement
                 | id "(" (Param ("," Param)*)? ")"
-                  "{" FuncBlock "}"  -- funcDeclStatement
+                  "{" RtnBlock "}"  -- funcDeclStatement
                 | "class" classId "{" Block "}"                   -- classDeclStatement
                 | ("match" IdExp "with" "|"? Match
                   ("|" Match)* ("|" "_" "->" Block)?)             -- matchStatement
-                | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
-                | "while" Exp "{" Block "}"                       -- whileStatement
-                | "for" id "in" IdExp "{" Block "}"               -- forInStatement
+                | "if" Exp "{" RtnBlock "}" ("else" "{" RtnBlock "}")?  -- ifElseStatement
+                | "while" Exp "{" RtnBlock "}"                       -- whileStatement
+                | "for" id "in" IdExp "{" RtnBlock "}"               -- forInStatement
                 | "print" "(" Exp ")"                             -- printStatement
-                | Rtn                                             -- returnStatement
                 | Exp                                             -- expStatement
-    FuncBlock   = Block Rtn                                       -- funcBlock
-    	        | Block
+    RtnBlock    = Block Rtn                                       -- ReturnBlock
+    	          | Block
                 | Rtn
     Rtn         = "return" Exp
     Param       = id ("=" VarExp)?

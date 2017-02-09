@@ -14,8 +14,7 @@ tests = function(validFiles, invalidFiles) {
         it('valid\\' +file.name + ' should be accepted by the parser',
         function() {
           parseResult = parser.match(file.code);
-          assert(parseResult.succeeded(),
-            file.name + ' was ' + parseResult.succeeded());
+          assert.equal(parseResult.succeeded(), true);
         });
       });
     });
@@ -25,8 +24,7 @@ tests = function(validFiles, invalidFiles) {
         it('invalid\\' + file.name + ' should be rejected by the parser',
         function() {
           parseResult = parser.match(file.code);
-          assert(!parseResult.succeeded(),
-            file.name + ' was ' + parseResult.succeeded());
+          assert.equal(parseResult.succeeded(), false);
         });
       });
     });

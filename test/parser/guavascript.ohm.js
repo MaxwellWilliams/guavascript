@@ -12,9 +12,10 @@ tests = function(validFiles, invalidFiles) {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
         it('valid\\' +file.name + ' should be accepted by the parser',
-        function() {
-          parseResult = parser.match(file.code);
-          assert.equal(parseResult.succeeded(), true);
+          function() {
+            parseResult = parser.match(file.code);
+            assert.equal(parseResult.succeeded(), true,
+              'Returned: ' + parseResult);
         });
       });
     });
@@ -22,9 +23,10 @@ tests = function(validFiles, invalidFiles) {
     describe('Test invalid example programs', function() {
       invalidFiles.forEach(function(file) {
         it('invalid\\' + file.name + ' should be rejected by the parser',
-        function() {
-          parseResult = parser.match(file.code);
-          assert.equal(parseResult.succeeded(), false);
+          function() {
+            parseResult = parser.match(file.code);
+            assert.equal(parseResult.succeeded(), false,
+              'Returned: ' + parseResult);
         });
       });
     });

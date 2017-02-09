@@ -5,7 +5,7 @@ Guavascript {
                 | id "(" (Param ("," Param)*)? ")" "{" FuncBlock "}"  -- funcDeclStatement
                 | "class" classId "{" Block "}"                   -- classDeclStatement
                 | ("match" IdExp "with" "|"? Match
-                  ("|" Match)* ("|" "_" "->" Block))              -- matchStatement
+                  ("|" Match)* ("|" "_" "->" Block)?)             -- matchStatement
                 | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
                 | "while" Exp "{" Block "}"                       -- whileStatement
                 | "for" id "in" IdExp "{" Block "}"               -- forInStatement

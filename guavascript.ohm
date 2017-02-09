@@ -6,13 +6,14 @@ Guavascript {
                 | "class" classId "{" Block "}"                   -- classDeclStatement
                 | ("match" IdExp "with" "|"? Match
                   ("|" Match)* ("|" "_" "->" Block)?)             -- matchStatement
-                | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
+                | "if" Exp "{" FuncBlock "}"
+                  ("else" "{" FuncBlock "}")?                     -- ifElseStatement
                 | "while" Exp "{" Block "}"                       -- whileStatement
                 | "for" id "in" IdExp "{" Block "}"               -- forInStatement
                 | "print" "(" Exp ")"                             -- printStatement
                 | Exp                                             -- expStatement
     FuncBlock   = Block Rtn                                       -- funcBlock
-    			      | Block
+    	        | Block
                 | Rtn
     Rtn         = "return" Exp
     Param       = id ("=" VarExp)?

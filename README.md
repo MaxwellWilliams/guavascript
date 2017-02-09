@@ -58,6 +58,20 @@ __Arithmetic__
 ((2 + 3) * (6 - 1) ^ 2) / 4                ((2 + 3) * Math.pow((6 - 1), 2)) / 4
 ```
 
+__While Statements__
+
+```
+while True {                               while (true) {
+   ret True                                   return true
+}                                          }
+```
+
+__Conditional Statements__
+
+```
+x == 2 ? x -= 1 : x += 1                   (x == 2) ? x -= 1 : x += 1
+```
+
 __Functions__
 
 ```

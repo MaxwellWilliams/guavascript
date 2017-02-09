@@ -6,5 +6,5 @@ count_by_two () {
       result += i
     }
   }
-  return result
+  ret result
 }

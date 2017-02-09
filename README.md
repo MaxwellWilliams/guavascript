@@ -62,7 +62,7 @@ __Functions__
 
 ```
 multiply (x, y) {                           var multiply = (x, y) => {
-   return x * y                                return x * y;
+   ret x * y                                   return x * y;
 }                                           }
 ```
 
@@ -75,6 +75,6 @@ add_even_numbers () {                       add_even_numbers = () => {
          result += i                                   result += i
       }                                            }
    }                                            }
-   return result                                return result
+   ret result                                   return result
 }                                            }
 ```

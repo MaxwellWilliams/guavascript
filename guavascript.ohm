@@ -2,15 +2,16 @@ Guavascript {
     Program     = Block
     Block       = Statement+
     Statement   = Exp "?" Block ":" Block                         -- conditionalStatement
-                | id "(" (Param ("," Param)*)? ")" "{" FuncBlock "}"  -- funcDeclStatement
+                | id "(" (Param ("," Param)*)? ")"
+                  "{" FuncBlock "}"  -- funcDeclStatement
                 | "class" classId "{" Block "}"                   -- classDeclStatement
                 | ("match" IdExp "with" "|"? Match
                   ("|" Match)* ("|" "_" "->" Block)?)             -- matchStatement
-                | "if" Exp "{" FuncBlock "}"
-                  ("else" "{" FuncBlock "}")?                     -- ifElseStatement
+                | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
                 | "while" Exp "{" Block "}"                       -- whileStatement
                 | "for" id "in" IdExp "{" Block "}"               -- forInStatement
                 | "print" "(" Exp ")"                             -- printStatement
+                | Rtn                                             -- returnStatement
                 | Exp                                             -- expStatement
     FuncBlock   = Block Rtn                                       -- funcBlock
     	        | Block

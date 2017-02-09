@@ -62,7 +62,7 @@ Guavascript {
     id          = ~keyword lower idrest*                          -- identifier
                 | constId
     idrest      = "_" | alnum
-    constId     = ~keyword upper+
+    constId     = ~keyword upper ("_" | upper)*
     classId     = upper idrest*
 
     space      += comment

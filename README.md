@@ -38,12 +38,6 @@ Guavascript is a strongly and statically typed language that compiles down to Ja
 ## Example Programs
 Guavascript on the left, Javascript on the right
 
-__Printing__
-
-```
-print('hello, world!')                      console.log(‘hello, world!’)
-```
-
 __Variable Declarations__
 
 ```
@@ -55,7 +49,7 @@ female = True                               let female = true
 __Constant Declarations__
 
 ```
-FEET_IN_METER = 3.28084                     const FEET_IN_METER = 3.28084
+PI = 3.14159265359                         const PI = 3.14159265359
 ```
 
 __Arithmetic__
@@ -67,17 +61,20 @@ __Arithmetic__
 __Functions__
 
 ```
+result = 0                                  result = 0
 multiply (x, y) {                           var multiply = (x, y) => {
-   return x * y                                return x * y;
+   result = x * y                                result = x * y;
 }                                           }
 ```
 
 ```
-count_by_two (n) {                          let count_by_two = (n) => {
-   for i in range(n) {                         for (i = 0; i < n; i++) {
-      if i % 2 == 0 {                             if (i % 2 === 0) {
-         print(i)                                    console.log(i);
-      }                                           }
-   }                                           }
-}                                           }
+numbers = [1, 2, 3, 4, 5, 6]                let numbers = [1, 2, 3, 4, 5, 6]
+result = 0                                  let result = 0
+count_by_two () {                           let count_by_two = () => {
+   for i in numbers {                           for (i in numbers) {
+      if i % 2 == 0 {                                if (i % 2 === 0) {
+         result += i                                     result += i
+      }                                              }
+   }                                            }
+}                                            }
 ```

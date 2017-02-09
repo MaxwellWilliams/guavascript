@@ -2,17 +2,23 @@ Guavascript {
     Program     = Block
     Block       = Statement+
     Statement   = Exp "?" Block ":" Block                         -- conditionalStatement
-                | id "(" (Param ("," Param)*)? ")" "{" Block "}"  -- funcDeclStatement
+                | id "(" (Param ("," Param)*)? ")" "{" FuncBlock "}"  -- funcDeclStatement
                 | "class" classId "{" Block "}"                   -- classDeclStatement
                 | ("match" IdExp "with" "|"? Match
                   ("|" Match)* ("|" "_" "->" Block))              -- matchStatement
                 | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
                 | "while" Exp "{" Block "}"                       -- whileStatement
                 | "for" id "in" IdExp "{" Block "}"               -- forInStatement
+                | "print" "(" Exp ")"							  -- printStatement
                 | Exp                                             -- expStatement
+    FuncBlock   = Block Rtn 									  -- funcBlock
+    			| Block
+                | Rtn
+    Rtn         = "return" Exp
     Param       = id ("=" VarExp)?
     Match       = Exp "->" Block
-
+	
+    PrintExp    = 
     Exp         = id assignOp BoolOrExp                           -- assignExp
                 | BoolOrExp
     BoolOrExp   = BoolOrExp orOp BoolAndExp                       -- boolOrExp
@@ -30,7 +36,7 @@ Guavascript {
     PrefixExp   = prefixOp? Exp1
     Exp1        = VarExp
                 | "(" Exp ")"                                     -- parenExp
-    VarExp      = (IdExp | List | Tuple | Dictionary | boolLit
+    VarExp      = (boolLit | IdExp | List | Tuple | Dictionary
                 | intLit | floatLit | stringLit)
 
     IdExp       = id ("." id)* (Arguments | IdSelector)* idPostOp?
@@ -58,11 +64,11 @@ Guavascript {
     stringLit   = "\"" ("\\\"" | (~"\"" any))* "\""
 
     keyword     = ("class" | "true" | "false" | "match" | "with" | "if"
-                | "else" | "while" | "for" | "in" | "this") ~idrest
+                | "else" | "while" | "for" | "in" | "this" | "print" | "return") ~idrest
     id          = ~keyword lower idrest*                          -- identifier
                 | constId
     idrest      = "_" | alnum
-    constId     = ~keyword upper ("_" | upper)*
+    constId     = ~keyword upper+
     classId     = upper idrest*
 
     space      += comment

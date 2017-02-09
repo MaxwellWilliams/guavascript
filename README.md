@@ -92,3 +92,11 @@ add_even_numbers () {                       add_even_numbers = () => {
    ret result                                   return result
 }                                            }
 ```
+__Class Declarations__
+```
+class Ball {                                 class Ball {
+	is_round() {                                 let is_round = () => {
+    	ret True                                     return true
+    }                                           }
+}                                            }
+```

@@ -9,16 +9,15 @@ Guavascript {
                 | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
                 | "while" Exp "{" Block "}"                       -- whileStatement
                 | "for" id "in" IdExp "{" Block "}"               -- forInStatement
-                | "print" "(" Exp ")"							  -- printStatement
+                | "print" "(" Exp ")"                             -- printStatement
                 | Exp                                             -- expStatement
-    FuncBlock   = Block Rtn 									  -- funcBlock
-    			| Block
+    FuncBlock   = Block Rtn                                       -- funcBlock
+    			      | Block
                 | Rtn
     Rtn         = "return" Exp
     Param       = id ("=" VarExp)?
     Match       = Exp "->" Block
 
-    PrintExp    =
     Exp         = id assignOp BoolOrExp                           -- assignExp
                 | BoolOrExp
     BoolOrExp   = BoolOrExp orOp BoolAndExp                       -- boolOrExp

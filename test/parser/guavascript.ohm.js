@@ -19,6 +19,7 @@ tests = function(validFiles, invalidFiles) {
         });
       });
     });
+
     describe('Test invalid example programs', function() {
       invalidFiles.forEach(function(file) {
         it('invalid\\' + file.name + ' should be rejected by the parser',
@@ -35,21 +36,24 @@ tests = function(validFiles, invalidFiles) {
 (function() {
   validFiles = [];
   invalidFiles = [];
+
   fs.readdirSync(validPrograms).forEach(function(fileName) {
     fullFilePath = validPrograms + '/' + fileName;
     fileContents = fs.readFileSync(fullFilePath, 'utf-8');
     validFiles.push({
       name: fileName,
-      code: fileContents,
+      code: fileContents
     });
   });
+
   fs.readdirSync(invalidPrograms).forEach(function(fileName) {
     fullFilePath = invalidPrograms + '/' + fileName;
     fileContents = fs.readFileSync(fullFilePath, 'utf-8');
     invalidFiles.push({
       name: fileName,
-      code: fileContents,
+      code: fileContents
     });
   });
+
   tests(validFiles, invalidFiles);
 }());

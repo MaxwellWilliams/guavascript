@@ -17,8 +17,8 @@ Guavascript {
     Rtn         = "return" Exp
     Param       = id ("=" VarExp)?
     Match       = Exp "->" Block
-	
-    PrintExp    = 
+
+    PrintExp    =
     Exp         = id assignOp BoolOrExp                           -- assignExp
                 | BoolOrExp
     BoolOrExp   = BoolOrExp orOp BoolAndExp                       -- boolOrExp
@@ -68,7 +68,7 @@ Guavascript {
     id          = ~keyword lower idrest*                          -- identifier
                 | constId
     idrest      = "_" | alnum
-    constId     = ~keyword upper+
+    constId     = ~keyword upper ("_" | upper)*
     classId     = upper idrest*
 
     space      += comment

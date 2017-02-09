@@ -47,9 +47,9 @@ print('hello, world!')                      console.log(‘hello, world!’)
 __Variable Declarations__
 
 ```
-name = "guav                                let name = “guav”
+name = "guav"                               let name = “guav”
 age = 21                                    var age = 21
-female = true                               let female = true
+female = True                               let female = true
 ```
 
 __Constant Declarations__

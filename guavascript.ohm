@@ -60,7 +60,7 @@ Guavascript {
     stringLit   = "\"" ("\\\"" | (~"\"" any))* "\""
 
     keyword     = ("class" | "true" | "false" | "match" | "with" | "if"
-                | "else" | "while" | "for" | "in" | "this" | "print" | "return") ~idrest
+                | "else" | "while" | "for" | "in" | "this" | "print" | "ret") ~idrest
     id          = ~keyword lower idrest*                          -- identifier
                 | constId
     idrest      = "_" | alnum

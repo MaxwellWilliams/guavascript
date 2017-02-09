@@ -1,4 +1,3 @@
-result = 0
 multiply (x, y) {
-   result = x * y
+   return x * y
 }

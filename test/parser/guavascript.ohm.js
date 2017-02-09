@@ -1,30 +1,36 @@
 fs = require('fs');
 path = require('path');
 ohm = require('ohm-js');
-parserLocation = path.resolve('./guavascript.ohm');
-parserFile = fs.readFileSync(parserLocation, encoding='utf-8');
-parser = ohm.grammar(parserFile);
+parserContents = fs.readFileSync('guavascript.ohm');
+parser = ohm.grammar(parserContents);
 assert = require('assert');
 validPrograms = path.resolve('./test/parser/programs/valid');
+async = require('async');
 
-(function() {
+tests = function(validFiles) {
   describe('guavascript.ohm', function() {
-    it('should return -1 when the value is not present', function() {
-      assert.equal(-1, [1, 2, 3].indexOf(4));
-    });
     describe('Test valid example programs', function() {
-      fs.readdirSync(validPrograms).forEach(function(file) {
-        console.log(file);
-        console.log(parser.match(file));
-
-        m = parser.match('myVariable = 10');
-        if (m.succeeded()) {
-          console.log('Success!');
-        } else {
-          console.log('Nope');
-        }
+      validFiles.forEach(function(file) {
+        it(file.name + ' should be accepted by the parser', function() {
+          parseResult = parser.match(file.code);
+          assert(parseResult.succeeded(),
+            'Is ' + parseResult.succeeded());
+        });
       });
-      // it('');
     });
   });
+};
+
+(function() {
+  validFiles = [];
+  fs.readdirSync(validPrograms).forEach(function(fileName) {
+    fullFilePath = validPrograms + '/' + fileName;
+    fileContents = fs.readFileSync(fullFilePath, 'utf-8');
+    validFiles.push({
+      name: fileName,
+      code: fileContents,
+    });
+  });
+  console.log(validFiles);
+  tests(validFiles);
 }());

@@ -2,7 +2,8 @@
     "extends": "google",
     "rules": {
         "linebreak-style": ["off", "unix"],
-        "guard-for-in": ["off"]
+        "guard-for-in": ["off"],
+        "require-jsdoc": ["off"]
     }
 
 }

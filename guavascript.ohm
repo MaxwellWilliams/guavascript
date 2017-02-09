@@ -1,26 +1,26 @@
 Guavascript {
     Program     = Block
     Block       = Statement+
-    Statement   = Exp "?" RtnBlock ":" RtnBlock                         -- conditionalStatement
+    Statement   = BoolOrExp "?" RtnBlock ":" RtnBlock                   -- conditionalStatement
                 | id "(" (Param ("," Param)*)? ")"
                   "{" RtnBlock "}"  -- funcDeclStatement
                 | "class" classId "{" Block "}"                         -- classDeclStatement
                 | ("match" IdExp "with" "|"? Match
-                  ("|" Match)* ("|" "_" "->" RtnBlock)?)                -- matchStatement
-                | "if" Exp "{" RtnBlock "}" ("else" "{" RtnBlock "}")?  -- ifElseStatement
-                | "while" Exp "{" RtnBlock "}"                          -- whileStatement
+                  ("|" Match)* ("|" "_" "->" (RtnBlock | BoolOrExp | Assign))?) -- matchStatement
+                | "if" BoolOrExp "{" RtnBlock "}" ("else" "{" RtnBlock "}")?  -- ifElseStatement
+                | "while" BoolOrExp "{" RtnBlock "}"                          -- whileStatement
                 | "for" id "in" IdExp "{" RtnBlock "}"                  -- forInStatement
-                | "print" "(" Exp ")"                                   -- printStatement
-                | Exp                                                   -- expStatement
+                | "print" "(" BoolOrExp ")"                             -- printStatement
+                | Assign                                                -- assignStatement
+                | IdExp                                                 -- IdExp
     RtnBlock    = Block Rtn                                             -- ReturnBlock
     	          | Block
                 | Rtn
-    Rtn         = "ret" Exp
+    Rtn         = "ret" BoolOrExp
     Param       = id ("=" VarExp)?
-    Match       = Exp "->" RtnBlock
+    Match       = BoolOrExp "->" (RtnBlock | BoolOrExp | Assign)
 
-    Exp         = id assignOp BoolOrExp                                -- assignExp
-                | BoolOrExp
+    Assign      = id assignOp BoolOrExp                                -- IdExp
     BoolOrExp   = BoolOrExp orOp BoolAndExp                            -- boolOrExp
                 | BoolAndExp
     BoolAndExp  = BoolAndExp andOp RelExp                              -- boolAndExp
@@ -35,7 +35,7 @@ Guavascript {
                 | PrefixExp
     PrefixExp   = prefixOp? Exp1
     Exp1        = VarExp
-                | "(" Exp ")"                                          -- parenExp
+                | "(" BoolOrExp ")"                                          -- parenExp
     VarExp      = (boolLit | IdExp | List | Tuple | Dictionary
                 | intLit | floatLit | stringLit)
 

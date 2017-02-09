@@ -1,17 +1,8 @@
-__TODO: Delete this note before final submission.__ To do:
-
-* Verify expression precedence is correct
-* Finish introduction
- * List other key points to include here:
-* Finish examples with Javascript equivalents
-* Test Ohm grammar with examples and correct mistakes
-
 ![Guavascript Logo] (/images/Guavascript logo.png)
 
 ## Introduction
 
-Guavascript is a strongly and statically typed language that compiles down to Javascript. With type inference, first class functions, and other features. Guavascript is packed with tools to make a programmer's job easier.  Designed with a minimalistic approach to reduce the amount of time programmers have
-to spend typing a worrying about syntax.  Similarly, Guavascript incorporates list comprehension, pattern matching, and the for-in loop to produce a more innately intuitive programming language that cuts out unnecessary in between logic.
+Guavascript is a strongly and statically typed language that compiles down to Javascript. With type inference, first class functions, and other features, Guavascript's goal is to enable a programmer to sketch out ideas quickly without sacrificing focus to lower-level details. For example, the language is designed with a minimalistic approach to reduce the amount of time programmers have to spend typing a worrying about language-specific syntax. Similarly, Guavascript incorporates pattern matching and the for-in loop to produce a more innately intuitive programming language that cuts out unnecessary in-between logic. Guavascript takes much inspiration from Python for its expressiveness and high-level abstraction.
 
 ## Features
 * .guav File Extension
@@ -24,12 +15,12 @@ to spend typing a worrying about syntax.  Similarly, Guavascript incorporates li
 * Static Typing
 * Strong Typing
 * Optional Parameters
-* Parenthesis required for if / while / functions
 
 ### Operators
 
 * Additive: `+`, `-`
-* Multiplicative: `*`, `/`
+* Multiplicative: `*`, `/`, `//`
+* Exponentiation: `^`
 * Relational: `<`, `>`, `>=`, `<=`, `==`, `!=`
 * Boolean: `&&`, `||`
 
@@ -42,13 +33,7 @@ to spend typing a worrying about syntax.  Similarly, Guavascript incorporates li
 * List (Heterogeneous allowed): `[1, 2, 3, 4, 5]`, `[“I”, 8, 50.4, “guavas”]`
 * Tuple (Heterogeneous allowed): `(30, 0.5, “guava”)`
 * Dictionary: `{key:“value”, bestColor:“Guava”, worstLanguage: “php”}`
-* Comments: `(‘) Single line comment`, `:) Single line comment`, or:
- ```
-=) Multi-line
-comments make
-you look cool,
-and annoy Toal (=
-```
+* Comments: `# Single line comment`
 
 ## Example Programs
 Guavascript on the left, Javascript on the right
@@ -76,7 +61,7 @@ FEET_IN_METER = 3.28084                     const FEET_IN_METER = 3.28084
 __Arithmetic__
 
 ```
-((2 + 3) * (6 - 1) ** 2) / 4                ((2 + 3) * Math.pow((6 - 1), 2)) / 4
+((2 + 3) * (6 - 1) ^ 2) / 4                ((2 + 3) * Math.pow((6 - 1), 2)) / 4
 ```
 
 __Functions__

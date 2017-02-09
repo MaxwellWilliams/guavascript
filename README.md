@@ -75,7 +75,7 @@ multiply (x, y) {                           var multiply = (x, y) => {
 ```
 count_by_two (n) {                          let count_by_two = (n) => {
    for i in range(n) {                         for (i = 0; i < n; i++) {
-      if (i % 2 == 0) {                           if (i % 2 === 0) {
+      if i % 2 == 0 {                             if (i % 2 === 0) {
          print(i)                                    console.log(i);
       }                                           }
    }                                           }

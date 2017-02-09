@@ -61,20 +61,20 @@ __Arithmetic__
 __Functions__
 
 ```
-result = 0                                  result = 0
 multiply (x, y) {                           var multiply = (x, y) => {
-   result = x * y                                result = x * y;
+   return x * y                                return x * y;
 }                                           }
 ```
 
 ```
 numbers = [1, 2, 3, 4, 5, 6]                let numbers = [1, 2, 3, 4, 5, 6]
-result = 0                                  let result = 0
-count_by_two () {                           let count_by_two = () => {
+add_even_numbers () {                       add_even_numbers = () => {
+   result = 0                                   let result = 0
    for i in numbers {                           for (i in numbers) {
-      if i % 2 == 0 {                                if (i % 2 === 0) {
-         result += i                                     result += i
-      }                                              }
+      if i % 2 == 0 {                              if (i % 2 === 0) {
+         result += i                                   result += i
+      }                                            }
    }                                            }
+   return result                                return result
 }                                            }
 ```

@@ -112,6 +112,9 @@ class BranchStatement extends Statement {
         this.block1 = block1;
         this.block2 = block2;
     }
+    toString() {
+        return "if " + this.exp.toString() + " then " + this.block1.toString() + " else " + this.block.toString();
+    }
 }
 
 class FunctionDeclarationStatement extends Statement {
@@ -121,6 +124,9 @@ class FunctionDeclarationStatement extends Statement {
         this.parameters = parameters;
         this.block = block;
     }
+    toString() {
+        return "";
+    }
 }
 
 class ClassDeclarationStatement extends Statement {
@@ -129,12 +135,18 @@ class ClassDeclarationStatement extends Statement {
         this.id = id;
         this.block = block;
     }
+    toString() {
+        return "";
+    }
 }
 
 class MatchStatement extends Statement {
     constructor(matchExp) {
         super();
         this.matchExp = matchExp;
+    }
+    toString() {
+        return "";
     }
 }
 
@@ -143,6 +155,9 @@ class WhileStatement extends Statement {
         super();
         this.exp = exp;
         this.block = block;
+    }
+    toString() {
+        return "";
     }
 }
 
@@ -160,6 +175,9 @@ class PrintStatement extends Statement {
         super();
         this.exp = exp;
     }
+    toString() {
+        return "";
+    }
 }
 
 class AssignmentStatement extends Statement {
@@ -169,6 +187,9 @@ class AssignmentStatement extends Statement {
         this.assignOp = assignOp;
         this.exp = exp;
     }
+    toString() {
+        return "";
+    }
 }
 
 class IdentifierStatement extends Statement {
@@ -176,12 +197,18 @@ class IdentifierStatement extends Statement {
         super();
         this.iDExp = iDExp;
     }
+    toString() {
+        return "";
+    }
 }
 
 class ReturnStatement extends Statement {
     constructor(exp) {
         super();
         this.exp = exp;
+    }
+    toString() {
+        return "";
     }
 }
 
@@ -194,62 +221,40 @@ class MatchExpression extends Expression {
         this.idExp = idExp;
         this.matches = matchArray
     }
-}
-
-class BooleanOrExpression extends Expression {
-    constructor(left, right) {
-        super();
-        this.left;
-        this.right;
+    toString() {
+        return "";
     }
 }
 
-class BooleanAndExpression extends Expression {
-    constructor(left, right) {
-        super();
-        this.left;
-        this.right;
-    }
-}
-
-class RelationalOperatorExpression extends Expression {
+class BinaryExpression extends Expression {
     constructor(left, op, right) {
         super();
         this.left = left;
         this.op = op;
         this.right = right;
     }
-}
-
-class AdditionOperatorExpression extends Expression {
-    constructor(left, op, right) {
-        super();
-        this.left = left;
-        this.op = op;
-        this.right = right;
+    toString() {
+        return "";
     }
 }
 
-class MultiplicationOperatorExpression extends Expression {
-    constructor(left, op, right) {
+class UnaryExpression extends Expression {
+    constructor(op, operand) {
         super();
-        this.left = left;
         this.op = op;
-        this.right = right;
+        this.operand = operand;
     }
-}
-
-class ExponentialExpression extends Expression {
-    constructor(base, exponent) {
-        super();
-        this.base = base;
-        this.pow = exponent;
+    toString() {
+        return "";
     }
 }
 
 class Exp1Expression extends Expression {
     constructor(variable) {
         this.var = variable;
+    }
+    toString() {
+        return "";
     }
 }
 
@@ -268,12 +273,12 @@ semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
     Statement_assign(id, assignOp, exp) {return new AssignmentStatement(id.sourceString, assignOp.sourceString, exp.tree());},
     Statement_identifier(iDExp) {return new IdentifierStatement(iDExp.tree());},
     Statement_return(exp) {return new ReturnStatement(exp.tree());}
-    Expression_match(idExp, matchArray) {return new BranchStatement(idExp.tree(), matchArray.tree());}
-    Expression_boolAnd(left, right) {return new BranchStatement(left.tree(), right.tree());}
-    Expression_boolOr(left, right) {return new BranchStatement(left.tree(), right.tree());}
-    Expression_rel(left, op, right) {return new BranchStatement(left.tree(), op.sourceString, right.tree());}
-    Expression_add(left, op, right) {return new BranchStatement(left.tree(), op.sourceString, right.tree());}
-    Expression_mul(left, op, right) {return new BranchStatement(left.tree(), op.sourceString, right.tree());}
-    Expression_expon(base, exponent) {return new BranchStatement(base.tree(), exponent.tree());}
-    Expression_exp1(variable) {return new BranchStatement(variable.tree());}
+    Expression_match(idExp, matchArray) {return new MatchExpression(idExp.tree(), matchArray.tree());}
+    Expression_boolAnd(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
+    Expression_boolOr(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
+    Expression_rel(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
+    Expression_add(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
+    Expression_mul(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
+    Expression_expon(base, exponent) {return new UnaryExpression(base.tree(), exponent.tree());}
+    Expression_exp1(variable) {return new Exp1Expression(variable.tree());}
 });

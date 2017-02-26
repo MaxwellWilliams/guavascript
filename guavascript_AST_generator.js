@@ -97,10 +97,15 @@ class Block {
     }
 }
 
+/*******************************
+* Statements
+*******************************/
+
 class Statement {
 }
 
-class ConditionalStatement extends Statement {
+// Use this for both conditional and if/else statement
+class BranchStatement extends Statement {
     constructor(exp, block1, block2) {
         super();
         this.exp = exp;
@@ -110,77 +115,79 @@ class ConditionalStatement extends Statement {
 }
 
 class FunctionDeclarationStatement extends Statement {
-    constructor() {
+    constructor(id, parameters, block) {
         super();
-
+        this.id = id;
+        this.parameters = parameters;
+        this.block = block;
     }
 }
 
 class ClassDeclarationStatement extends Statement {
-    constructor() {
+    constructor(id, block) {
         super();
-
+        this.id = id;
+        this.block = block;
     }
 }
 
 class MatchStatement extends Statement {
-    constructor() {
+    constructor(matchExp) {
         super();
-
-    }
-}
-
-class IfElseStatement extends Statement {
-    constructor() {
-        super();
-
+        this.matchExp = matchExp;
     }
 }
 
 class WhileStatement extends Statement {
-    constructor() {
+    constructor(exp, block) {
         super();
-
+        this.exp = exp;
+        this.block = block;
     }
 }
 
 class ForInStatement extends Statement {
-    constructor() {
+    constructor(id, iDExp, block) {
         super();
-
+        this.id = id;
+        this.iDExp = iDExp;
+        this.block = block;
     }
 }
 
 class PrintStatement extends Statement {
-    constructor() {
+    constructor(exp) {
         super();
-
+        this.exp = exp;
     }
 }
 
 class AssignmentStatement extends Statement {
-    constructor() {
+    constructor(id, assignOp, exp) {
         super();
-
+        this.id = id;
+        this.assignOp = assignOp;
+        this.exp = exp;
     }
 }
 
 class IdentifierStatement extends Statement {
-    constructor() {
+    constructor(iDExp) {
         super();
-
+        this.iDExp = iDExp;
     }
 }
 
 class ReturnStatement extends Statement {
-    constructor() {
+    constructor(exp) {
         super();
-
+        this.exp = exp;
     }
 }
 
 // Guavascript CST -> AST
 semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
     Program(block) {return new Program(block.tree());},
-    Block() {}
+    Block(statements) {return new Block(statements.tree());},
+    Statement_conditional(exp, block1, block2) {return new BranchStatement(exp.tree(), block1.tree(), block2.tree());}
 });

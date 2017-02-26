@@ -193,7 +193,14 @@
             super();
             this.idExp = idExp;
             this.matches = matchArray
+        }
+    }
 
+    class BooleanOrExpression extends Expression {
+        constructor(left, right) {
+            super();
+            this.left;
+            this.right;
         }
     }
 
@@ -240,7 +247,7 @@
         }
     }
 
-    class VariableExpression extends Expression {
+    class Exp1Expression extends Expression {
         constructor(variable) {
             this.var = variable;
         }
@@ -261,4 +268,12 @@ semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
     Statement_assign(id, assignOp, exp) {return new AssignmentStatement(id.sourceString, assignOp.sourceString, exp.tree());},
     Statement_identifier(iDExp) {return new IdentifierStatement(iDExp.tree());},
     Statement_return(exp) {return new ReturnStatement(exp.tree());}
+    Expression_match(idExp, matchArray) {return new BranchStatement(idExp.tree(), matchArray.tree());}
+    Expression_boolAnd(left, right) {return new BranchStatement(left.tree(), right.tree());}
+    Expression_boolOr(left, right) {return new BranchStatement(left.tree(), right.tree());}
+    Expression_rel(left, op, right) {return new BranchStatement(left.tree(), op.sourceString, right.tree());}
+    Expression_add(left, op, right) {return new BranchStatement(left.tree(), op.sourceString, right.tree());}
+    Expression_mul(left, op, right) {return new BranchStatement(left.tree(), op.sourceString, right.tree());}
+    Expression_expon(base, exponent) {return new BranchStatement(base.tree(), exponent.tree());}
+    Expression_exp1(variable) {return new BranchStatement(variable.tree());}
 });

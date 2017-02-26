@@ -1,24 +1,21 @@
 Guavascript {
     Program     = Block
     Block       = Statement+
-    Statement   = Exp "?" RtnBlock ":" RtnBlock                         -- conditionalStatement
+    Statement   = Exp "?" Block ":" Block                         -- conditionalStatement
                 | id "(" (Param ("," Param)*)? ")"
-                  "{" RtnBlock "}"  -- funcDeclStatement
+                  "{" Block "}"  -- funcDeclStatement
                 | "class" classId "{" Block "}"                         -- classDeclStatement
                 | ("match" IdExp "with" "|"? Match
-                  ("|" Match)* ("|" "_" "->" (RtnBlock | Exp | Assign))?) -- matchStatement
-                | "if" Exp "{" RtnBlock "}" ("else" "{" RtnBlock "}")?  -- ifElseStatement
-                | "while" Exp "{" RtnBlock "}"                          -- whileStatement
-                | "for" id "in" IdExp "{" RtnBlock "}"                  -- forInStatement
+                  ("|" Match)* ("|" "_" "->" (Block | Exp | Assign))?) -- matchStatement
+                | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
+                | "while" Exp "{" Block "}"                          -- whileStatement
+                | "for" id "in" IdExp "{" Block "}"                  -- forInStatement
                 | "print" "(" Exp ")"                                   -- printStatement
                 | Assign                                                -- assignStatement
                 | IdExp                                                 -- IdExp
-    RtnBlock    = Block Rtn                                             -- ReturnBlock
-    	          | Block
-                | Rtn
-    Rtn         = "ret" Exp
+                | "ret" Exp                                             -- ReturnStatement
     Param       = id ("=" Var)?
-    Match       = Exp "->" (RtnBlock | Exp | Assign)
+    Match       = Exp "->" Block
 
     Assign      = id assignOp Exp                                      -- IdExp
     Exp         = Exp orOp BoolAndExp                                  -- boolOrExp

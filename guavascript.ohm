@@ -9,7 +9,6 @@ Guavascript {
                 | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
                 | "while" Exp "{" Block "}"                          -- whileStatement
                 | "for" id "in" IdExp "{" Block "}"                  -- forInStatement
-                | "print" "(" Exp ")"                                   -- printStatement
                 | Assign                                                -- assignStatement
                 | IdExp                                                 -- IdExp
                 | "ret" Exp                                             -- ReturnStatement

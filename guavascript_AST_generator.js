@@ -253,6 +253,7 @@ class UnaryExpression extends Expression {
     }
 }
 
+
 class Exp1Expression extends Expression {
     constructor(variable) {
         this.var = variable;
@@ -283,6 +284,6 @@ semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
     Expression_rel(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
     Expression_add(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
     Expression_mul(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
-    Expression_expon(base, exponent) {return new UnaryExpression(base.tree(), exponent.tree());}
+    Expression_expon(base, exponent) {return new BinaryExpression(base.tree(), "^", exponent.tree());}
     Expression_exp1(variable) {return new Exp1Expression(variable.tree());}
 });

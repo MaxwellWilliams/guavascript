@@ -1,4 +1,3 @@
-while True {
+while is True {
    ret True
-   ret False
 }

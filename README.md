@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Guavascript is a strongly and statically typed language that compiles down to Javascript. With type inference, first class functions, and other features, Guavascript's goal is to enable a programmer to sketch out ideas quickly without sacrificing focus to lower-level details. For example, the language is designed with a minimalistic approach to reduce the amount of time programmers have to spend typing a worrying about language-specific syntax. Similarly, Guavascript incorporates pattern matching and the for-in loop to produce a more innately intuitive programming language that cuts out unnecessary in-between logic. Guavascript takes much inspiration from Python for its expressiveness and high-level abstraction.
+Guavascript is a strongly and statically typed language that compiles down to Javascript. With type inference, first class functions, and other features, Guavascript's goal is to enable a programmer to sketch out ideas quickly without sacrificing focus to lower-level details. For example, the language is designed with a minimalistic approach to reduce the amount of time programmers have to spend typing a worrying about language-specific syntax. Similarly, Guavascript incorporates pattern matching and the for-in loop to produce a more intuitive programming language that cuts out unnecessary in-between logic. Guavascript takes much inspiration from Python for its expressiveness and high-level abstraction.
 
 ## Features
 * .guav File Extension
@@ -81,22 +81,39 @@ multiply (x, y) {                           var multiply = (x, y) => {
 ```
 
 ```
-numbers = [1, 2, 3, 4, 5, 6]                let numbers = [1, 2, 3, 4, 5, 6]
-add_even_numbers () {                       add_even_numbers = () => {
-   result = 0                                   let result = 0
-   for i in numbers {                           for (i in numbers) {
-      if i % 2 == 0 {                              if (i % 2 === 0) {
-         result += i                                   result += i
-      }                                            }
-   }                                            }
-   ret result                                   return result
+numbers = [1, 2, 3, 4, 5, 6]                let numbers = [1, 2, 3, 4, 5, 6];
+add_even_numbers() {                        add_even_numbers = () => {
+    result = 0                                  var result = 0;
+    for num in numbers {                            for (var i in numbers) {
+        if num % 2 == 0 {                               if (numbers[i] % 2 === 0) {
+            result += i                                     result += i;
+        }                                               }
+    }                                               }
+    ret result                                   return result;
 }                                            }
 ```
+
+__Higher-Order Functions__
+
+```
+doTwice (f, x) {                            var doTwice = (f, x) => {
+   ret f(f(x))                              	return f(f(x));
+}                                           }
+```
+
 __Class Declarations__
+
 ```
 class Ball {                                 class Ball {
-	is_round() {                                 let is_round = () => {
+    Ball (radius, weight = 1.0) {		 constructor(radius, weight) {
+    	this.radius = radius			     this.radius = radius;
+	this.weight = weight			     this.weight = weight;
+    }                				 }
+    is_round() {                                 var is_round = () => {
     	ret True                                     return true
-    }                                           }
+    }                                            }
 }                                            }
+
+bouncyBall = Ball(0.2)			     let bouncyBall = new Ball(0.2, 1.0);
+bouncyBall.is_round()			     bouncyBall.is_round();
 ```

@@ -189,5 +189,15 @@ class ReturnStatement extends Statement {
 semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
     Program(block) {return new Program(block.tree());},
     Block(statements) {return new Block(statements.tree());},
-    Statement_conditional(exp, block1, block2) {return new BranchStatement(exp.tree(), block1.tree(), block2.tree());}
+    Statement_conditional(exp, block1, block2) {return new BranchStatement(exp.tree(), block1.tree(), block2.tree());},
+    Statement_ifElse(exp, block1, block2) {return new BranchStatement(exp.tree(), block1.tree(), block2.tree());},
+    Statement_funcDecl(id, parameters, block) {return new FunctionDeclarationStatement(id.sourceString, parameters.tree(), block.tree());},
+    Statement_classDecl(id, block) {return new ClassDeclarationStatement(id.sourceString, block.tree());},
+    Statement_match(matchExp) {return new MatchStatement(matchExp.tree());},
+    Statement_while(exp, block) {return new WhileStatement(exp.tree(), block.tree());},
+    Statement_forIn(id, iDExp, block) {return new ForInStatement(id.sourceString, iDExp.tree(), block.tree());},
+    Statement_print(exp) {return new PrintStatement(exp.tree());},
+    Statement_assign(id, assignOp, exp) {return new AssignmentStatement(id.sourceString, assignOp.sourceString, exp.tree());},
+    Statement_identifier(iDExp) {return new IdentifierStatement(iDExp.tree());},
+    Statement_return(exp) {return new ReturnStatement(exp.tree());}
 });

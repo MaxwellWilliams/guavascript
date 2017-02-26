@@ -68,13 +68,13 @@ this.value = value;
 
 // CST -> AST
 const semantics = aelGrammar.createSemantics().addOperation('tree', {
-Program(body) {return new Program(body.tree());},
-Exp_binary(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());},
-Term_binary(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());},
-Factor_negate(op, operand) {return new UnaryExpression('-', operand.tree());},
-Primary_parens(open, expression, close) {return expression.tree();},
-Power(base, op, exponent) {return new BinaryExpression(base.tree(), op.sourceString, exponent.tree());},
-number(chars) {return new NumericLiteral(+this.sourceString);},
+    Program(body) {return new Program(body.tree());},
+    Exp_binary(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());},
+    Term_binary(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());},
+    Factor_negate(op, operand) {return new UnaryExpression('-', operand.tree());},
+    Primary_parens(open, expression, close) {return expression.tree();},
+    Power(base, op, exponent) {return new BinaryExpression(base.tree(), op.sourceString, exponent.tree());},
+    number(chars) {return new NumericLiteral(+this.sourceString);},
 });
 */
 
@@ -125,7 +125,7 @@ class FunctionDeclarationStatement extends Statement {
         this.block = block;
     }
     toString() {
-        return "";
+        return id.toString() + "(" parameters.toString() ")" + "...";  // TODO: Check with Toal before doing all the toString's
     }
 }
 
@@ -211,6 +211,10 @@ class ReturnStatement extends Statement {
         return "";
     }
 }
+
+/*******************************
+* Expressions
+*******************************/
 
 class Expression {
 }

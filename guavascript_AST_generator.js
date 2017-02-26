@@ -151,6 +151,13 @@ class ForInStatement extends Statement {
     }
 }
 
+class PrintStatement extends Statement {
+    constructor() {
+        super();
+
+    }
+}
+
 class AssignmentStatement extends Statement {
     constructor() {
         super();

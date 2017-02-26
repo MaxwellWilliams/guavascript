@@ -17,7 +17,7 @@ Guavascript {
     	          | Block
                 | Rtn
     Rtn         = "ret" Exp
-    Param       = id ("=" VarExp)?
+    Param       = id ("=" Var)?
     Match       = Exp "->" (RtnBlock | Exp | Assign)
 
     Assign      = id assignOp Exp                                      -- IdExp
@@ -34,20 +34,20 @@ Guavascript {
     ExponExp    = PrefixExp exponOp AddExp                             -- exponExp
                 | PrefixExp
     PrefixExp   = prefixOp? Exp1
-    Exp1        = VarExp
+    Exp1        = Var
                 | "(" Exp ")"                                          -- parenExp
-    VarExp      = (boolLit | IdExp | List | Tuple | Dictionary
+    Var         = (boolLit | IdExp | List | Tuple | Dictionary
                 | intLit | floatLit | stringLit)
 
     IdExp       = id ("." id | Arguments | IdSelector)* idPostOp?
-    Arguments   = "(" (VarExp ("," VarExp)*)? ")"
-    IdSelector  = "[" VarExp "]"
+    Arguments   = "(" (Var ("," Var)*)? ")"
+    IdSelector  = "[" Var "]"
     idPostOp    = "++" | "--"
 
-    List        = "[" (VarExp ("," VarExp)*)? "]"
-    Tuple       = "(" (VarExp ("," VarExp)*)? ")"
+    List        = "[" (Var ("," Var)*)? "]"
+    Tuple       = "(" (Var ("," Var)*)? ")"
     Dictionary  = "{" (IdValuePair ("," IdValuePair)*)? "}"
-    IdValuePair = id ":" VarExp
+    IdValuePair = id ":" Var
 
     orOp        = "||"
     andOp       = "&&"

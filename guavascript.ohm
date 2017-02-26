@@ -5,8 +5,7 @@ Guavascript {
                 | id "(" (Param ("," Param)*)? ")"
                   "{" Block "}"  -- funcDeclStatement
                 | "class" classId "{" Block "}"                         -- classDeclStatement
-                | ("match" IdExp "with" "|"? Match
-                  ("|" Match)* ("|" "_" "->" (Block | Exp | Assign))?) -- matchStatement
+                | MatchExp                                       -- matchStatement
                 | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElseStatement
                 | "while" Exp "{" Block "}"                          -- whileStatement
                 | "for" id "in" IdExp "{" Block "}"                  -- forInStatement
@@ -15,9 +14,11 @@ Guavascript {
                 | IdExp                                                 -- IdExp
                 | "ret" Exp                                             -- ReturnStatement
     Param       = id ("=" Var)?
-    Match       = Exp "->" Block
+    MatchExp    = ("match" IdExp "with" "|"? Match
+                  ("|" Match)* ("|" "_" "->" (Block | Var))?)
+    Match       = Exp "->" (Block | Var)
 
-    Assign      = id assignOp Exp                                      -- IdExp
+    Assign      = id assignOp (Exp | MatchExp)                         -- IdExp
     Exp         = Exp orOp BoolAndExp                                  -- boolOrExp
                 | BoolAndExp
     BoolAndExp  = BoolAndExp andOp RelExp                              -- boolAndExp
@@ -36,7 +37,8 @@ Guavascript {
     Var         = (boolLit | IdExp | List | Tuple | Dictionary
                 | intLit | floatLit | stringLit)
 
-    IdExp       = id ("." id | Arguments | IdSelector)* idPostOp?
+    IdExp       = id (periodId | Arguments | IdSelector)* idPostOp?
+    periodId    = "." id
     Arguments   = "(" (Var ("," Var)*)? ")"
     IdSelector  = "[" Var "]"
     idPostOp    = "++" | "--"

@@ -106,14 +106,31 @@ class Statement {
 
 // Use this for both conditional and if/else statement
 class BranchStatement extends Statement {
-    constructor(exp, block1, block2) {
+    constructor(cases, elseBlock) {
         super();
-        this.exp = exp;
-        this.block1 = block1;
-        this.block2 = block2;
+        this.cases = cases;
+        this.elseBlock = elseBlock;
     }
-    toString() {
-        return "if " + this.exp.toString() + " then " + this.block1.toString() + " else " + this.block.toString();
+    toString(indent = 0) {
+        string = `\t`.repeat(indent) + `(if`;
+        for (var i in this.cases) {
+            string += `\n${this.cases[i].toString(++indent)}`;
+        }
+        if (elseBlock) {
+            string += `\n${this.elseBlock.toString(++indent)}`;
+        }
+        string += `)`;
+        return string;
+    }
+}
+
+class Case {
+    constructor(exp, block) {
+        this.exp = exp;
+        this.block = block;
+    }
+    toString(indent = 0) {
+        return `${`\t`.repeat(indent)}(case ${this.exp.toString(++indent)} ${this.block.toString(++indent)})`;
     }
 }
 
@@ -267,8 +284,8 @@ class Exp1Expression extends Expression {
 semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
     Program(block) {return new Program(block.tree());},
     Block(statements) {return new Block(statements.tree());},
-    Statement_conditional(exp, block1, block2) {return new BranchStatement(exp.tree(), block1.tree(), block2.tree());},
-    Statement_ifElse(exp, block1, block2) {return new BranchStatement(exp.tree(), block1.tree(), block2.tree());},
+    Statement_conditional(exp, block1, block2) {return new BranchStatement(new Case(exp.tree(), block1.tree()), block2.tree());},
+    Statement_ifElse(exp, block1, block2) {return new BranchStatement(new Case(exp.tree(), block1.tree()), block2.tree());},
     Statement_funcDecl(id, parameters, block) {return new FunctionDeclarationStatement(id.sourceString, parameters.tree(), block.tree());},
     Statement_classDecl(id, block) {return new ClassDeclarationStatement(id.sourceString, block.tree());},
     Statement_match(matchExp) {return new MatchStatement(matchExp.tree());},

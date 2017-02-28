@@ -116,7 +116,7 @@ class BranchStatement extends Statement {
         for (var i in this.cases) {
             string += `\n${this.cases[i].toString(++indent)}`;
         }
-        if (elseBlock) {
+        if (typeof elseBlock != `undefined`) {
             string += `\n${this.elseBlock.toString(++indent)}`;
         }
         string += `)`;

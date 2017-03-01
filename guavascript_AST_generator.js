@@ -85,15 +85,28 @@ ohm = require('ohm-js');
 parserContents = fs.readFileSync('guavascript.ohm');
 guavascriptGrammar = ohm.grammar(parserContents);
 
+let spacer = `    `;
+
 class Program {
     constructor(block) {
-        this.body = block;
+        this.block = block;
+    }
+    toString(indent = 0) {
+        return `${spacer.repeat(indent)}(program\n${this.block.toString(++indent)})`;
     }
 }
 
 class Block {
     constructor(statements) {
         this.body = statements;
+    }
+    toString(indent = 0) {
+        var string = `${spacer.repeat(indent)}(block`;
+        for (var statementIndex in statements) {
+            string += `\n${this.statements[statementIndex].toString(++indent)}`;
+        }
+        string += `)`;
+        return string;
     }
 }
 
@@ -112,7 +125,7 @@ class BranchStatement extends Statement {
         this.elseBlock = elseBlock;
     }
     toString(indent = 0) {
-        string = `\t`.repeat(indent) + `(if`;
+        var string = `${spacer.repeat(indent)}(if`;
         for (var i in this.cases) {
             string += `\n${this.cases[i].toString(++indent)}`;
         }
@@ -130,7 +143,7 @@ class Case {
         this.block = block;
     }
     toString(indent = 0) {
-        return `${`\t`.repeat(indent)}(case ${this.exp.toString(++indent)} ${this.block.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(case\n${this.exp.toString(++indent)}\n${this.block.toString(++indent)})`;
     }
 }
 
@@ -141,8 +154,22 @@ class FunctionDeclarationStatement extends Statement {
         this.parameters = parameters;
         this.block = block;
     }
-    toString() {
-        return id.toString() + "(" parameters.toString() ")" + "...";  // TODO: Check with Toal before doing all the toString's
+    toString(index) {
+        var string = `${spacer.repeat(indent)}(func\n(id ${this.id.toString(++indent)})\n(param`;
+        for (var parameterIndex in this.parameters) {
+            string += `\n${this.parameters[parameterIndex].toString(++indent)}`;
+        }
+        string += `)\n${this.block.toString(++indent)})`;
+    }
+}
+
+class Parameter {
+    constructor(id, defaultValue) {
+        this.id = id;
+        this.defaultValue = defaultValue;
+    }
+    toString(index) {
+        return `${spacer.repeat(indent)}(id ${this.id}, default ${this.defaultValue})`;
     }
 }
 
@@ -152,8 +179,8 @@ class ClassDeclarationStatement extends Statement {
         this.id = id;
         this.block = block;
     }
-    toString() {
-        return "";
+    toString(index) {
+        return `${spacer.repeat(indent)}(class)`;
     }
 }
 
@@ -162,7 +189,7 @@ class MatchStatement extends Statement {
         super();
         this.matchExp = matchExp;
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }
@@ -173,7 +200,7 @@ class WhileStatement extends Statement {
         this.exp = exp;
         this.block = block;
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }
@@ -185,6 +212,9 @@ class ForInStatement extends Statement {
         this.iDExp = iDExp;
         this.block = block;
     }
+    toString(index) {
+        return "";
+    }
 }
 
 class PrintStatement extends Statement {
@@ -192,7 +222,7 @@ class PrintStatement extends Statement {
         super();
         this.exp = exp;
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }
@@ -204,7 +234,7 @@ class AssignmentStatement extends Statement {
         this.assignOp = assignOp;
         this.exp = exp;
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }
@@ -214,7 +244,7 @@ class IdentifierStatement extends Statement {
         super();
         this.iDExp = iDExp;
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }
@@ -224,7 +254,7 @@ class ReturnStatement extends Statement {
         super();
         this.exp = exp;
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }
@@ -242,7 +272,7 @@ class MatchExpression extends Expression {
         this.idExp = idExp;
         this.matches = matchArray
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }
@@ -254,7 +284,7 @@ class BinaryExpression extends Expression {
         this.op = op;
         this.right = right;
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }
@@ -265,7 +295,7 @@ class UnaryExpression extends Expression {
         this.op = op;
         this.operand = operand;
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }
@@ -275,7 +305,7 @@ class Exp1Expression extends Expression {
     constructor(variable) {
         this.var = variable;
     }
-    toString() {
+    toString(index) {
         return "";
     }
 }

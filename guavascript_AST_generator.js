@@ -340,6 +340,24 @@ class Variable extends Expression {
     }
 }
 
+class IdExpression extends Expression {
+    constructor(id) {
+        this.id = id;
+    }
+    toString(indent) {
+        return `(${this.id.toString(indent)})`;
+    }
+}
+
+class periodId {
+    constructor(id) {
+        this.id = id;
+    }
+    toString(indent) {
+        return `(${this.id.toString(indent)})`;
+    }
+}
+
 // TODO: merge MatchExpression Match's into single array. Same with other arrays
 
 // Guavascript CST -> AST
@@ -373,4 +391,6 @@ semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
     PrefixExp(),
     ParenExp(_, exp, _) {return new ParenthesisExpression(exp.tree());}
     ParenExp_pass(variable) {return new Variable(variable.tree());}
+    Var(input) {return new Variable(input.tree());}
+    IdExp
 });

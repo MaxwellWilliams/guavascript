@@ -341,20 +341,35 @@ class Variable extends Expression {
 }
 
 class IdExpression extends Expression {
-    constructor(id) {
-        this.id = id;
+    constructor(idExpBody, idPostOp) {
+        this.idExpBody = idExpBody;
+        this.idPostOp = idPostOp;
     }
     toString(indent) {
-        return `(${this.id.toString(indent)})`;
+        return `${spacer.repeat(indent)}(IdExpression\n${this.idExpBody.toString(++indent)}${this.idPostOp === 'undefined' ? "" : `\n${spacer.repeat(++indent)}${this.idPostOp}`})`;
     }
 }
 
-class periodId {
+class IdExpressionBody {
+    constructor(idExpBody, idAppendage) {
+        this.idExpBody = idExpBody;
+        this.idAppendage = idAppendage;
+        this.appendageOp = idAppendage.getOp();
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}(${this.appendageOp}\n${this.IdExpressionBody.toString(++indent)}\n${this.idAppendage.toString(++indent)})`;
+    }
+}
+
+class PeriodId {
     constructor(id) {
         this.id = id;
     }
+    getOp() {
+        return ".";
+    }
     toString(indent) {
-        return `(${this.id.toString(indent)})`;
+        return `${spacer.repeat(indent)}(${this.id})`;
     }
 }
 
@@ -392,5 +407,4 @@ semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
     ParenExp(_, exp, _) {return new ParenthesisExpression(exp.tree());}
     ParenExp_pass(variable) {return new Variable(variable.tree());}
     Var(input) {return new Variable(input.tree());}
-    IdExp
 });

@@ -85,14 +85,14 @@ ohm = require('ohm-js');
 parserContents = fs.readFileSync('guavascript.ohm');
 guavascriptGrammar = ohm.grammar(parserContents);
 
-let spacer = `    `;
+var spacer = "    ";
 
 class Program {
     constructor(block) {
         this.block = block;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(program\n${this.block.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(Program\n${this.block.toString(++indent)})`;
     }
 }
 
@@ -101,7 +101,7 @@ class Block {
         this.body = statements;
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(block`;
+        var string = `${spacer.repeat(indent)}(Block`;
         for (var statementIndex in statements) {
             string += `\n${this.statements[statementIndex].toString(++indent)}`;
         }
@@ -112,6 +112,10 @@ class Block {
 
 /*******************************
 * Statements
+* Note: statement toString methods include an `indent` parameter, indicating how indented
+* the particular printed statement should be. To illustrate the tree structure, a language
+* class passes the `indent` + 1 to its children unless the child is trivial and printed
+* directly in the parent node.
 *******************************/
 
 class Statement {
@@ -154,8 +158,8 @@ class FunctionDeclarationStatement extends Statement {
         this.parameters = parameters;
         this.block = block;
     }
-    toString(index) {
-        var string = `${spacer.repeat(indent)}(func\n(id ${this.id.toString(++indent)})\n(param`;
+    toString(indent) {
+        var string = `${spacer.repeat(indent)}(Func\n(id ${this.id})\n(param`;
         for (var parameterIndex in this.parameters) {
             string += `\n${this.parameters[parameterIndex].toString(++indent)}`;
         }
@@ -168,7 +172,7 @@ class Parameter {
         this.id = id;
         this.defaultValue = defaultValue;
     }
-    toString(index) {
+    toString(indent) {
         return `${spacer.repeat(indent)}(id ${this.id}, default ${this.defaultValue})`;
     }
 }
@@ -179,8 +183,8 @@ class ClassDeclarationStatement extends Statement {
         this.id = id;
         this.block = block;
     }
-    toString(index) {
-        return `${spacer.repeat(indent)}(class)`;
+    toString(indent) {
+        return `${spacer.repeat(indent)}(Class\n(id ${this.id})\n${this.block.toString(++index)})`;
     }
 }
 
@@ -189,8 +193,8 @@ class MatchStatement extends Statement {
         super();
         this.matchExp = matchExp;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        return `${spacer.repeat(indent)}(Match\n${this.matchExp.toString(index)})`;
     }
 }
 
@@ -200,8 +204,8 @@ class WhileStatement extends Statement {
         this.exp = exp;
         this.block = block;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        return `${spacer.repeat(indent)}(While\n${this.exp.toString(++indent)}\n${this.block.toString(++indent)})`;
     }
 }
 
@@ -212,8 +216,8 @@ class ForInStatement extends Statement {
         this.iDExp = iDExp;
         this.block = block;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        return `${spacer.repeat(indent)}(For id (${this.id}) in\n${this.iDExp.toString(++indent)}\n${this.block.toString(++indent)})`;
     }
 }
 
@@ -222,8 +226,8 @@ class PrintStatement extends Statement {
         super();
         this.exp = exp;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        return `${spacer.repeat(indent)}(Print\n${this.exp.toString(++indent)})`;
     }
 }
 
@@ -234,8 +238,8 @@ class AssignmentStatement extends Statement {
         this.assignOp = assignOp;
         this.exp = exp;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        return `${spacer.repeat(indent)}(${this.assignOp}\n)${spacer.repeat(++indent)}(id ${this.id})\n${this.exp.toString(++indent)}`;
     }
 }
 
@@ -244,8 +248,8 @@ class IdentifierStatement extends Statement {
         super();
         this.iDExp = iDExp;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        return `${spacer.repeat(indent)}(Identifier Statement\n${this.iDExp(++indent)})`;
     }
 }
 
@@ -254,8 +258,8 @@ class ReturnStatement extends Statement {
         super();
         this.exp = exp;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        return `${spacer.repeat(indent)}(Return\n${this.exp.toString(++indent)})`;
     }
 }
 
@@ -266,14 +270,30 @@ class ReturnStatement extends Statement {
 class Expression {
 }
 
+class IdentifierExpression extends Expression {
+    constructor(id, /* TODO: What to do with all those optionals? */ idPostOp) {
+        this.id = id;
+        this.idPostOp = idPostOp;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;  // TODO: not done!
+    }
+}
+
 class MatchExpression extends Expression {
     constructor(idExp, matchArray) {
         super();
         this.idExp = idExp;
         this.matches = matchArray
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        var string = `${spacer.repeat(indent)}(Match Expression\n${this.idExp.toString(++indent)}\n${spacer.repeat(++indent)}(matches`;
+        indent++;
+        for (var matchIndex in this.matches) {
+            string += `\n${this.matches[matchIndex].toString(++indent)}`
+        }
+        string += "))"
+        return string;
     }
 }
 
@@ -284,8 +304,8 @@ class BinaryExpression extends Expression {
         this.op = op;
         this.right = right;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        return `${spacer.repeat(indent)}(${this.op}\n${this.left.toString(++indent)}\n${this.right.toString(++indent)})`;
     }
 }
 
@@ -295,20 +315,32 @@ class UnaryExpression extends Expression {
         this.op = op;
         this.operand = operand;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        return `${spacer.repeat(indent)}(${this.op}\n${this.operand.toString(++indent)})`;
     }
 }
 
+class ParenthesisExpression extends Expression {
+    constructor(exp) {
+        this.exp = exp;
+    }
+    toString(indent) {
+        // Don't increase indent, as the semantic meaning of parenthesis are already captured in the tree
+        return `${this.exp.toString(indent)}`;
+    }
+}
 
-class Exp1Expression extends Expression {
+class Variable extends Expression {
     constructor(variable) {
         this.var = variable;
     }
-    toString(index) {
-        return "";
+    toString(indent) {
+        // Don't increase indent, we already know literals and other data types are variables
+        return `${this.var.toString(indent)}`;
     }
 }
+
+// TODO: merge MatchExpression Match's into single array. Same with other arrays
 
 // Guavascript CST -> AST
 semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
@@ -324,13 +356,21 @@ semantics = guavascriptGrammar.createSemantics().addOperation('tree' {
     Statement_print(exp) {return new PrintStatement(exp.tree());},
     Statement_assign(id, assignOp, exp) {return new AssignmentStatement(id.sourceString, assignOp.sourceString, exp.tree());},
     Statement_identifier(iDExp) {return new IdentifierStatement(iDExp.tree());},
-    Statement_return(exp) {return new ReturnStatement(exp.tree());}
-    Expression_match(idExp, matchArray) {return new MatchExpression(idExp.tree(), matchArray.tree());}
-    Expression_boolAnd(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
-    Expression_boolOr(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
-    Expression_rel(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
-    Expression_add(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
-    Expression_mul(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());}
-    Expression_expon(base, exponent) {return new BinaryExpression(base.tree(), "^", exponent.tree());}
-    Expression_exp1(variable) {return new Exp1Expression(variable.tree());}
+    Statement_return(exp) {return new ReturnStatement(exp.tree());},
+    Expression_match(idExp, matchArray) {return new MatchExpression(idExp.tree(), matchArray.tree());},
+    Exp(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());},
+    Exp_pass(),
+    BoolAndExp(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());},
+    BoolAndExp_pass(),
+    RelExp(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());},
+    RelExp_pass(),
+    AddExp(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());},
+    AddExp_pass(),
+    MulExp(left, op, right) {return new BinaryExpression(left.tree(), op.sourceString, right.tree());},
+    MulExp_pass(),
+    ExponExp(base, exponent) {return new BinaryExpression(base.tree(), "^", exponent.tree());},
+    ExponExp_pass(),
+    PrefixExp(),
+    ParenExp(_, exp, _) {return new ParenthesisExpression(exp.tree());}
+    ParenExp_pass(variable) {return new Variable(variable.tree());}
 });

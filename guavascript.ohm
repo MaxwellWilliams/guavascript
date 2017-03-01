@@ -1,14 +1,14 @@
 Guavascript {
     Program     = Block
     Block       = Statement+
-    Statement   = Exp "?" Block ":" Block                         -- conditional
+    Statement   = Exp "?" Block ":" Block                               -- conditional
                 | id "(" (Param ("," Param)*)? ")"
-                  "{" Block "}"                                   -- funcDecl
+                  "{" Block "}"                                         -- funcDecl
                 | "class" classId "{" Block "}"                         -- classDecl
-                | MatchExp                                       -- match
-                | "if" Exp "{" Block "}" ("else" "{" Block "}")?  -- ifElse
-                | "while" Exp "{" Block "}"                          -- while
-                | "for" id "in" IdExp "{" Block "}"                  -- forIn
+                | MatchExp                                              -- match
+                | "if" Exp "{" Block "}" ("else" "{" Block "}")?        -- ifElse
+                | "while" Exp "{" Block "}"                             -- while
+                | "for" id "in" IdExp "{" Block "}"                     -- forIn
                 | "print" "(" Exp ")"                                   -- print
                 | id assignOp (Exp | MatchExp)                          -- assign
                 | IdExp                                                 -- identifier
@@ -18,25 +18,27 @@ Guavascript {
                   ("|" Match)* ("|" "_" "->" (Block | Var))?)
     Match       = Exp "->" (Block | Var)
 
-    Exp         = Exp orOp BoolAndExp
+    Exp         = Exp orOp BoolAndExp                                  -- reg
                 | BoolAndExp                                           -- pass
-    BoolAndExp  = BoolAndExp andOp RelExp
+    BoolAndExp  = BoolAndExp andOp RelExp                              -- reg
                 | RelExp                                               -- pass
-    RelExp      = AddExp relOp AddExp
+    RelExp      = AddExp relOp AddExp                                  -- reg
                 | AddExp                                               -- pass
-    AddExp      = AddExp addOp MulExp
+    AddExp      = AddExp addOp MulExp                                  -- reg
                 | MulExp                                               -- pass
-    MulExp      = MulExp mulOp ExponExp
+    MulExp      = MulExp mulOp ExponExp                                -- reg
                 | ExponExp                                             -- pass
-    ExponExp    = PrefixExp exponOp AddExp
+    ExponExp    = PrefixExp exponOp AddExp                             -- reg
                 | PrefixExp                                            -- pass
     PrefixExp   = prefixOp? ParenExp
-    ParenExp    = "(" Exp ")"
+    ParenExp    = "(" Exp ")"                                          -- reg
                 | Var                                                  -- pass
     Var         = (boolLit | IdExp | List | Tuple | Dictionary
                 | intLit | floatLit | stringLit)
 
-    IdExp       = id (periodId | Arguments | IdSelector)* idPostOp?
+    IdExp       = IdExpBody idPostOp?
+    IdExpBody   = IdExpBody (periodId | Arguments | IdSelector)        -- recursive
+                | id
     periodId    = "." id
     Arguments   = "(" (Var ("," Var)*)? ")"
     IdSelector  = "[" Var "]"

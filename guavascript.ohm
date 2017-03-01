@@ -18,21 +18,21 @@ Guavascript {
                   ("|" Match)* ("|" "_" "->" (Block | Var))?)
     Match       = Exp "->" (Block | Var)
 
-    Exp         = Exp orOp BoolAndExp                                  -- boolOr
-                | BoolAndExp
-    BoolAndExp  = BoolAndExp andOp RelExp                              -- boolAnd
-                | RelExp
-    RelExp      = AddExp relOp AddExp                                  -- rel
-                | AddExp
-    AddExp      = AddExp addOp MulExp                                  -- add
-                | MulExp
-    MulExp      = MulExp mulOp ExponExp                                -- mul
-                | ExponExp
-    ExponExp    = PrefixExp exponOp AddExp                             -- expon
-                | PrefixExp
-    PrefixExp   = prefixOp? Exp1
-    Exp1        = Var
-                | "(" Exp ")"                                          -- paren
+    Exp         = Exp orOp BoolAndExp
+                | BoolAndExp                                           -- pass
+    BoolAndExp  = BoolAndExp andOp RelExp
+                | RelExp                                               -- pass
+    RelExp      = AddExp relOp AddExp
+                | AddExp                                               -- pass
+    AddExp      = AddExp addOp MulExp
+                | MulExp                                               -- pass
+    MulExp      = MulExp mulOp ExponExp
+                | ExponExp                                             -- pass
+    ExponExp    = PrefixExp exponOp AddExp
+                | PrefixExp                                            -- pass
+    PrefixExp   = prefixOp? ParenExp
+    ParenExp    = "(" Exp ")"
+                | Var                                                  -- pass
     Var         = (boolLit | IdExp | List | Tuple | Dictionary
                 | intLit | floatLit | stringLit)
 

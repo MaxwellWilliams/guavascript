@@ -395,8 +395,6 @@ class IdExpressionBody {
     }
 }
 
-// *********************************************************************************************
-
 class PeriodId {
     constructor(id) {
         this.id = id;
@@ -408,17 +406,6 @@ class PeriodId {
         return `${spacer.repeat(indent)}(${this.id.toString(++indent)})`; // TODO: done?
     }
 }
-
-// *********************************************************************************************
-
-/*
-
-
-All toStrings between here and semantics are unimplemented
-
-
-*/
-
 
 class Arguments {
     constructor(arg, argsArray) {
@@ -546,7 +533,7 @@ class ConstId {
         this.rest = rest;
     }
     toString(indent) {
-        var string = `${spacer.repeat(indent)}(\n${this.idValuePair.toString()}`;
+        var string = `${spacer.repeat(indent)}(\n${this.firstWord.toString()}`;
         for (var char in this.rest) {
             string += `\n${this.rest[char].toString()}`
         }
@@ -556,13 +543,19 @@ class ConstId {
 }  // TODO: done?
 
 class ClassId {
-    constructor(classname) {
-        this.classname = classname;
+    constructor(className, rest) {
+        this.className = className;
+        this.rest = rest;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`; // TODO: not done!
+        var string = `${spacer.repeat(indent)}(\n${this.className.toString()}`;
+        for (var char in this.rest) {
+            string += `\n${this.rest[char].toString()}`
+        }
+        string += ")"
+        return string;
     }
-}
+}  // TODO: done?
 
 class Comment {
     constructor(comments) {

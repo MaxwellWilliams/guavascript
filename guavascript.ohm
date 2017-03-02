@@ -38,7 +38,7 @@ Guavascript {
 
     IdExp       = IdExpBody idPostOp?
     IdExpBody   = IdExpBody (periodId | Arguments | IdSelector)        -- recursive
-                | id
+                | id                                                   -- id
     periodId    = "." id
     Arguments   = "(" (Var ("," Var)*)? ")"
     IdSelector  = "[" Var "]"

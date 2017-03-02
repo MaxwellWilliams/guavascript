@@ -391,7 +391,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Statement_identifier(iDExp) {return new IdentifierStatement(iDExp.ast());},
     Statement_return(ret, exp) {return new ReturnStatement(exp.ast());},
     MatchExp(matchStr, idExp, wit, line1, expression, match1, lines, expressions, matchArray, line2, underscore, match2) {return new MatchExpression(idExp.ast(), matchArray.ast());},
-    Param(id, equals, variable) {return new Parameter(id.sourceString, parameter.ast())},
+    Param(id, equals, variable) {return new Parameter(id.sourceString, variable.ast())},
     Exp_reg(left, op, right) {return new BinaryExpression(left.ast(), op.sourceString, right.ast());},
     Exp_pass(boolAndExp) {},
     BoolAndExp_reg(left, op, right) {return new BinaryExpression(left.ast(), op.sourceString, right.ast());},
@@ -402,12 +402,33 @@ semantics = grammar.createSemantics().addOperation('ast', {
     AddExp_pass(mulExp) {},
     MulExp_reg(left, op, right) {return new BinaryExpression(left.ast(), op.sourceString, right.ast());},
     MulExp_pass(exponentExp) {},
-    ExponExp_reg(base, operator, exponent) {return new BinaryExpression(base.ast(), "^", exponent.ast());},
+    ExponExp_reg(base, operator, exponent) {return new BinaryExpression(base.ast(), operator, exponent.ast());},
     ExponExp_pass(prefixExp) {},
     PrefixExp(prefixOp, parenExp) {},
     ParenExp_reg(left, exp, right) {return new ParenthesisExpression(exp.ast());},
     ParenExp_pass(variable) {return new Variable(variable.ast());},
-    Var(input) {return new Variable(input.ast());}
+    Var(input) {return new Variable(input.ast());},
+
+    IdExp(idExpBody, idPostOp) {return new IdentifierExpression(idExpBody.ast(), idPostOp.ast());},
+    IdExpBody_recursive(idExpBody, selector) {return new IdentifierExpressionBody(idExpBody.ast(), selector.ast());},
+    IdExpBody_id(id) {return new IdentifierExpressionBody(id.sourceString);},
+    periodId(period, id) {return new PeriodId(id.sourceString);},
+    Arguments(lParen, var1, commasArray, varArray, rParen) {return new Arguments(var1.ast(), varArray.ast());},
+    IdSelector(lBracket, variable, rBracket) {return new IdSelector(variable.ast());},
+    idPostOp(op) {return new IdPostOp(op);},
+    List(lBracket, variable, commas, variables, rBracket) {return new List(variable, variables);},
+    Tuple(lParen, variable, commas, variables, rParen) {return new Tuple(variable, variables);},
+    Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {return new List(variable, variables);},
+    IdValuePair(id, colon, variable) {return new IdValuePair(id.sourceString, variable.ast());},
+    orOp(operator) {return new orOp(operator);},
+    andOp(operator) {return new andOp(operator);},
+    exponOp(operator) {return new exponOp(operator);},
+    assignOp(operator) {return new assignOp(operator);},
+    addOp(operator) {return new addOp(operator);},
+    mulOp(operator) {return new mulOp(operator);},
+    relOp(operator) {return new relOp(operator);},
+    prefixOp(operator) {return new prefixOp(operator);}
+
 });
 
 module.exports = (program) => {

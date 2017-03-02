@@ -14,9 +14,9 @@ Guavascript {
                 | IdExp                                                 -- identifier
                 | "ret" Exp                                             -- return
     Param       = id ("=" Var)?
-    MatchExp    = ("match" IdExp "with" "|"? Match
-                  ("|" Match)* ("|" "_" "->" (Block | Var))?)
-    Match       = Exp "->" (Block | Var)
+    MatchExp    = ("match" IdExp "with" "|"? Exp Match
+                  ("|" Exp Match)* ("|" "_" Match)?)
+    Match       = "->" (Block | Var)
 
     Exp         = Exp orOp BoolAndExp                                  -- reg
                 | BoolAndExp                                           -- pass

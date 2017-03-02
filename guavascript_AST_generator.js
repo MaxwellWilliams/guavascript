@@ -518,6 +518,15 @@ class StringLit {
     }
 }
 
+class BoolLit {
+    constructor(boolVal) {
+        this.boolVal = boolVal;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}(${this.boolVal})`;
+    }
+}
+
 class IdIdentifier {
     constructor(id) {
         this.id = id;
@@ -622,7 +631,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     mulOp(operator) {return operator;},
     relOp(operator) {return operator;},
     prefixOp(operator) {return operator;},
-    boolLit(operator) {return operator;},
+    boolLit(boolVal) {return new BoolLit(boolVal.sourceString);},
     intLit(digits) {return new IntLit(digits.ast());},
     floatLit(digits1, period, digits2) {return new FloatLit(digits1, digits2);},
     stringLit(backslashes, any, backslash) {return new StringLit(any)},

@@ -82,8 +82,8 @@ const semantics = aelGrammar.createSemantics().addOperation('tree', {
 
 fs = require('fs');
 ohm = require('ohm-js');
-parserContents = fs.readFileSync('guavascript.ohm');
-guavascriptGrammar = ohm.grammar(parserContents);
+grammarContents = fs.readFileSync('guavascript.ohm');
+grammar = ohm.grammar(grammarContents);
 
 var spacer = "    ";
 
@@ -376,7 +376,7 @@ class PeriodId {
 // TODO: merge MatchExpression Match's into single array. Same with other arrays
 
 // Guavascript CST -> AST
-semantics = guavascriptGrammar.createSemantics().addOperation('tree', () => {
+semantics = grammar.createSemantics().addOperation('ast', () => {
     Program = (block) => {return new Program(block.tree());},
     Block = (statements) => {return new Block(statements.tree());},
     Statement_conditional = (exp, block1, block2) => {return new BranchStatement(new Case(exp.tree(), block1.tree()), block2.tree());},
@@ -409,3 +409,12 @@ semantics = guavascriptGrammar.createSemantics().addOperation('tree', () => {
     ParenExp_pass = (variable) => {return new Variable(variable.tree());}
     Var = (input) => {return new Variable(input.tree());}
 });
+
+module.exports = (program) => {
+  match = grammar.match(program);
+  if(match.succeeded()) {
+      return semantics(match).ast();
+  } else {
+    console.log(match.message);
+  }
+}

@@ -407,6 +407,138 @@ class PeriodId {
     }
 }
 
+/*
+
+
+All toStrings between here and semantics are unimplemented
+
+
+*/
+
+
+class Arguments {
+    constructor(arg, argsArray) {
+        this.arg = arg;
+        this.argsArray = argsArray;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class IdSelector {
+    constructor(variable) {
+        this.variable = variable;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class List {
+    constructor(variable, variables) {
+        this.variable = variable;
+        this.variables = variables;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class Tuple {
+    constructor(variable, variables) {
+        this.variable = variable;
+        this.variables = variables;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class Dictionary {
+    constructor(idValuePair, idValuePairsArray) {
+        this.idValuePair = idValuePair;
+        this.idValuePairsArray = idValuePairsArray;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class IdValuePair {
+    constructor(id, variable) {
+        this.id = id;
+        this.variable = variable;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class IntLit {
+    constructor(digits) {
+        this.digits = digits;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class FloatLit {
+    constructor(digits1, digits2) {
+        this.digits1 = digits1;
+        this.digits2 = digits2;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class StringLit {
+    constructor(word) {
+        this.word = word;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class IdIdentifier {
+    constructor(keyword) {
+        this.keyword = keyword;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class ConstId {
+    constructor(words) {
+        this.words = words;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class ClassId {
+    constructor(classname) {
+        this.classname = classname;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
+class Comment {
+    constructor(comments) {
+        this.comments = comments;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;
+    }
+}
+
 // TODO: merge MatchExpression Match's into single array. Same with other arrays
 
 // Guavascript CST -> AST
@@ -450,10 +582,10 @@ semantics = grammar.createSemantics().addOperation('ast', {
     periodId(period, id) {return new PeriodId(id.sourceString);},
     Arguments(lParen, var1, commasArray, varArray, rParen) {return new Arguments(var1.ast(), varArray.ast());},
     IdSelector(lBracket, variable, rBracket) {return new IdSelector(variable.ast());},
-    idPostOp(op) {return new IdPostOp(op);},
-    List(lBracket, variable, commas, variables, rBracket) {return new List(variable, variables);},
-    Tuple(lParen, variable, commas, variables, rParen) {return new Tuple(variable, variables);},
-    Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {return new List(variable, variables);},
+    idPostOp(op) {return op},
+    List(lBracket, variable, commas, variables, rBracket) {return new List(variable.ast(), variables.ast());},
+    Tuple(lParen, variable, commas, variables, rParen) {return new Tuple(variable.ast(), variables.ast());},
+    Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {return new List(IdValuePair.ast(), IdValuePairs.ast());},
     IdValuePair(id, colon, variable) {return new IdValuePair(id.sourceString, variable.ast());},
     orOp(operator) {return operator;},
     andOp(operator) {return operator;},
@@ -464,15 +596,15 @@ semantics = grammar.createSemantics().addOperation('ast', {
     relOp(operator) {return operator;},
     prefixOp(operator) {return operator;},
     boolLit(operator) {return operator;},
-    intLit(digits) {return new IntLit(noFloatLit.ast(), digits.ast());},
+    intLit(digits) {return new IntLit(digits.ast());},
     floatLit(digits1, period, digits2) {return new FloatLit(digits1, digits2);},
-    stringLit(backslashes, any, backslash) {},
+    stringLit(backslashes, any, backslash) {return new StringLit(any)},
     keyword(word) {return word;},
-    id_identifier(lower, ids) {return new Id(keyword);},
-    id_constant(constId) {},
+    id_identifier(lower, ids) {return new Id(keyword.ast());},
+    id_constant(constId) {return new constId(constId.ast())},
     idrest(character) {return character},
     constId(underscores, words) {return ConstId(words)},
-    classId(upper, idrests) {return ClassId(classname)},
+    classId(upper, idrests) {return ClassId(idrests.ast())},
     // Not sure how to do the += for space
     comment(hashBang, comments, newline) {return new Comment(comments)},
 });

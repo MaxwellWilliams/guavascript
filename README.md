@@ -28,7 +28,7 @@ Guavascript is a strongly and statically typed language that compiles down to Ja
 
 * Int: `4`, `8`, `666`
 * Float: `4.0`, `3.1415926`, `0.7734`
-* Boolean: `True`, `False`
+* Boolean: `true`, `false`
 * String: `“guava”`, `“Don’t throw guavas in the lavas”`, `“The guava said, \“I am delicious.\””`
 * List (Heterogeneous allowed): `[1, 2, 3, 4, 5]`, `[“I”, 8, 50.4, “guavas”]`
 * Tuple (Heterogeneous allowed): `(30, 0.5, “guava”)`
@@ -43,7 +43,7 @@ __Variable Declarations__
 ```
 name = "guav"                               let name = “guav”
 age = 21                                    var age = 21
-female = True                               let female = true
+female = true                               let female = true
 ```
 
 __Constant Declarations__
@@ -61,8 +61,8 @@ x = ((2 + 3) * (6 - 1) ^ 2) / 4            x = ((2 + 3) * Math.pow((6 - 1), 2)) 
 __While Statements__
 
 ```
-while True {                               while (true) {
-   ret True                                   return true
+while true {                               while (true) {
+   ret true                                   return true
 }                                          }
 ```
 

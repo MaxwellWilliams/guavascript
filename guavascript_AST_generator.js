@@ -388,12 +388,14 @@ class IdExpressionBody {
     constructor(idExpBody, idAppendage) {
         this.idExpBody = idExpBody;
         this.idAppendage = idAppendage;
-        this.appendageOp = idAppendage.getOp();
+        this.appendageOp = idAppendage === 'undefined' ? 'undefined' : idAppendage.getOp();
     }
     toString(indent) {
         return `${spacer.repeat(indent)}(${this.appendageOp}\n${this.IdExpressionBody.toString(++indent)}\n${this.idAppendage.toString(++indent)})`;
     }
 }
+
+// *********************************************************************************************
 
 class PeriodId {
     constructor(id) {
@@ -403,9 +405,11 @@ class PeriodId {
         return ".";
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}(${this.id})`;
+        return `${spacer.repeat(indent)}(${this.id.toString(++indent)})`; // TODO: done?
     }
 }
+
+// *********************************************************************************************
 
 /*
 
@@ -422,28 +426,40 @@ class Arguments {
         this.argsArray = argsArray;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        var string = `${spacer.repeat(indent)}(Arguments\n${this.idExp.toString(++indent)}\n${spacer.repeat(++indent)}`;
+        indent++;
+        for (var arg in this.argsArray) {
+            string += `\n${this.argsArray[arg].toString(++indent)}`
+        }
+        string += ")"
+        return string;
     }
-}
+}  // TODO: done?
 
 class IdSelector {
     constructor(variable) {
         this.variable = variable;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        return `${spacer.repeat(indent)}(${this.variable})`;
     }
 }
 
 class List {
-    constructor(variable, variables) {
+    constructor(variable, varArray) {
         this.variable = variable;
-        this.variables = variables;
+        this.varArray = varArray;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        var string = `${spacer.repeat(indent)}(List Elements\n${this.variable.toString(++indent)}\n${spacer.repeat(++indent)}`;
+        indent++;
+        for (var variable in this.varArray) {
+            string += `\n${this.varArray[variable].toString(++indent)}`
+        }
+        string += ")"
+        return string;
     }
-}
+}  // TODO: done?
 
 class Tuple {
     constructor(variable, variables) {
@@ -451,9 +467,15 @@ class Tuple {
         this.variables = variables;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        var string = `${spacer.repeat(indent)}(Tuple Elements\n${this.variable.toString(++indent)}\n${spacer.repeat(++indent)}`;
+        indent++;
+        for (var variable in this.varArray) {
+            string += `\n${this.varArray[variable].toString(++indent)}`
+        }
+        string += ")"
+        return string;
     }
-}
+}  // TODO: done?
 
 class Dictionary {
     constructor(idValuePair, idValuePairsArray) {
@@ -461,9 +483,15 @@ class Dictionary {
         this.idValuePairsArray = idValuePairsArray;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        var string = `${spacer.repeat(indent)}(Tuple Elements\n${this.idValuePair.toString(++indent)}\n${spacer.repeat(++indent)}`;
+        indent++;
+        for (var pair in this.idValuePairsArray) {
+            string += `\n${this.idValuePairsArray[pair].toString(++indent)}`
+        }
+        string += ")"
+        return string;
     }
-}
+}  // TODO: done?
 
 class IdValuePair {
     constructor(id, variable) {
@@ -471,7 +499,7 @@ class IdValuePair {
         this.variable = variable;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        return `${spacer.repeat(indent)}(Id Value Pair\n${this.id.toString(++indent)}\n${this.variable.toString(++indent)})`;;
     }
 }
 
@@ -480,7 +508,7 @@ class IntLit {
         this.digits = digits;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        return `${spacer.repeat(indent)}(${this.digits.toString(++indent)})`;
     }
 }
 
@@ -490,7 +518,7 @@ class FloatLit {
         this.digits2 = digits2;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        return `${spacer.repeat(indent)}(${this.digits1.toString(++indent)},${this.digits2.toString(++indent)})`;
     }
 }
 
@@ -499,34 +527,40 @@ class StringLit {
         this.word = word;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        return `${spacer.repeat(indent)}(${this.word.toString(++indent)})`;
     }
 }
 
 class IdIdentifier {
-    constructor(keyword) {
-        this.keyword = keyword;
+    constructor(id) {
+        this.id = id;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        return `${spacer.repeat(indent)}`; // TODO: not done!
     }
 }
 
 class ConstId {
-    constructor(words) {
-        this.words = words;
+    constructor(firstWord, rest) {
+        this.words = firstWord;
+        this.rest = rest;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        var string = `${spacer.repeat(indent)}(\n${this.idValuePair.toString()}`;
+        for (var char in this.rest) {
+            string += `\n${this.rest[char].toString()}`
+        }
+        string += ")"
+        return string;
     }
-}
+}  // TODO: done?
 
 class ClassId {
     constructor(classname) {
         this.classname = classname;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        return `${spacer.repeat(indent)}`; // TODO: not done!
     }
 }
 
@@ -535,7 +569,7 @@ class Comment {
         this.comments = comments;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;
+        return `${spacer.repeat(indent)}(${this.comments.toString(++indent)})`; // TODO: done?
     }
 }
 

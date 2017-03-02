@@ -97,13 +97,13 @@ class Program {
 }
 
 class Block {
-    constructor(statements) {
-        this.body = statements;
+    constructor(body) {
+        this.body = body;
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Block`;
-        for (var statementIndex in statements) {
-            string += `\n${this.statements[statementIndex].toString(++indent)}`;
+        for (var statementIndex in this.body) {
+            string += `\n${this.body[statementIndex].toString(++indent)}`;
         }
         string += `)`;
         return string;

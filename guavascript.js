@@ -5,4 +5,4 @@ args = process.argv;
 filePath = args[2];
 fileContents = fs.readFileSync(filePath, 'utf-8');
 
-console.log(parser(fileContents));
+console.log(parser(fileContents).toString());

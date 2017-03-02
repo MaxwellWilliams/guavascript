@@ -4,14 +4,14 @@ ohm = require('ohm-js');
 assert = require('assert');
 parserContents = fs.readFileSync('guavascript.ohm');
 parser = ohm.grammar(parserContents);
-validPrograms = path.resolve('./test/parser/programs/valid');
-invalidPrograms = path.resolve('./test/parser/programs/invalid');
+validPrograms = path.resolve('./test/grammar/programs/valid');
+invalidPrograms = path.resolve('./test/grammar/programs/invalid');
 
 tests = function(validFiles, invalidFiles) {
   describe('guavascript.ohm', function() {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
-        it('valid\\' +file.name + ' should be accepted by the parser',
+        it('grammar\\programs\\valid\\' +file.name + ' should be accepted by the parser',
           function() {
             parseResult = parser.match(file.code);
             assert.equal(parseResult.succeeded(), true,
@@ -22,7 +22,7 @@ tests = function(validFiles, invalidFiles) {
 
     describe('Test invalid example programs', function() {
       invalidFiles.forEach(function(file) {
-        it('invalid\\' + file.name + ' should be rejected by the parser',
+        it('grammar\\programs\\invalid\\' + file.name + ' should be rejected by the parser',
           function() {
             parseResult = parser.match(file.code);
             assert.equal(parseResult.succeeded(), false,

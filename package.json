@@ -4,7 +4,8 @@
   "description": "Allen, Anson, Evan, and Max's project for Compiler's class.",
   "main": "index.js",
   "scripts": {
-    "test": "eslint **/*.js && mocha test/**/*.js"
+    "test": "eslint **/*.js && mocha test/**/*.js",
+    "lint": "eslint **/*.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/AnsonAdams/guavascript#readme",
   "devDependencies": {
+    "babel-eslint": "^6.1.2",
     "eslint": "^3.14.0",
     "eslint-config-google": "^0.7.1",
     "eslint-config-standard": "^6.2.1",

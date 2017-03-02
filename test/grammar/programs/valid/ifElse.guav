@@ -1,5 +1,5 @@
-if (x == True) {
-    ret True
+if (x == true) {
+    ret true
 } else {
-    ret False
+    ret false
 }

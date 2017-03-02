@@ -58,7 +58,7 @@ Guavascript {
     relOp       = "<=" | "<" | "==" | "!=" | ">=" | ">"
     prefixOp    = "--" | "-" | "!" | "++"
 
-    boolLit     = "True" | "False"
+    boolLit     = "true" | "false"
     intLit      = ~floatLit digit+
     floatLit    = digit+ "." digit+
     stringLit   = "\"" ("\\\"" | (~"\"" any))* "\""

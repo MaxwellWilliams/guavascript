@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "eslint **/*.js && mocha test/**/*.js",
-    "lint": "eslint **/*.js"
+    "lint": "eslint **/*.js",
+    "start": "node guavascript.js"
   },
   "repository": {
     "type": "git",

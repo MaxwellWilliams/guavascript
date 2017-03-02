@@ -66,7 +66,7 @@ Guavascript {
     keyword     = ("class" | "true" | "false" | "match" | "with" | "if"
                 | "else" | "while" | "for" | "in" | "this" | "print" | "ret") ~idrest
     id          = ~keyword lower idrest*                               -- identifier
-                | constId
+                | constId                                              -- constant
     idrest      = "_" | alnum
     constId     = ~keyword upper ("_" | upper)*
     classId     = upper idrest*

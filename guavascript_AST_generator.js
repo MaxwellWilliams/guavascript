@@ -272,6 +272,7 @@ class Expression {
 
 class IdentifierExpression extends Expression {
     constructor(id, /* TODO: What to do with all those optionals? */ idPostOp) {
+        super();
         this.id = id;
         this.idPostOp = idPostOp;
     }
@@ -279,6 +280,29 @@ class IdentifierExpression extends Expression {
         return `${spacer.repeat(indent)}`;  // TODO: not done!
     }
 }
+
+
+class IdentifierExpressionBodyRecursive extends Expression {
+    constructor(idExpBody, selector) {
+        super();
+        this.idExpBody = idExpBody;
+        this.selector = selector
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;  // TODO: not done!
+    }
+}
+
+class IdentifierExpressionBodyId extends Expression {
+    constructor(id) {
+        super();
+        this.id = id;
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;  // TODO: not done!
+    }
+}
+
 
 class MatchExpression extends Expression {
     constructor(idExp, matchArray) {
@@ -294,6 +318,15 @@ class MatchExpression extends Expression {
         }
         string += "))"
         return string;
+    }
+}
+
+class Match {
+    constructor(expression) {
+        this.expression = expression
+    }
+    toString(indent) {
+        return `${spacer.repeat(indent)}`;  // TODO: not done!
     }
 }
 
@@ -332,6 +365,7 @@ class ParenthesisExpression extends Expression {
 
 class Variable extends Expression {
     constructor(variable) {
+        super();
         this.var = variable;
     }
     toString(indent) {
@@ -391,6 +425,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Statement_identifier(iDExp) {return new IdentifierStatement(iDExp.ast());},
     Statement_return(ret, exp) {return new ReturnStatement(exp.ast());},
     MatchExp(matchStr, idExp, wit, line1, expression, match1, lines, expressions, matchArray, line2, underscore, match2) {return new MatchExpression(idExp.ast(), matchArray.ast());},
+    Match (arrow, expression) {return new Match(expression.ast())},
     Param(id, equals, variable) {return new Parameter(id.sourceString, variable.ast())},
     Exp_reg(left, op, right) {return new BinaryExpression(left.ast(), op.sourceString, right.ast());},
     Exp_pass(boolAndExp) {},
@@ -410,8 +445,8 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Var(input) {return new Variable(input.ast());},
 
     IdExp(idExpBody, idPostOp) {return new IdentifierExpression(idExpBody.ast(), idPostOp.ast());},
-    IdExpBody_recursive(idExpBody, selector) {return new IdentifierExpressionBody(idExpBody.ast(), selector.ast());},
-    IdExpBody_id(id) {return new IdentifierExpressionBody(id.sourceString);},
+    IdExpBody_recursive(idExpBody, selector) {return new IdentifierExpressionBodyRecursive(idExpBody.ast(), selector.ast());},
+    IdExpBody_id(id) {return new IdentifierExpressionBodyRecursive(id.sourceString);},
     periodId(period, id) {return new PeriodId(id.sourceString);},
     Arguments(lParen, var1, commasArray, varArray, rParen) {return new Arguments(var1.ast(), varArray.ast());},
     IdSelector(lBracket, variable, rBracket) {return new IdSelector(variable.ast());},
@@ -420,15 +455,26 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Tuple(lParen, variable, commas, variables, rParen) {return new Tuple(variable, variables);},
     Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {return new List(variable, variables);},
     IdValuePair(id, colon, variable) {return new IdValuePair(id.sourceString, variable.ast());},
-    orOp(operator) {return new orOp(operator);},
-    andOp(operator) {return new andOp(operator);},
-    exponOp(operator) {return new exponOp(operator);},
-    assignOp(operator) {return new assignOp(operator);},
-    addOp(operator) {return new addOp(operator);},
-    mulOp(operator) {return new mulOp(operator);},
-    relOp(operator) {return new relOp(operator);},
-    prefixOp(operator) {return new prefixOp(operator);}
-
+    orOp(operator) {return operator;},
+    andOp(operator) {return operator;},
+    exponOp(operator) {return operator;},
+    assignOp(operator) {return operator;},
+    addOp(operator) {return operator;},
+    mulOp(operator) {return operator;},
+    relOp(operator) {return operator;},
+    prefixOp(operator) {return operator;},
+    boolLit(operator) {return operator;},
+    intLit(digits) {return new IntLit(noFloatLit.ast(), digits.ast());},
+    floatLit(digits1, period, digits2) {return new FloatLit(digits1, digits2);},
+    stringLit(backslashes, any, backslash) {},
+    keyword(word) {return word;},
+    id_identifier(lower, ids) {return new Id(keyword);},
+    id_constant(constId) {},
+    idrest(character) {return character},
+    constId(underscores, words) {return ConstId(words)},
+    classId(upper, idrests) {return ClassId(classname)},
+    // Not sure how to do the += for space
+    comment(hashBang, comments, newline) {return new Comment(comments)},
 });
 
 module.exports = (program) => {

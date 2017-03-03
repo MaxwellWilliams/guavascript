@@ -106,7 +106,7 @@ class Block {
         for (var statementIndex in this.body) {
             string += `\n${this.body[statementIndex].toString(indent)}`;
         }
-        string += `)`;
+        string += `hello)`;
         return string;
     }
 }
@@ -135,7 +135,8 @@ class BranchStatement extends Statement {
         for (var i in this.cases) {
             string += `\n${this.cases[i].toString(indent)}`;
         }
-        if (this.elseBlock !== `undefined`) {
+        if (this.elseBlock !== 'undefined') {
+            console.log("Else: " + (this.elseBlock.length));
             string += `\n${this.elseBlock.toString(indent)}`;
         }
         string += `)`;
@@ -149,7 +150,7 @@ class Case {
         this.block = block;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(case\n${this.exp.toString(++indent)}\n${this.block.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(case${(this.exp === 'undefined') ? "" : `\n${this.exp.toString(++indent)}`}\n${this.block.toString(++indent)})`;
     }
 }
 
@@ -225,7 +226,7 @@ class ForInStatement extends Statement {
         this.block = block;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(For id (${this.id}) in\n${this.iDExp.toString(++indent)}\n${this.block.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(For id (${this.id}) in\n${this.iDExp.toString(++indent)}\n${this.block.toString(indent)})`;
     }
 }
 
@@ -247,7 +248,7 @@ class AssignmentStatement extends Statement {
         this.exp = exp;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.assignOp}\n${this.idExp.toString(++indent)}\n${this.exp.toString(indent)}`;
+        return `${spacer.repeat(indent)}(${this.assignOp}\n${this.idExp.toString(++indent)}\n${this.exp.toString(indent)})`;
     }
 }
 
@@ -393,24 +394,14 @@ class PeriodId {
 }
 
 class Arguments {
-    constructor(firstArg, args) {
-        this.firstArg = firstArg;
-        this.args = args[0];
+    constructor(args) {
+        this.args = args;
     }
     getOp() {
         return "()";
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(Arguments`;
-        indent++;
-        string += (this.firstArg === 'undefined') ? "" : `\n${spacer.repeat(indent)}${this.firstArg.toString(indent)}`
-        if (this.args !== 'undefined') {
-            for (var argIndex in this.args) {
-                string += `\n${this.args[argIndex].toString(indent)}`
-            }
-        }
-        string += ")"
-        return string;
+        return `${spacer.repeat(indent)}(Arguments${this.args.toString(++indent)})`;
     }
 }
 
@@ -427,39 +418,20 @@ class IdSelector {
 }
 
 class List {
-    constructor(firstVar, varArray) {
-        this.firstVar = firstVar;
-        this.varArray = (varArray.length == 0) ? [] : varArray[0];
+    constructor(varList) {
+        this.varList = varList;
     }
     toString(indent = 0) {
-        console.log("firstVar: " + this.firstVar.length);
-        var string = `${spacer.repeat(indent)}(List`;
-        indent++;
-        string += (this.firstVar.length === 0) ? "" : `\n${spacer.repeat(indent)}${this.firstVar.toString(indent)}`;
-        console.log("varArray: " + (this.varArray.length != 0));
-        if (this.varArray.length != 0) {
-            for (var variable in this.varArray) {
-                string += `\n${this.varArray[variable].toString(indent)}`
-            }
-        }
-        string += ")"
-        return string;
+        return `${spacer.repeat(indent)}(List${this.varList.toString(++indent)})`;
     }
 }  // TODO: done?
 
 class Tuple {
-    constructor(variable, variables) {
-        this.variable = variable;
-        this.variables = variables;
+    constructor(elems) {
+        this.elems = elems;
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(Tuple Elements\n${this.variable.toString(++indent)}\n${spacer.repeat(++indent)}`;
-        indent++;
-        for (var variable in this.varArray) {
-            string += `\n${this.varArray[variable].toString(++indent)}`
-        }
-        string += ")"
-        return string;
+        return `${spacer.repeat(indent)}(Tuple${this.elems.toString(++indent)})`;
     }
 }  // TODO: done?
 
@@ -486,6 +458,22 @@ class IdValuePair {
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Id Value Pair\n${this.id.toString(++indent)}\n${this.variable.toString(++indent)})`;;
+    }
+}
+
+class VarList {
+    constructor(firstVar, varArray) {
+        this.firstVar = firstVar;
+        this.varArray = (varArray.length == 0) ? [] : varArray[0];
+    }
+    toString(indent = 0) {
+        var string = (this.firstVar.length === 0) ? "" : `\n${spacer.repeat(indent)}${this.firstVar.toString(indent)}`;
+        if (this.varArray.length != 0) {
+            for (var variable in this.varArray) {
+                string += `\n${this.varArray[variable].toString(indent)}`
+            }
+        }
+        return string;
     }
 }
 
@@ -556,7 +544,7 @@ class ClassId {
         this.rest = rest;
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(\n${this.className.toString()}`;
+        var string = `${spacer.repeat(indent)}(\n${this.className.toString()}`
         for (var char in this.rest) {
             string += `\n${this.rest[char].toString()}`
         }
@@ -616,13 +604,14 @@ semantics = grammar.createSemantics().addOperation('ast', {
     IdExpBody_recursive(idExpBody, selector) {return new IdExpressionBodyRecursive(idExpBody.ast(), selector.ast());},
     IdExpBody_base(id) {return new IdExpressionBodyBase(id.sourceString);},
     periodId(period, id) {return new PeriodId(id.sourceString);},
-    Arguments(lParen, var1, commasArray, varArray, rParen) {return new Arguments(var1.ast(), varArray.ast());},
+    Arguments(lParen, args, rParen) {return new Arguments(args.ast());},
     IdSelector(lBracket, variable, rBracket) {return new IdSelector(variable.ast());},
     idPostOp(op) {return op},
-    List(lBracket, firstElem, commas, restElems, rBracket) {return new List(firstElem.ast(), restElems.ast());},
-    Tuple(lParen, variable, commas, variables, rParen) {return new Tuple(variable.ast(), variables.ast());},
+    List(lBracket, list, rBracket) {return new List(list.ast());},
+    Tuple(lParen, tuple, rParen) {return new Tuple(tuple.ast());},
     Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {return new List(IdValuePair.ast(), IdValuePairs.ast());},
     IdValuePair(id, colon, variable) {return new IdValuePair(id.sourceString, variable.ast());},
+    VarList(firstElem, commas, restElems) {return new VarList(firstElem.ast(), restElems.ast());},
     orOp(operator) {return operator;},
     andOp(operator) {return operator;},
     exponOp(operator) {return operator;},

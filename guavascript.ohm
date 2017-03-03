@@ -41,14 +41,15 @@ Guavascript {
     IdExpBody   = IdExpBody (periodId | Arguments | IdSelector)        -- recursive
                 | (id | "this")                                        -- base
     periodId    = "." id
-    Arguments   = "(" (Var ("," Var)*)? ")"
+    Arguments   = "(" VarList ")"
     IdSelector  = "[" Var "]"
     idPostOp    = "++" | "--"
 
-    List        = "[" (Var ("," Var)*)? "]"
-    Tuple       = "(" (Var ("," Var)*)? ")"
+    List        = "[" VarList "]"
+    Tuple       = "(" VarList ")"
     Dictionary  = "{" (IdValuePair ("," IdValuePair)*)? "}"
     IdValuePair = id ":" Var
+    VarList     = (Var ("," Var)*)?
 
     orOp        = "||"
     andOp       = "&&"

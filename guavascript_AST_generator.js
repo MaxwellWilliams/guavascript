@@ -106,7 +106,7 @@ class Block {
         for (var statementIndex in this.body) {
             string += `\n${this.body[statementIndex].toString(indent)}`;
         }
-        string += `hello)`;
+        string += `)`;
         return string;
     }
 }
@@ -127,7 +127,7 @@ class BranchStatement extends Statement {
     constructor(cases, elseBlock) {
         super();
         this.cases = cases;
-        this.elseBlock = elseBlock;
+        this.elseBlock = elseBlock[0];
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(if`;
@@ -135,8 +135,7 @@ class BranchStatement extends Statement {
         for (var i in this.cases) {
             string += `\n${this.cases[i].toString(indent)}`;
         }
-        if (this.elseBlock !== 'undefined') {
-            console.log("Else: " + (this.elseBlock.length));
+        if (typeof this.elseBlock != 'undefined') {
             string += `\n${this.elseBlock.toString(indent)}`;
         }
         string += `)`;
@@ -438,13 +437,15 @@ class Tuple {
 class Dictionary {
     constructor(idValuePair, idValuePairsArray) {
         this.idValuePair = idValuePair;
-        this.idValuePairsArray = idValuePairsArray;
+        this.idValuePairsArray = (idValuePairsArray.length == 0) ? [] : idValuePairsArray[0];
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(Tuple Elements\n${this.idValuePair.toString(++indent)}\n${spacer.repeat(++indent)}`;
-        indent++;
-        for (var pair in this.idValuePairsArray) {
-            string += `\n${this.idValuePairsArray[pair].toString(++indent)}`
+        var string = `${spacer.repeat(indent)}(Dictionary`
+        string += `${(this.idValuePair.length == 0) ? "" : `\n${spacer.repeat(++indent)}${this.idValuePair.toString(indent)}`}`;
+        if (this.idValuePairsArray.length !== 0) {
+            for (var pairIndex in this.idValuePairsArray) {
+                string += `\n${this.idValuePairsArray[pairIndex].toString(indent)}`
+            }
         }
         string += ")"
         return string;
@@ -457,7 +458,7 @@ class IdValuePair {
         this.variable = variable;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Id Value Pair\n${this.id.toString(++indent)}\n${this.variable.toString(++indent)})`;;
+        return `${spacer.repeat(indent)}(${this.id} : ${this.variable.toString()})`;;
     }
 }
 
@@ -609,7 +610,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     idPostOp(op) {return op},
     List(lBracket, list, rBracket) {return new List(list.ast());},
     Tuple(lParen, tuple, rParen) {return new Tuple(tuple.ast());},
-    Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {return new List(IdValuePair.ast(), IdValuePairs.ast());},
+    Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {return new Dictionary(IdValuePair.ast(), IdValuePairs.ast());},
     IdValuePair(id, colon, variable) {return new IdValuePair(id.sourceString, variable.ast());},
     VarList(firstElem, commas, restElems) {return new VarList(firstElem.ast(), restElems.ast());},
     orOp(operator) {return operator;},

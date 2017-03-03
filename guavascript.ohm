@@ -10,7 +10,7 @@ Guavascript {
                 | "while" Exp "{" Block "}"                             -- while
                 | "for" id "in" IdExp "{" Block "}"                     -- forIn
                 | "print" "(" Exp ")"                                   -- print
-                | IdExp assignOp (Exp | MatchExp)                          -- assign
+                | IdExp assignOp (Exp | MatchExp)                       -- assign
                 | IdExp                                                 -- identifier
                 | "ret" Exp                                             -- return
     Param       = id ("=" Var)?
@@ -30,7 +30,8 @@ Guavascript {
                 | ExponExp                                             -- pass
     ExponExp    = PrefixExp exponOp AddExp                             -- reg
                 | PrefixExp                                            -- pass
-    PrefixExp   = prefixOp? ParenExp
+    PrefixExp   = prefixOp ParenExp                                    -- reg
+                | ParenExp                                             -- pass
     ParenExp    = "(" Exp ")"                                          -- reg
                 | Var                                                  -- pass
     Var         = (boolLit | IdExp | List | Tuple | Dictionary
@@ -38,7 +39,7 @@ Guavascript {
 
     IdExp       = IdExpBody idPostOp?
     IdExpBody   = IdExpBody (periodId | Arguments | IdSelector)        -- recursive
-                | (id | "this")                                        -- id
+                | (id | "this")                                        -- base
     periodId    = "." id
     Arguments   = "(" (Var ("," Var)*)? ")"
     IdSelector  = "[" Var "]"

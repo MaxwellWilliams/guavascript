@@ -629,9 +629,8 @@ semantics = grammar.createSemantics().addOperation('ast', {
     id_variable(firstChar, rest) {return new IdVariable(firstChar.sourceString, rest.sourceString);},
     id_constant(constId) {return new constId(constId.ast())},
     idrest(character) {return character},
-    constId(underscores, words) {return ConstId(words)},
-    classId(upper, idrests) {return ClassId(idrests.ast())},
-    // Not sure how to do the += for space
+    constId(underscores, words) {return new ConstId(words)},
+    classId(upper, idrests) {return new ClassId(idrests.ast())},
     comment(hashBang, comments, newline) {return new Comment(comments)},
 });
 

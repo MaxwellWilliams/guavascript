@@ -202,7 +202,7 @@ class MatchStatement extends Statement {
         this.matchExp = matchExp;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Match\n${this.matchExp.toString(index)})`;
+        return `${this.matchExp.toString(indent)}`;
     }
 }
 
@@ -278,29 +278,55 @@ class ReturnStatement extends Statement {
 class Expression {
 }
 
+// class MatchExpression extends Expression {
+//     constructor(idExp, matchArray) {
+//         super();
+//         this.idExp = idExp;
+//         this.matches = matchArray
+//     }
+//     toString(indent = 0) {
+//         var string = `${spacer.repeat(indent)}(Match Expression\n${this.idExp.toString(++indent)}\n${spacer.repeat(++indent)}(matches`;
+//         indent++;
+//         for (var matchIndex in this.matches) {
+//             string += `\n${this.matches[matchIndex].toString(++indent)}`
+//         }
+//         string += "))"
+//         return string;
+//     }
+// }
+
+//idExp.ast(), exp1.ast(), expArray.ast(), match1.ast(), matchArray.ast(), matchFinal.ast()
+
 class MatchExpression extends Expression {
-    constructor(idExp, matchArray) {
+    constructor(idExp, var1, varArray, match1, matchArray, matchFinal) {
         super();
         this.idExp = idExp;
-        this.matches = matchArray
+        this.var1 = var1;
+        this.varArray = varArray;
+        this.match1 = match1;
+        this.matchArray = matchArray;
+        this.matchFinal = matchFinal[0];
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(Match Expression\n${this.idExp.toString(++indent)}\n${spacer.repeat(++indent)}(matches`;
-        indent++;
-        for (var matchIndex in this.matches) {
-            string += `\n${this.matches[matchIndex].toString(++indent)}`
+        var string = `${spacer.repeat(indent)}(Match Expression\n${this.idExp.toString(++indent)}\n${spacer.repeat(indent)}(Matches`;
+        string += (this.var1.length != 0 && this.match1.length != 0) ? `\n${spacer.repeat(++indent)}(Match\n${this.var1.toString(++indent)} -> \n${this.match1.toString(indent)})` : "";
+        if (this.varArray.length == this.matchArray.length && this.varArray.length != 0) {
+            for (var varIndex in this.varArray) {
+                string += `\n${spacer.repeat(--indent)}(Match\n${this.varArray[varIndex].toString(++indent)} -> \n${this.matchArray[varIndex].toString(indent)})`
+            }
         }
-        string += "))"
+        string += (this.matchFinal.length != 0) ? `\n${spacer.repeat(--indent)}(Match\n${spacer.repeat(++indent)} _ -> \n${this.matchFinal.toString(indent)})` : "";
+        string += "))";
         return string;
     }
 }
 
 class Match {
-    constructor(expression) {
-        this.expression = expression
+    constructor(matchee) {
+        this.matchee = matchee;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}`;  // TODO: not done!
+        return `${this.matchee.toString(indent)}`;
     }
 }
 
@@ -388,7 +414,7 @@ class PeriodId {
         return ".";
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.id.toString(++indent)})`; // TODO: done?
+        return `${spacer.repeat(indent)}(${this.id.toString(++indent)})`;
     }
 }
 
@@ -412,7 +438,7 @@ class IdSelector {
         return "[]";
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.variable})`;
+        return `${this.variable.toString(indent)}`;
     }
 }
 
@@ -423,7 +449,7 @@ class List {
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(List${this.varList.toString(++indent)})`;
     }
-}  // TODO: done?
+}
 
 class Tuple {
     constructor(elems) {
@@ -432,7 +458,7 @@ class Tuple {
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Tuple${this.elems.toString(++indent)})`;
     }
-}  // TODO: done?
+}
 
 class Dictionary {
     constructor(idValuePair, idValuePairsArray) {
@@ -444,13 +470,13 @@ class Dictionary {
         string += `${(this.idValuePair.length == 0) ? "" : `\n${spacer.repeat(++indent)}${this.idValuePair.toString(indent)}`}`;
         if (this.idValuePairsArray.length !== 0) {
             for (var pairIndex in this.idValuePairsArray) {
-                string += `\n${this.idValuePairsArray[pairIndex].toString(indent)}`
+                string += `\n${this.idValuePairsArray[pairIndex].toString(indent)}`;
             }
         }
         string += ")"
         return string;
     }
-}  // TODO: done?
+}
 
 class IdValuePair {
     constructor(id, variable) {
@@ -458,7 +484,7 @@ class IdValuePair {
         this.variable = variable;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.id} : ${this.variable.toString()})`;;
+        return `${spacer.repeat(indent)}(${this.id} : ${this.variable.toString()})`;
     }
 }
 
@@ -515,6 +541,13 @@ class BoolLit {
     }
 }
 
+class NullLit {
+    constructor() {}
+    toString(indent = 0) {
+        return `${spacer.repeat(indent)}(null)`;
+    }
+}
+
 class IdVariable {
     constructor(firstChar, rest) {
         this.string = firstChar + rest;
@@ -522,7 +555,7 @@ class IdVariable {
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(\n${this.string})`;
     }
-}  // TODO: done?
+}
 
 class ConstId {
     constructor(firstWord, rest) {
@@ -537,7 +570,7 @@ class ConstId {
         string += ")"
         return string;
     }
-}  // TODO: done?
+}
 
 class ClassId {
     constructor(className, rest) {
@@ -552,14 +585,14 @@ class ClassId {
         string += ")"
         return string;
     }
-}  // TODO: done?
+}
 
 class Comment {
     constructor(comments) {
         this.comments = comments;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.comments.toString(++indent)})`; // TODO: done?
+        return `${spacer.repeat(indent)}(${this.comments.toString(++indent)})`;
     }
 }
 
@@ -580,8 +613,8 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Statement_assign(idExp, assignOp, exp) {return new AssignmentStatement(idExp.ast(), assignOp.sourceString, exp.ast());},
     Statement_identifier(iDExp) {return new IdentifierStatement(iDExp.ast());},
     Statement_return(ret, exp) {return new ReturnStatement(exp.ast());},
-    MatchExp(matchStr, idExp, wit, line1, expression, match1, lines, expressions, matchArray, line2, underscore, match2) {return new MatchExpression(idExp.ast(), matchArray.ast());},
-    Match (arrow, expression) {return new Match(expression.ast())},
+    MatchExp(matchStr, idExp, wit, line1, var1, match1, lines, varArray, matchArray, lineFinal, _, matchFinal) {return new MatchExpression(idExp.ast(), var1.ast(), varArray.ast(), match1.ast(), matchArray.ast(), matchFinal.ast());},
+    Match (arrow, matchee) {return new Match(matchee.ast())},
     Param(id, equals, variable) {return new Parameter(id.sourceString, variable.ast())},
     Exp_reg(left, op, right) {return new BinaryExpression(left.ast(), op.sourceString, right.ast());},
     Exp_pass(otherExp) {return otherExp.ast();},
@@ -625,6 +658,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     intLit(digits) {return new IntLit(this.sourceString);},
     floatLit(digits1, period, digits2) {return new FloatLit(digits1.sourceString, digits2.sourceString);},
     stringLit(lQuote, str, rQuote) {return new StringLit(str.sourceString)},
+    nullLit(nul) {return new NullLit()},
     keyword(word) {return word;},
     id_variable(firstChar, rest) {return new IdVariable(firstChar.sourceString, rest.sourceString);},
     id_constant(constId) {return new constId(constId.ast())},

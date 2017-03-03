@@ -14,8 +14,8 @@ Guavascript {
                 | IdExp                                                 -- identifier
                 | "ret" Exp                                             -- return
     Param       = id ("=" Var)?
-    MatchExp    = ("match" IdExp "with" "|"? Exp Match
-                  ("|" Exp Match)* ("|" "_" Match)?)
+    MatchExp    = ("match" IdExp "with" "|"? Var Match
+                  ("|" Var Match)* ("|" "_" Match)?)
     Match       = "->" (Block | Var)
 
     Exp         = Exp orOp BoolAndExp                                  -- reg
@@ -35,7 +35,7 @@ Guavascript {
     ParenExp    = "(" Exp ")"                                          -- reg
                 | Var                                                  -- pass
     Var         = (boolLit | IdExp | List | Tuple | Dictionary
-                | intLit | floatLit | stringLit)
+                | intLit | floatLit | stringLit | nullLit)
 
     IdExp       = IdExpBody idPostOp?
     IdExpBody   = IdExpBody (periodId | Arguments | IdSelector)        -- recursive
@@ -64,9 +64,10 @@ Guavascript {
     intLit      = ~floatLit digit+
     floatLit    = digit+ "." digit+
     stringLit   = "\"" ("\\\"" | (~"\"" any))* "\""
+    nullLit     = "null"
 
     keyword     = ("class" | "true" | "false" | "match" | "with" | "if"
-                | "else" | "while" | "for" | "in" | "this" | "print" | "ret") ~idrest
+                | "else" | "while" | "for" | "in" | "this" | "print" | "ret" | "null") ~idrest
     id          = ~keyword letter idrest*                               -- variable
                 | constId                                               -- constant
     idrest      = "_" | alnum

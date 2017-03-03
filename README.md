@@ -107,10 +107,10 @@ __Class Declarations__
 class Ball {                                 class Ball {
     Ball (radius, weight = 1.0) {		 constructor(radius, weight) {
     	this.radius = radius			     this.radius = radius;
-	this.weight = weight			     this.weight = weight;
+	       this.weight = weight			     this.weight = weight;
     }                				 }
     is_round() {                                 var is_round = () => {
-    	ret True                                     return true
+    	ret true                                     return true
     }                                            }
 }                                            }
 

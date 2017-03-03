@@ -184,7 +184,7 @@ class ClassDeclarationStatement extends Statement {
         this.block = block;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}(Class\n(id ${this.id})\n${this.block.toString(++index)})`;
+        return `${spacer.repeat(indent)}(Class\n${spacer.repeat(indent++)}(id ${this.id})\n${this.block.toString(++indent)})`;
     }
 }
 
@@ -249,7 +249,7 @@ class IdentifierStatement extends Statement {
         this.iDExp = iDExp;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}(Identifier Statement\n${this.iDExp(++indent)})`;
+        return `${spacer.repeat(indent)}(Identifier Statement\n${this.iDExp.toString(++indent)})`;
     }
 }
 

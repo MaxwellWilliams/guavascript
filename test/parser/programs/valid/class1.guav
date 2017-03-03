@@ -1,5 +1,9 @@
 class Ball {
-	is_round () {
-		ret True
-	}
+    Ball (radius, weight = 1.0) {
+        this.radius = radius
+        this.weight = weight
+    }
+    is_round() {
+        ret true
+    }
 }

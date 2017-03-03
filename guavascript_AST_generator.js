@@ -202,7 +202,7 @@ class MatchStatement extends Statement {
         this.matchExp = matchExp;
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Match\n${this.matchExp.toString(index)})`;
+        return `${spacer.repeat(indent)}(Match\n${this.matchExp.toString(indent)})`;
     }
 }
 

@@ -131,11 +131,12 @@ class BranchStatement extends Statement {
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(if`;
+        indent++;
         for (var i in this.cases) {
-            string += `\n${this.cases[i].toString(++indent)}`;
+            string += `\n${this.cases[i].toString(indent)}`;
         }
-        if (typeof elseBlock != `undefined`) {
-            string += `\n${this.elseBlock.toString(++indent)}`;
+        if (this.elseBlock !== `undefined`) {
+            string += `\n${this.elseBlock.toString(indent)}`;
         }
         string += `)`;
         return string;
@@ -402,7 +403,7 @@ class Arguments {
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Arguments`;
         indent++;
-        string += this.firstArg === 'undefined' ? "" : `\n${spacer.repeat(indent)}${this.firstArg.toString(indent)}`
+        string += (this.firstArg === 'undefined') ? "" : `\n${spacer.repeat(indent)}${this.firstArg.toString(indent)}`
         if (this.args !== 'undefined') {
             for (var argIndex in this.args) {
                 string += `\n${this.args[argIndex].toString(indent)}`
@@ -426,15 +427,20 @@ class IdSelector {
 }
 
 class List {
-    constructor(variable, varArray) {
-        this.variable = variable;
-        this.varArray = varArray;
+    constructor(firstVar, varArray) {
+        this.firstVar = firstVar;
+        this.varArray = (varArray.length == 0) ? [] : varArray[0];
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(List Elements\n${this.variable.toString(++indent)}\n${spacer.repeat(++indent)}`;
+        console.log("firstVar: " + this.firstVar.length);
+        var string = `${spacer.repeat(indent)}(List`;
         indent++;
-        for (var variable in this.varArray) {
-            string += `\n${this.varArray[variable].toString(++indent)}`
+        string += (this.firstVar.length === 0) ? "" : `\n${spacer.repeat(indent)}${this.firstVar.toString(indent)}`;
+        console.log("varArray: " + (this.varArray.length != 0));
+        if (this.varArray.length != 0) {
+            for (var variable in this.varArray) {
+                string += `\n${this.varArray[variable].toString(indent)}`
+            }
         }
         string += ")"
         return string;
@@ -613,7 +619,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Arguments(lParen, var1, commasArray, varArray, rParen) {return new Arguments(var1.ast(), varArray.ast());},
     IdSelector(lBracket, variable, rBracket) {return new IdSelector(variable.ast());},
     idPostOp(op) {return op},
-    List(lBracket, variable, commas, variables, rBracket) {return new List(variable.ast(), variables.ast());},
+    List(lBracket, firstElem, commas, restElems, rBracket) {return new List(firstElem.ast(), restElems.ast());},
     Tuple(lParen, variable, commas, variables, rParen) {return new Tuple(variable.ast(), variables.ast());},
     Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {return new List(IdValuePair.ast(), IdValuePairs.ast());},
     IdValuePair(id, colon, variable) {return new IdValuePair(id.sourceString, variable.ast());},
@@ -627,8 +633,8 @@ semantics = grammar.createSemantics().addOperation('ast', {
     prefixOp(operator) {return operator;},
     boolLit(boolVal) {return new BoolLit(boolVal.sourceString);},
     intLit(digits) {return new IntLit(this.sourceString);},
-    floatLit(digits1, period, digits2) {return new FloatLit(digits1, digits2);},
-    stringLit(backslashes, any, backslash) {return new StringLit(any)},
+    floatLit(digits1, period, digits2) {return new FloatLit(digits1.sourceString, digits2.sourceString);},
+    stringLit(lQuote, str, rQuote) {return new StringLit(str.sourceString)},
     keyword(word) {return word;},
     id_variable(firstChar, rest) {return new IdVariable(firstChar.sourceString, rest.sourceString);},
     id_constant(constId) {return new constId(constId.ast())},

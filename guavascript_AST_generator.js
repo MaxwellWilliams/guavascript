@@ -161,7 +161,7 @@ class FunctionDeclarationStatement extends Statement {
     toString(indent) {
         var string = `${spacer.repeat(indent)}(Func\n(id ${this.id})\n(param`;
         for (var parameterIndex in this.parameters) {
-            string += `\n${this.parameters[parameterIndex].toString(++indent)}`;
+            string += `\n${this.parameters[parameterIndex].ast().toString(++indent)}`;
         }
         string += `)\n${this.block.toString(++indent)})`;
     }
@@ -270,26 +270,27 @@ class ReturnStatement extends Statement {
 class Expression {
 }
 
+/*
+
 class IdentifierExpression extends Expression {
-    constructor(id, /* TODO: What to do with all those optionals? */ idPostOp) {
+    constructor(idBody, idPostOp) {
         super();
-        this.id = id;
+        this.idBody = idBody;
         this.idPostOp = idPostOp;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;  // TODO: not done!
+        return `${spacer.repeat(indent)}(Identifier Expression\n${this.idBody.ast(++indent)}\n${spacer.repeat(++indent)}${this.idPostOp.sourceString})`;
     }
 }
-
 
 class IdentifierExpressionBodyRecursive extends Expression {
     constructor(idExpBody, selector) {
         super();
         this.idExpBody = idExpBody;
-        this.selector = selector
+        this.selector = selector;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;  // TODO: not done!
+        return `${spacer.repeat(indent)}(something\n)`;
     }
 }
 
@@ -299,10 +300,10 @@ class IdentifierExpressionBodyId extends Expression {
         this.id = id;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`;  // TODO: not done!
+        return `${spacer.repeat(indent)}${this.id}`;
     }
 }
-
+*/
 
 class MatchExpression extends Expression {
     constructor(idExp, matchArray) {
@@ -412,6 +413,9 @@ class Arguments {
         this.arg = arg;
         this.argsArray = argsArray;
     }
+    getOp() {
+        return "[]";
+    }
     toString(indent) {
         var string = `${spacer.repeat(indent)}(Arguments\n${this.idExp.toString(++indent)}\n${spacer.repeat(++indent)}`;
         indent++;
@@ -426,6 +430,9 @@ class Arguments {
 class IdSelector {
     constructor(variable) {
         this.variable = variable;
+    }
+    getOp() {
+        return "[]";
     }
     toString(indent) {
         return `${spacer.repeat(indent)}(${this.variable})`;
@@ -582,20 +589,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Program(block) {return new Program(block.ast());},
     Block(statements) {return new Block(statements.ast());},
     Statement_conditional(exp, question, block1, colon, block2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
-
-    Statement_funcDecl(id, lParen, commas, parameter, parameters, rParen, lCurly, block, rCurly) {
-        console.log("id: " + id.ast());
-        console.log("lParen: " + lParen.sourceString);
-        console.log("commas: " + commas.sourceString);
-        console.log("parameter: " + parameter.sourceString);
-        console.log("parameters: " + parameters.sourceString);
-        console.log("rParen: " + rParen.sourceString);
-        console.log("lCurly: " + lCurly.sourceString);
-        console.log("block: " + block.sourceString);
-        console.log("rCurly: " + rCurly.sourceString);
-        return new FunctionDeclarationStatement(id.sourceString, parameters.ast(), block.ast());
-    },
-
+    Statement_funcDecl(id, lParen, parameter, commas, parameters, rParen, lCurly, block, rCurly) {return new FunctionDeclarationStatement(id.sourceString, [parameter].concat(parameters), block.ast());},
     Statement_classDecl(clas, id, lCurly, block, rCurly) {return new ClassDeclarationStatement(id.sourceString, block.ast());},
     Statement_match(matchExp) {return new MatchStatement(matchExp.ast());},
     Statement_ifElse(i, exp, lCurly1, block1, rCurly1, els, lCurly2, block2, rCurly2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
@@ -625,9 +619,9 @@ semantics = grammar.createSemantics().addOperation('ast', {
     ParenExp_pass(variable) {return new Variable(variable.ast());},
     Var(input) {return new Variable(input.ast());},
 
-    IdExp(idExpBody, idPostOp) {return new IdentifierExpression(idExpBody.ast(), idPostOp.ast());},
-    IdExpBody_recursive(idExpBody, selector) {return new IdentifierExpressionBodyRecursive(idExpBody.ast(), selector.ast());},
-    IdExpBody_id(id) {return new IdentifierExpressionBodyRecursive(id.sourceString);},
+    IdExp(idExpBody, idPostOp) {return new IdExpression(idExpBody.ast(), idPostOp.ast());},
+    IdExpBody_recursive(idExpBody, selector) {return new IdExpressionBody(idExpBody.ast(), selector.ast());},
+    IdExpBody_id(id) {return id.sourceString;},
     periodId(period, id) {return new PeriodId(id.sourceString);},
     Arguments(lParen, var1, commasArray, varArray, rParen) {return new Arguments(var1.ast(), varArray.ast());},
     IdSelector(lBracket, variable, rBracket) {return new IdSelector(variable.ast());},

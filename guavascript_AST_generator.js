@@ -527,14 +527,14 @@ class BoolLit {
     }
 }
 
-class IdIdentifier {
-    constructor(id) {
-        this.id = id;
+class IdVariable {
+    constructor(firstChar, rest) {
+        this.string = firstChar + rest;
     }
     toString(indent) {
-        return `${spacer.repeat(indent)}`; // TODO: not done!
+        return `${spacer.repeat(indent)}(\n${this.string})`;
     }
-}
+}  // TODO: done?
 
 class ConstId {
     constructor(firstWord, rest) {
@@ -582,7 +582,20 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Program(block) {return new Program(block.ast());},
     Block(statements) {return new Block(statements.ast());},
     Statement_conditional(exp, question, block1, colon, block2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
-    Statement_funcDecl(id, lParen, commas, parameter, parameters, rParen, lCurly, block, rCurly) {return new FunctionDeclarationStatement(id.sourceString, parameters.ast(), block.ast());},
+
+    Statement_funcDecl(id, lParen, commas, parameter, parameters, rParen, lCurly, block, rCurly) {
+        console.log("id: " + id.ast());
+        console.log("lParen: " + lParen.sourceString);
+        console.log("commas: " + commas.sourceString);
+        console.log("parameter: " + parameter.sourceString);
+        console.log("parameters: " + parameters.sourceString);
+        console.log("rParen: " + rParen.sourceString);
+        console.log("lCurly: " + lCurly.sourceString);
+        console.log("block: " + block.sourceString);
+        console.log("rCurly: " + rCurly.sourceString);
+        return new FunctionDeclarationStatement(id.sourceString, parameters.ast(), block.ast());
+    },
+
     Statement_classDecl(clas, id, lCurly, block, rCurly) {return new ClassDeclarationStatement(id.sourceString, block.ast());},
     Statement_match(matchExp) {return new MatchStatement(matchExp.ast());},
     Statement_ifElse(i, exp, lCurly1, block1, rCurly1, els, lCurly2, block2, rCurly2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
@@ -636,7 +649,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     floatLit(digits1, period, digits2) {return new FloatLit(digits1, digits2);},
     stringLit(backslashes, any, backslash) {return new StringLit(any)},
     keyword(word) {return word;},
-    id_identifier(lower, ids) {return new Id(keyword.ast());},
+    id_variable(firstChar, rest) {return new IdVariable(firstChar.sourceString, rest.sourceString);},
     id_constant(constId) {return new constId(constId.ast())},
     idrest(character) {return character},
     constId(underscores, words) {return ConstId(words)},

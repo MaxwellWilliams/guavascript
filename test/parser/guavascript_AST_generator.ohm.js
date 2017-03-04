@@ -5,7 +5,7 @@ assert = require('assert');
 parser = require(path.resolve('./guavascript_AST_generator.js'));
 validPrograms = path.resolve('./test/parser/programs/valid');
 invalidPrograms = path.resolve('./test/parser/programs/invalid');
-// validProgramAsts = path.resolve('./test/parser/ast/valid');
+validProgramAsts = path.resolve('./test/parser/ast/valid');
 // invalidProgramAsts = path.resolve('./test/parser/ast/invalid');
 
 tests = function(validFiles, invalidFiles) {
@@ -14,12 +14,8 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('parser\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
           function() {
-            // console.log(parser(file.code).toString());
-            // console.log( '\"' + file.ast.toString() + '\"');
-            // console.log( '\"' + parser(file.code).toString() + '\"');
-            // console.log(parser(file.code).toString() == file.ast);
-            console.log();
-            assert.equal(parser(file.code).toString(), programAsts[file.name],
+            // console.log(parser(file.code).toString().localeCompare(file.ast));
+            assert.equal(parser(file.code).toString(), asts[file.name],
               'Returned: ' + grammarResult);
         });
       });
@@ -44,13 +40,18 @@ tests = function(validFiles, invalidFiles) {
 
   fs.readdirSync(validPrograms).forEach(function(fileName) {
     fullProgramPath = validPrograms + '/' + fileName;
-    // fullAstPath = validProgramAsts + '/' + fileName;
+    fullAstPath = validProgramAsts + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // astFileContents = fs.readFileSync(fullAstPath, 'utf-8');
+
+    // astFile = require(path.resolve(validProgramAsts + '/' + fileName.replace('.guav', '.js')));
+    // console.log(astFile.getAst());
+    // astString = require(path.resolve(validProgramAsts + '/' + fileName.replace('.guav', '.js'))).getAst();
+    // console.log(astString);
+
     validFiles.push({
       name: fileName,
       code: programFileContents
-      // ast: astFileContents
+      // ast: astString
     });
   });
 
@@ -66,213 +67,32 @@ tests = function(validFiles, invalidFiles) {
   tests(validFiles, invalidFiles);
 }());
 
-programAsts = {
-    'bigTest1.guav': `(Program
-    (Block
-        (Class
-            (id Test)
-            (Block
-                (Func
-                    (id Test)
-                    (Parameters
-                        (id param1, default (1))
-                        (id param2, default (l))
-                        (id param3, default (false))
-                        (id param4, default (0)))
-                    (Block
-                        (=
-                            (IdExpression
-                                (.
-                                    (this)
-                                    (param1)))
-                            (IdExpression
-                                (param1)))
-                        (=
-                            (IdExpression
-                                (.
-                                    (this)
-                                    (param2)))
-                            (IdExpression
-                                (param2)))
-                        (=
-                            (IdExpression
-                                (.
-                                    (this)
-                                    (param3)))
-                            (IdExpression
-                                (param3)))
-                        (=
-                            (IdExpression
-                                (.
-                                    (this)
-                                    (PARAM4)))
-                            (IdExpression
-                                (param4)))))
-                (Func
-                    (id getParam1)
-                    (Parameters)
-                    (Block
-                        (Return
-                            (IdExpression
-                                (.
-                                    (this)
-                                    (param1))))))
-                (Func
-                    (id setParam1)
-                    (Parameters
-                        (id newParam, default ))
-                    (Block
-                        (=
-                            (IdExpression
-                                (.
-                                    (this)
-                                    (param1)))
-                            (IdExpression
-                                (newParam)))))
-                (Func
-                    (id checkIfEqual)
-                    (Parameters
-                        (id paramX, default )
-                        (id paramY, default ))
-                    (Block
-                        (Return
-                            (==
-                                (IdExpression
-                                    (paramX))
-                                (IdExpression
-                                    (paramY))))))
-                (Class
-                    (id Sub)
-                    (Block
-                        (Func
-                            (id Sub)
-                            (Parameters
-                                (id x, default )
-                                (id y, default )
-                                (id z, default ))
-                            (Block
-                                (=
-                                    (IdExpression
-                                        (.
-                                            (this)
-                                            (x)))
-                                    (IdExpression
-                                        (x)))
-                                (=
-                                    (IdExpression
-                                        (.
-                                            (this)
-                                            (y)))
-                                    (IdExpression
-                                        (y)))
-                                (=
-                                    (IdExpression
-                                        (.
-                                            (this)
-                                            (z)))
-                                    (IdExpression
-                                        (z)))))
-                        (Func
-                            (id checkVariables)
-                            (Parameters
-                                (id var1, default ))
-                            (Block
-                                (Identifier Statement
-                                    (IdExpression
-                                        (answer)))
-                                (if
-                                    (!=
-                                        (IdExpression
-                                            (var1))
-                                        (null))
-                                    (Block
-                                        (=
-                                            (IdExpression
-                                                (answer))
-                                            (Match Expression
-                                                (IdExpression
-                                                    (var1))
-                                                (Matches
-                                                    (Match
-                                                        (1) ->
-                                                        (las))
-                                                    (Match
-                                                        (2) ->
-                                                        (las))
-                                                    (Match
-                                                         _ ->
-                                                        (lass Test {
-)))))))
-                                (Return
-                                    (IdExpression
-                                        (answer)))))))
-                (Class
-                    (id Collections)
-                    (Block
-                        (Func
-                            (id Collections)
-                            (Parameters
-                                (id dict, default )
-                                (id list, default )
-                                (id tup, default ))
-                            (Block
-                                (=
-                                    (IdExpression
-                                        (.
-                                            (this)
-                                            (dict)))
-                                    (IdExpression
-                                        (dict)))
-                                (=
-                                    (IdExpression
-                                        (.
-                                            (this)
-                                            (list)))
-                                    (IdExpression
-                                        (list)))
-                                (=
-                                    (IdExpression
-                                        (.
-                                            (this)
-                                            (tup)))
-                                    (IdExpression
-                                        (tup)))))
-                        (Func
-                            (id addToDict)
-                            (Parameters
-                                (id id, default )
-                                (id value, default ))
-                            (Block
-                                (=
-                                    (IdExpression
-                                        ([]
-                                            (.
-                                                (this)
-                                                (dict))
-                                            (IdExpression
-                                                (id))))
-                                    (IdExpression
-                                        (value)))))
-                        (Func
-                            (id getDict)
-                            (Parameters
-                                (id id, default ))
-                            (Block
-                                (Return
-                                    (IdExpression
-                                        ([]
-                                            (.
-                                                (this)
-                                                (dict))
-                                            (IdExpression
-                                                (id)))))))
-                        (Func
-                            (id getTuple)
-                            (Parameters)
-                            (Block
-                                (Return
-                                    (IdExpression
-                                        (.
-                                            (this)
-                                            (tup))))))))))))`
-}
+asts = {
+    'arithmetic1.guav': require(path.resolve(validProgramAsts + '/arithmetic1.js')).getAst(),
+    'arithmetic2.guav': require(path.resolve(validProgramAsts + '/arithmetic2.js')).getAst(),
+    'bigTest1.guav': require(path.resolve(validProgramAsts + '/bigTest1.js')).getAst(),
+    'class1.guav': require(path.resolve(validProgramAsts + '/class1.js')).getAst(),
+    'conditional1.guav': require(path.resolve(validProgramAsts + '/conditional1.js')).getAst(),
+    'constDecl1.guav': require(path.resolve(validProgramAsts + '/constDecl1.js')).getAst(),
+    'constDecl2.guav': require(path.resolve(validProgramAsts + '/constDecl2.js')).getAst(),
+    'decl1.guav': require(path.resolve(validProgramAsts + '/decl1.js')).getAst(),
+    'decl2.guav': require(path.resolve(validProgramAsts + '/decl2.js')).getAst(),
+    'decl3.guav': require(path.resolve(validProgramAsts + '/decl3.js')).getAst(),
+    'decl4.guav': require(path.resolve(validProgramAsts + '/decl4.js')).getAst(),
+    'dict1.guav': require(path.resolve(validProgramAsts + '/dict1.js')).getAst(),
+    'dict2.guav': require(path.resolve(validProgramAsts + '/dict2.js')).getAst(),
+    'funcDecl1.guav': require(path.resolve(validProgramAsts + '/funcDecl1.js')).getAst(),
+    'funcDecl2.guav': require(path.resolve(validProgramAsts + '/funcDecl2.js')).getAst(),
+    'funcDecl3.guav': require(path.resolve(validProgramAsts + '/funcDecl3.js')).getAst(),
+    'idExp1.guav': require(path.resolve(validProgramAsts + '/idExp1.js')).getAst(),
+    'idExp2.guav': require(path.resolve(validProgramAsts + '/idExp2.js')).getAst(),
+    'idExp3.guav': require(path.resolve(validProgramAsts + '/idExp3.js')).getAst(),
+    'ifElse.guav': require(path.resolve(validProgramAsts + '/ifElse.js')).getAst(),
+    'match1.guav': require(path.resolve(validProgramAsts + '/match1.js')).getAst(),
+    'match2.guav': require(path.resolve(validProgramAsts + '/match2.js')).getAst(),
+    'match3.guav': require(path.resolve(validProgramAsts + '/match3.js')).getAst(),
+    'print1.guav': require(path.resolve(validProgramAsts + '/print1.js')).getAst(),
+    'shortMatch.guav': require(path.resolve(validProgramAsts + '/shortMatch.js')).getAst(),
+    'tuple.guav': require(path.resolve(validProgramAsts + '/tuple.js')).getAst(),
+    'while1.guav': require(path.resolve(validProgramAsts + '/while1.js')).getAst()
+};

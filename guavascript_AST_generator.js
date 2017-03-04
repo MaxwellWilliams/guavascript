@@ -51,7 +51,7 @@ class BranchStatement extends Statement {
         var string = `${spacer.repeat(indent)}(if`;
         indent++;
         for (var i in this.cases) {
-            string += `\n${this.cases[i].toString(indent)}`;
+            string += `\n1${this.cases[i].toString(indent)}`;
         }
         if (typeof this.elseBlock != 'undefined') {
             string += `\n${this.elseBlock.toString(indent)}`;
@@ -227,13 +227,13 @@ class MatchExpression extends Expression {
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Match Expression\n${this.idExp.toString(++indent)}\n${spacer.repeat(indent)}(Matches`;
-        string += (this.var1.length != 0 && this.match1.length != 0) ? `\n${spacer.repeat(++indent)}(Match\n${this.var1.toString(++indent)} -> \n${this.match1.toString(indent)})` : "";
+        string += (this.var1.length != 0 && this.match1.length != 0) ? `\n${spacer.repeat(++indent)}(1Match\n${this.var1.toString(++indent)} ->\n${this.match1.toString(indent)})` : "";
         if (this.varArray.length == this.matchArray.length && this.varArray.length != 0) {
             for (var varIndex in this.varArray) {
-                string += `\n${spacer.repeat(--indent)}(Match\n${this.varArray[varIndex].toString(++indent)} -> \n${this.matchArray[varIndex].toString(indent)})`
+                string += `\n${spacer.repeat(--indent)}(Match\n${this.varArray[varIndex].toString(++indent)} ->\n${this.matchArray[varIndex].toString(indent)})`
             }
         }
-        string += (this.matchFinal.length != 0) ? `\n${spacer.repeat(--indent)}(Match\n${spacer.repeat(++indent)} _ -> \n${this.matchFinal.toString(indent)})` : "";
+        string += (this.matchFinal.length != 0) ? `\n${spacer.repeat(--indent)}(Match\n${spacer.repeat(++indent)} _ ->\n${this.matchFinal.toString(indent)})` : "";
         string += "))";
         return string;
     }

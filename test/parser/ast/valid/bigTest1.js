@@ -1,4 +1,5 @@
-(Program
+module.exports.getAst = function() {
+    return `(Program
     (Block
         (Class
             (id Test)
@@ -205,4 +206,5 @@
                                     (IdExpression
                                         (.
                                             (this)
-                                            (tup))))))))))))
+                                            (tup))))))))))))`;
+};

@@ -3,7 +3,4 @@ match x with
 | 3 -> "three"
 | 4 -> "four"
 | 5 -> "five"
-| _ -> if (y == 3) {
-            string = "hello, world!"
-            list = [1, 2, 3, 4]
-       }
+| _ -> "nope"

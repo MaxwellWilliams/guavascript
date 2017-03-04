@@ -70,7 +70,6 @@ tests = function(validFiles, invalidFiles) {
 asts = {
     'arithmetic1.guav': require(path.resolve(validProgramAsts + '/arithmetic1.js')).getAst(),
     'arithmetic2.guav': require(path.resolve(validProgramAsts + '/arithmetic2.js')).getAst(),
-    'bigTest1.guav': require(path.resolve(validProgramAsts + '/bigTest1.js')).getAst(),
     'class1.guav': require(path.resolve(validProgramAsts + '/class1.js')).getAst(),
     'conditional1.guav': require(path.resolve(validProgramAsts + '/conditional1.js')).getAst(),
     'constDecl1.guav': require(path.resolve(validProgramAsts + '/constDecl1.js')).getAst(),
@@ -90,7 +89,6 @@ asts = {
     'ifElse.guav': require(path.resolve(validProgramAsts + '/ifElse.js')).getAst(),
     'match1.guav': require(path.resolve(validProgramAsts + '/match1.js')).getAst(),
     'match2.guav': require(path.resolve(validProgramAsts + '/match2.js')).getAst(),
-    'match3.guav': require(path.resolve(validProgramAsts + '/match3.js')).getAst(),
     'print1.guav': require(path.resolve(validProgramAsts + '/print1.js')).getAst(),
     'shortMatch.guav': require(path.resolve(validProgramAsts + '/shortMatch.js')).getAst(),
     'tuple.guav': require(path.resolve(validProgramAsts + '/tuple.js')).getAst(),

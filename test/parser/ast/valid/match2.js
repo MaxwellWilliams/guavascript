@@ -19,24 +19,5 @@ module.exports.getAst = function() {
                     (atch))
                 (Match
                      _ ->
-                    (Block
-                        (if
-                            (==
-                                (IdExpression
-                                    (y))
-                                (3))
-                            (Block
-                                (=
-                                    (IdExpression
-                                        (string))
-                                    (atch x with
-))
-                                (=
-                                    (IdExpression
-                                        (list))
-                                    (List
-                                        (1)
-                                        (2)
-                                        (3)
-                                        (4)))))))))))`;
+                    (atch))))))`;
 }

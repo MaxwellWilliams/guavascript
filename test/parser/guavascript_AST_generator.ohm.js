@@ -12,7 +12,7 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('grammar\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
           function() {
-            console.log(parser(file.code));
+            console.log(parser(file.code).toString());
             // assert.equal(grammarResult.succeeded(), true,
             //   'Returned: ' + grammarResult);
         });

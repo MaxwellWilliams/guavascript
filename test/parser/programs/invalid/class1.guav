@@ -1,5 +1,0 @@
-class ball {
-	is_round () {
-		ret True
-	}
-}

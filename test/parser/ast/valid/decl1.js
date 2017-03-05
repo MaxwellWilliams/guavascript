@@ -4,5 +4,5 @@ module.exports.getAst = function() {
         (=
             (IdExpression
                 (name))
-            (ame = "gua))))`;
+            (guav1231\\\"))))`;
 }

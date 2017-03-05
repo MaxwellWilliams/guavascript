@@ -6,6 +6,6 @@ module.exports.getAst = function() {
                 (dict))
             (Dictionary
                 (x : (5))
-                (y : (ict =))
+                (y : (Hello))
                 (z : (true))))))`;
 }

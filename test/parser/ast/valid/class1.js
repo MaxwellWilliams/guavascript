@@ -8,7 +8,7 @@ module.exports.getAst = function() {
                     (id Ball)
                     (Parameters
                         (id radius, default )
-                        (id weight, default (c.a)))
+                        (id weight, default (1.0)))
                     (Block
                         (=
                             (IdExpression

@@ -7,17 +7,17 @@ module.exports.getAst = function() {
             (Matches
                 (Match
                     (2) ->
-                    (atc))
+                    (two))
                 (Match
                     (3) ->
-                    (atch ))
+                    (three))
                 (Match
                     (4) ->
-                    (atch))
+                    (four))
                 (Match
                     (5) ->
-                    (atch))
+                    (five))
                 (Match
                      _ ->
-                    (atch))))))`;
+                    (nope))))))`;
 }

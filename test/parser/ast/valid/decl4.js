@@ -4,5 +4,5 @@ module.exports.getAst = function() {
         (=
             (IdExpression
                 (pi))
-            (p. = 3.14))))`;
+            (3.1415926))))`;
 }

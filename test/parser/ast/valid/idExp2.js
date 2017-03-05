@@ -8,5 +8,5 @@ module.exports.getAst = function() {
                         (console)
                         (log))
                     (Arguments
-                        (onsole.log("h)))))))`;
+                        (hello, world!)))))))`;
 }

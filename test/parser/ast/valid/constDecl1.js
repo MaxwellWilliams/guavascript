@@ -4,5 +4,5 @@ module.exports.getAst = function() {
         (=
             (IdExpression
                 (FEET_IN_METER))
-            (F.ET_IN))))`;
+            (3.28084))))`;
 };

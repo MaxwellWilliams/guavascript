@@ -1,4 +1,3 @@
-
 module.exports.getAst = function() {
     return `(Program
     (Block
@@ -6,7 +5,7 @@ module.exports.getAst = function() {
             (IdExpression
                 (tuple))
             (Tuple
-                (up)
+                (hi)
                 (3)
                 (true)))))`;
 }

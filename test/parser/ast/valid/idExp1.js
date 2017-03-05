@@ -9,7 +9,7 @@ module.exports.getAst = function() {
                         (log))
                     (Arguments
                         (1)
-                        (onsole.log(1,)
+                        (hello, world!)
                         (true)
-                        (c.ns)))))))`;
+                        (3.14)))))))`;
 }

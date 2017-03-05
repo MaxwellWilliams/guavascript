@@ -7,5 +7,5 @@ module.exports.getAst = function() {
             (Matches
                 (Match
                     (2) ->
-                    (atc))))))`;
+                    (two))))))`;
 }

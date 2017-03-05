@@ -92,5 +92,6 @@ asts = {
     'print1.guav': require(path.resolve(validProgramAsts + '/print1.js')).getAst(),
     'shortMatch.guav': require(path.resolve(validProgramAsts + '/shortMatch.js')).getAst(),
     'tuple.guav': require(path.resolve(validProgramAsts + '/tuple.js')).getAst(),
-    'while1.guav': require(path.resolve(validProgramAsts + '/while1.js')).getAst()
+    'while1.guav': require(path.resolve(validProgramAsts + '/while1.js')).getAst(),
+    'bigProgram.guav': require(path.resolve(validProgramAsts + '/bigProgram.js')).getAst()
 };

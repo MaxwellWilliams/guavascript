@@ -72,6 +72,19 @@ __Conditional Statements__
 x == 2 ? x -= 1 : x += 1                   (x == 2) ? x -= 1 : x += 1
 ```
 
+__Match Statements__
+
+```
+match fruit with                           
+    | pear   -> puke.exe()                 if (fruit == pear) { puke.exe(); }
+    | apple  -> puke.exe()                 else if (fruit == apple) { puke.exe(); }
+    | banana -> puke.exe()                 else if (fruit == banana) { puke.exe(); }
+    | guava  -> observe("delicious")       else if (fruit == guava) {
+                observe("nutritious")          observe("delicious");
+    | _      -> puke.exe()                     observe("nutritious");
+                                           } else { puke.exe(); }
+```
+
 __Functions__
 
 ```
@@ -97,7 +110,7 @@ __Higher-Order Functions__
 
 ```
 doTwice (f, x) {                            var doTwice = (f, x) => {
-   ret f(f(x))                              	return f(f(x));
+   ret f(f(x))                                  return f(f(x));
 }                                           }
 ```
 
@@ -105,15 +118,15 @@ __Class Declarations__
 
 ```
 class Ball {                                 class Ball {
-    Ball (radius, weight = 1.0) {		 constructor(radius, weight) {
-    	this.radius = radius			     this.radius = radius;
-	       this.weight = weight			     this.weight = weight;
-    }                				 }
+    Ball (radius, weight = 1.0) {                constructor(radius, weight) {
+    	this.radius = radius                         this.radius = radius;
+	       this.weight = weight                  this.weight = weight;
+    }                                        }
     is_round() {                                 var is_round = () => {
     	ret true                                     return true
     }                                            }
 }                                            }
 
-bouncyBall = Ball(0.2)			     let bouncyBall = new Ball(0.2, 1.0);
-bouncyBall.is_round()			     bouncyBall.is_round();
+bouncyBall = Ball(0.2)                       let bouncyBall = new Ball(0.2, 1.0);
+bouncyBall.is_round()                        bouncyBall.is_round();
 ```

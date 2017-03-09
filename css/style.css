@@ -118,7 +118,7 @@ p, li {
   font-size: 1.3rem !important;
 }
 
-h2, span {
+h2, span, #intro {
   font-weight: 300 !important;
   font-size: 4rem !important;
 }
@@ -274,7 +274,7 @@ a {
 }
 
 .green {
-  color: green;
+  color: #9acb5c;
 }
 
 .col-xs-12 {

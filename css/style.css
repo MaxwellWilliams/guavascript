@@ -323,3 +323,9 @@ a {
     display: none !important;
   }
 }
+
+
+
+.examples p {
+  line-height: 1;
+}

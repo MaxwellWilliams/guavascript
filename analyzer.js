@@ -10,7 +10,9 @@ class AnalysisContext {
     }
 
     variableMustNotBeAlreadyDeclared(name) {
-        if
+        if (this.symbolTable[name]) {
+
+        }
     }
 
 }

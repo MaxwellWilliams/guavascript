@@ -47,6 +47,9 @@ class BranchStatement extends Statement {
         this.cases = cases;
         this.elseBlock = elseBlock[0];
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(if`;
         indent++;
@@ -66,6 +69,9 @@ class Case {
         this.exp = exp;
         this.block = block;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(case${(this.exp === 'undefined') ? "" : `\n${this.exp.toString(++indent)}`}\n${this.block.toString(++indent)})`;
     }
@@ -78,6 +84,9 @@ class FunctionDeclarationStatement extends Statement {
         this.parameter1 = parameter1;
         this.parameterArray = parameterArray[0];
         this.block = block;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Func\n${spacer.repeat(++indent)}(id ${this.id})\n${spacer.repeat(indent)}(Parameters`;
@@ -98,6 +107,9 @@ class Parameter {
         this.id = id;
         this.defaultValue = defaultValue;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(id ${this.id}, default ${this.defaultValue})`;
     }
@@ -109,6 +121,9 @@ class ClassDeclarationStatement extends Statement {
         this.id = id;
         this.block = block;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Class\n${spacer.repeat(++indent)}(id ${this.id})\n${this.block.toString(indent)})`;
     }
@@ -118,6 +133,9 @@ class MatchStatement extends Statement {
     constructor(matchExp) {
         super();
         this.matchExp = matchExp;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         return `${this.matchExp.toString(indent)}`;
@@ -129,6 +147,9 @@ class WhileStatement extends Statement {
         super();
         this.exp = exp;
         this.block = block;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(While\n${this.exp.toString(++indent)}\n${this.block.toString(++indent)})`;
@@ -142,6 +163,9 @@ class ForInStatement extends Statement {
         this.iDExp = iDExp;
         this.block = block;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(For id (${this.id}) in\n${this.iDExp.toString(++indent)}\n${this.block.toString(indent)})`;
     }
@@ -151,6 +175,9 @@ class PrintStatement extends Statement {
     constructor(exp) {
         super();
         this.exp = exp;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Print\n${this.exp.toString(++indent)})`;
@@ -164,6 +191,9 @@ class AssignmentStatement extends Statement {
         this.assignOp = assignOp;
         this.exp = exp;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.assignOp}\n${this.idExp.toString(++indent)}\n${this.exp.toString(indent)})`;
     }
@@ -174,6 +204,9 @@ class IdentifierStatement extends Statement {
         super();
         this.iDExp = iDExp;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Identifier Statement\n${this.iDExp.toString(++indent)})`;
     }
@@ -183,6 +216,9 @@ class ReturnStatement extends Statement {
     constructor(exp) {
         super();
         this.exp = exp;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Return\n${this.exp.toString(++indent)})`;
@@ -225,6 +261,9 @@ class MatchExpression extends Expression {
         this.matchArray = matchArray;
         this.matchFinal = matchFinal[0];
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Match Expression\n${this.idExp.toString(++indent)}\n${spacer.repeat(indent)}(Matches`;
         string += (this.var1.length != 0 && this.match1.length != 0) ? `\n${spacer.repeat(++indent)}(Match\n${this.var1.toString(++indent)} ->\n${this.match1.toString(indent)})` : "";
@@ -243,6 +282,9 @@ class Match {
     constructor(matchee) {
         this.matchee = matchee;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${this.matchee.toString(indent)}`;
     }
@@ -255,6 +297,9 @@ class BinaryExpression extends Expression {
         this.op = op;
         this.right = right;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.op}\n${this.left.toString(++indent)}\n${this.right.toString(indent)})`;
     }
@@ -266,6 +311,9 @@ class UnaryExpression extends Expression {
         this.op = op;
         this.operand = operand;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.op}\n${this.operand.toString(++indent)})`;
     }
@@ -275,6 +323,9 @@ class ParenthesisExpression extends Expression {
     constructor(exp) {
         super();
         this.exp = exp;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         // Don't increase indent, as the semantic meaning of parenthesis are already captured in the tree
@@ -286,6 +337,9 @@ class Variable extends Expression {
     constructor(variable) {
         super();
         this.var = variable;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         // Don't increase indent, we already know literals and other data types are variables
@@ -299,6 +353,9 @@ class IdExpression extends Expression {
         this.idExpBody = idExpBody;
         this.idPostOp = idPostOp;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(IdExpression\n${this.idExpBody.toString(++indent)}${(this.idPostOp.length === 0) ? "" : `\n${spacer.repeat(++indent)}${this.idPostOp}`})`;
     }
@@ -310,6 +367,9 @@ class IdExpressionBodyRecursive {
         this.idAppendage = idAppendage;
         this.appendageOp = idAppendage === 'undefined' ? 'undefined' : idAppendage.getOp();
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.appendageOp}\n${this.idExpBody.toString(++indent)}\n${this.idAppendage.toString(indent)})`;
     }
@@ -319,6 +379,9 @@ class IdExpressionBodyBase {
     constructor(id) {
         this.id = id;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id})`;
     }
@@ -327,6 +390,9 @@ class IdExpressionBodyBase {
 class PeriodId {
     constructor(id) {
         this.id = id;
+    }
+    analyze() {
+        // TODO
     }
     getOp() {
         return ".";
@@ -340,6 +406,9 @@ class Arguments {
     constructor(args) {
         this.args = args;
     }
+    analyze() {
+        // TODO
+    }
     getOp() {
         return "()";
     }
@@ -351,6 +420,9 @@ class Arguments {
 class IdSelector {
     constructor(variable) {
         this.variable = variable;
+    }
+    analyze() {
+        // TODO
     }
     getOp() {
         return "[]";
@@ -364,6 +436,9 @@ class List {
     constructor(varList) {
         this.varList = varList;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(List${this.varList.toString(++indent)})`;
     }
@@ -372,6 +447,9 @@ class List {
 class Tuple {
     constructor(elems) {
         this.elems = elems;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Tuple${this.elems.toString(++indent)})`;
@@ -382,6 +460,9 @@ class Dictionary {
     constructor(idValuePair, idValuePairsArray) {
         this.idValuePair = idValuePair;
         this.idValuePairsArray = (idValuePairsArray.length == 0) ? [] : idValuePairsArray[0];
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Dictionary`
@@ -401,6 +482,9 @@ class IdValuePair {
         this.id = id;
         this.variable = variable;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id} : ${this.variable.toString()})`;
     }
@@ -410,6 +494,9 @@ class VarList {
     constructor(firstVar, varArray) {
         this.firstVar = firstVar;
         this.varArray = (varArray.length == 0) ? [] : varArray[0];
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         var string = (this.firstVar.length === 0) ? "" : `\n${spacer.repeat(indent)}${this.firstVar.toString(indent)}`;
@@ -426,6 +513,9 @@ class IntLit {
     constructor(digits) {
         this.digits = digits;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.digits.toString(++indent)})`;
     }
@@ -436,6 +526,9 @@ class FloatLit {
         this.digits1 = digits1;
         this.digits2 = digits2;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.digits1.toString(++indent)}.${this.digits2.toString(++indent)})`;
     }
@@ -444,6 +537,9 @@ class FloatLit {
 class StringLit {
     constructor(word) {
         this.word = word;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.word.toString(++indent)})`;
@@ -454,6 +550,9 @@ class BoolLit {
     constructor(boolVal) {
         this.boolVal = boolVal;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.boolVal})`;
     }
@@ -461,6 +560,9 @@ class BoolLit {
 
 class NullLit {
     constructor() {}
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(null)`;
     }
@@ -469,6 +571,9 @@ class NullLit {
 class IdVariable {
     constructor(firstChar, rest) {
         this.string = firstChar + rest;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(\n${this.string})`;
@@ -479,6 +584,9 @@ class ConstId {
     constructor(firstWord, rest) {
         this.words = firstWord;
         this.rest = rest;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(\n${this.firstWord.toString()}`;
@@ -495,6 +603,9 @@ class ClassId {
         this.className = className;
         this.rest = rest;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(\n${this.className.toString()}`
         for (var char in this.rest) {
@@ -504,17 +615,6 @@ class ClassId {
         return string;
     }
 }
-
-class Comment {
-    constructor(comments) {
-        this.comments = comments;
-    }
-    toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.comments.toString(++indent)})`;
-    }
-}
-
-// TODO: merge MatchExpression Match's into single array. Same with other arrays
 
 // Guavascript CST -> AST
 semantics = grammar.createSemantics().addOperation('ast', {
@@ -582,8 +682,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     id_constant(constId) {return new constId(constId.ast())},
     idrest(character) {return character},
     constId(underscores, words) {return new ConstId(words)},
-    classId(upper, idrests) {return new ClassId(idrests.ast())},
-    comment(hashBang, comments, newline) {return new Comment(comments)},
+    classId(upper, idrests) {return new ClassId(idrests.ast())}
 });
 
 module.exports = (program) => {

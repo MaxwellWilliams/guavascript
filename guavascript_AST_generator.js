@@ -9,6 +9,9 @@ class Program {
     constructor(block) {
         this.block = block;
     }
+    analyze() {
+        // TODO
+    }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Program\n${this.block.toString(++indent)})`;
     }
@@ -17,6 +20,9 @@ class Program {
 class Block {
     constructor(body) {
         this.body = body;
+    }
+    analyze() {
+        // TODO
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Block`;

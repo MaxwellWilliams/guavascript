@@ -238,25 +238,6 @@ class ReturnStatement extends Statement {
 class Expression {
 }
 
-// class MatchExpression extends Expression {
-//     constructor(idExp, matchArray) {
-//         super();
-//         this.idExp = idExp;
-//         this.matches = matchArray
-//     }
-//     toString(indent = 0) {
-//         var string = `${spacer.repeat(indent)}(Match Expression\n${this.idExp.toString(++indent)}\n${spacer.repeat(++indent)}(matches`;
-//         indent++;
-//         for (var matchIndex in this.matches) {
-//             string += `\n${this.matches[matchIndex].toString(++indent)}`
-//         }
-//         string += "))"
-//         return string;
-//     }
-// }
-
-//idExp.ast(), exp1.ast(), expArray.ast(), match1.ast(), matchArray.ast(), matchFinal.ast()
-
 class MatchExpression extends Expression {
     constructor(idExp, var1, varArray, match1, matchArray, matchFinal) {
         super();
@@ -699,3 +680,6 @@ module.exports = (program) => {
     console.log(match.message);
   }
 }
+
+module.exports.FunctionDeclarationStatement = FunctionDeclarationStatement;
+module.exports.Parameter = Parameter;

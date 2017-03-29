@@ -1,0 +1,9 @@
+# Should analyze fine since the conditional exp's for the if statements are ultimately type boolean
+
+if (false) {
+    print("nope")
+} else if (5 < 3) {
+    print("still nope")
+} else if (47 <= 47) {
+    print("you bet")
+}

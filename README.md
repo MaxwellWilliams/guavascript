@@ -1,4 +1,9 @@
+
 ![Guavascript Logo] (/images/Guavascript logo.png)
+
+:( Why is the logo broken?
+
+https://ansonadams.github.io/guavascript/
 
 ## Introduction
 

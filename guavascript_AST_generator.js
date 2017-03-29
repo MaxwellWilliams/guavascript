@@ -1,9 +1,10 @@
-fs = require('fs');
-ohm = require('ohm-js');
-grammarContents = fs.readFileSync('guavascript.ohm');
-grammar = ohm.grammar(grammarContents);
+const fs = require('fs');
+const ohm = require('ohm-js');
+const grammarContents = fs.readFileSync('guavascript.ohm');
+const grammar = ohm.grammar(grammarContents);
+const Context = require('./semantics/context');
 
-var spacer = "    ";
+const spacer = "    ";
 
 function unpack(a) {
   return a.length === 0 ? null : a[0];
@@ -13,8 +14,9 @@ class Program {
     constructor(block) {
         this.block = block;
     }
-    analyze() {
-        // TODO
+    analyze(context = new Context()) {
+        console.log("DEBUG: Program analyzing");
+        this.block.analyze(context.createChildContextForBlock());
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Program\n${this.block.toString(++indent)})`;
@@ -25,8 +27,9 @@ class Block {
     constructor(body) {
         this.body = body;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        console.log("DEBUG: Block analyzing");
+        this.body.forEach(s => s.analyze(context));
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Block`;
@@ -57,8 +60,12 @@ class BranchStatement extends Statement {
         this.cases = cases;
         this.elseBlock = elseBlock[0];
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        console.log("DEBUG: BranchStatement analyzing");
+        this.cases.forEach(c => c.analyze(context));
+        if (this.elseBlock) {
+            this.elseBlock.analyze(context.createChildContextForBlock());
+        }
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(if`;
@@ -79,8 +86,11 @@ class Case {
         this.exp = exp;
         this.block = block;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        console.log("DEBUG: Case analyzing");
+        // TODO: How to check that this.exp is of type BOOL?
+        this.exp.analyze(context);
+        this.block.analyze(context.createChildContextForBlock);
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(case${(this.exp === 'undefined') ? "" : `\n${this.exp.toString(++indent)}`}\n${this.block.toString(++indent)})`;
@@ -93,9 +103,22 @@ class FunctionDeclarationStatement extends Statement {
         this.id = id;
         this.parameterArray = parameterArray;
         this.block = block;
+
+        // TODO: Fix up that nasty split array, use this for string printing
+        this.parameters = this.paramater1.join(this.parameterArray);
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        console.log("DEBUG: FunctionDeclarationStatement analyzing");
+        context.assertVariableIsNotAlreadyDeclared(this.id);
+        this.block.analyze(context.createChildContextForFunction());
+        context.addVariable(this.id,
+            {
+                parameters: this.parameters,
+                closure: context.symbolTable,
+                block: this.block
+            },
+            "function");
+        // TODO: Do we need to analyze the parameters?
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Func\n${spacer.repeat(++indent)}(id ${this.id})\n${spacer.repeat(indent)}(Parameters`;
@@ -119,7 +142,8 @@ class Parameter {
         this.defaultValue = defaultValue;
     }
     analyze() {
-        // TODO
+        console.log("DEBUG: Parameter analyzing");
+        // TODO: I'm not sure there is anything semantic-wise to check here...
     }
     toString(indent = 0) {
       console.log(indent);
@@ -134,8 +158,13 @@ class ClassDeclarationStatement extends Statement {
         this.id = id;
         this.block = block;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        console.log("DEBUG: ClassDeclarationStatement analyzing");
+        context.assertVariableIsNotAlreadyDeclared(this.id);
+
+        // TODO: I THINK the block should be analyzed before adding it to the context??
+        this.block.analyze(context);
+        context.addVariable(this.id, this.block, "class");
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Class\n${spacer.repeat(++indent)}(id ${this.id})\n${this.block.toString(indent)})`;
@@ -244,25 +273,6 @@ class ReturnStatement extends Statement {
 
 class Expression {
 }
-
-// class MatchExpression extends Expression {
-//     constructor(idExp, matchArray) {
-//         super();
-//         this.idExp = idExp;
-//         this.matches = matchArray
-//     }
-//     toString(indent = 0) {
-//         var string = `${spacer.repeat(indent)}(Match Expression\n${this.idExp.toString(++indent)}\n${spacer.repeat(++indent)}(matches`;
-//         indent++;
-//         for (var matchIndex in this.matches) {
-//             string += `\n${this.matches[matchIndex].toString(++indent)}`
-//         }
-//         string += "))"
-//         return string;
-//     }
-// }
-
-//idExp.ast(), exp1.ast(), expArray.ast(), match1.ast(), matchArray.ast(), matchFinal.ast()
 
 class MatchExpression extends Expression {
     constructor(idExp, var1, varArray, match1, matchArray, matchFinal) {
@@ -705,3 +715,6 @@ module.exports = (program) => {
     console.log(match.message);
   }
 }
+
+module.exports.FunctionDeclarationStatement = FunctionDeclarationStatement;
+module.exports.Parameter = Parameter;

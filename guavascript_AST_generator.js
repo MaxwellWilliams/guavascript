@@ -5,6 +5,10 @@ grammar = ohm.grammar(grammarContents);
 
 var spacer = "    ";
 
+function unpack(a) {
+  return a.length === 0 ? null : a[0];
+}
+
 class Program {
     constructor(block) {
         this.block = block;
@@ -84,11 +88,10 @@ class Case {
 }
 
 class FunctionDeclarationStatement extends Statement {
-    constructor(id, parameter1, parameterArray, block) {
+    constructor(id, parameterArray, block) {
         super();
         this.id = id;
-        this.parameter1 = parameter1;
-        this.parameterArray = parameterArray[0];
+        this.parameterArray = parameterArray;
         this.block = block;
     }
     analyze() {
@@ -97,9 +100,11 @@ class FunctionDeclarationStatement extends Statement {
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Func\n${spacer.repeat(++indent)}(id ${this.id})\n${spacer.repeat(indent)}(Parameters`;
         indent++;
-        string += (this.parameter1.length === 0) ? "" : `\n${spacer.repeat(indent)}${this.parameter1.toString(indent)}`;
-        if (this.parameterArray !== 'undefined') {
+        // console.log(this.parameterArray);
+        if (this.parameterArray !== []) {
             for (var parameterIndex in this.parameterArray) {
+                // console.log(this.parameterArray['Parameter']);
+                console.log(indent);
                 string += `\n${this.parameterArray[parameterIndex].toString(indent)}`;
             }
         }
@@ -117,6 +122,8 @@ class Parameter {
         // TODO
     }
     toString(indent = 0) {
+      console.log(indent);
+      // console.log(this.id);
         return `${spacer.repeat(indent)}(id ${this.id}, default ${this.defaultValue})`;
     }
 }
@@ -463,19 +470,17 @@ class Tuple {
 }
 
 class Dictionary {
-    constructor(idValuePair, idValuePairsArray) {
-        this.idValuePair = idValuePair;
-        this.idValuePairsArray = (idValuePairsArray.length == 0) ? [] : idValuePairsArray[0];
+    constructor(idValuePairs) {
+        this.idValuePairs = idValuePairs;
     }
     analyze() {
         // TODO
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(Dictionary`
-        string += `${(this.idValuePair.length == 0) ? "" : `\n${spacer.repeat(++indent)}${this.idValuePair.toString(indent)}`}`;
-        if (this.idValuePairsArray.length !== 0) {
-            for (var pairIndex in this.idValuePairsArray) {
-                string += `\n${this.idValuePairsArray[pairIndex].toString(indent)}`;
+        var string = `${spacer.repeat(indent++)}(Dictionary`
+        if (this.idValuePairs.length !== 0) {
+            for (var pairIndex in this.idValuePairs) {
+                string += `\n${this.idValuePairs[pairIndex].toString(indent)}`;
             }
         }
         string += ")"
@@ -523,32 +528,31 @@ class IntLit {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.digits.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(${this.digits})`;
     }
 }
 
 class FloatLit {
-    constructor(digits1, digits2) {
-        this.digits1 = digits1;
-        this.digits2 = digits2;
+    constructor(value) {
+        this.value = value;
     }
     analyze() {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.digits1.toString(++indent)}.${this.digits2.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(${this.value})`;
     }
 }
 
 class StringLit {
-    constructor(word) {
-        this.word = word;
+    constructor(value) {
+        this.value = value.substring(1, value.length - 1);
     }
     analyze() {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.word.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(${this.value})`;
     }
 }
 
@@ -575,14 +579,14 @@ class NullLit {
 }
 
 class IdVariable {
-    constructor(firstChar, rest) {
-        this.string = firstChar + rest;
+    constructor(value) {
+        this.value = value;
     }
     analyze() {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(\n${this.string})`;
+        return `${spacer.repeat(indent)}(\n${this.value})`;
     }
 }
 
@@ -627,7 +631,8 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Program(block) {return new Program(block.ast());},
     Block(statements) {return new Block(statements.ast());},
     Statement_conditional(exp, question, block1, colon, block2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
-    Statement_funcDecl(id, lParen, parameter1, commas, parameterArray, rParen, lCurly, block, rCurly) {return new FunctionDeclarationStatement(id.sourceString, parameter1.ast(), parameterArray.ast(), block.ast());},
+    Statement_funcDecl(id, lParen, parameter1, commas, parameterArray, rParen, lCurly, block, rCurly) {return new FunctionDeclarationStatement(
+      id.sourceString, parameter1.ast().concat(parameterArray.ast()), block.ast());},
     Statement_classDecl(clas, id, lCurly, block, rCurly) {return new ClassDeclarationStatement(id.sourceString, block.ast());},
     Statement_match(matchExp) {return new MatchStatement(matchExp.ast());},
     Statement_ifElse(i, exp, lCurly1, block1, rCurly1, els, lCurly2, block2, rCurly2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
@@ -667,7 +672,8 @@ semantics = grammar.createSemantics().addOperation('ast', {
     idPostOp(op) {return op},
     List(lBracket, list, rBracket) {return new List(list.ast());},
     Tuple(lParen, tuple, rParen) {return new Tuple(tuple.ast());},
-    Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {return new Dictionary(IdValuePair.ast(), IdValuePairs.ast());},
+    Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {
+      return new Dictionary(IdValuePair.ast().concat(unpack(IdValuePairs.ast())));},
     IdValuePair(id, colon, variable) {return new IdValuePair(id.sourceString, variable.ast());},
     VarList(firstElem, commas, restElems) {return new VarList(firstElem.ast(), restElems.ast());},
     orOp(operator) {return operator;},
@@ -680,12 +686,12 @@ semantics = grammar.createSemantics().addOperation('ast', {
     prefixOp(operator) {return operator;},
     boolLit(boolVal) {return new BoolLit(boolVal.sourceString);},
     intLit(digits) {return new IntLit(this.sourceString);},
-    floatLit(digits1, period, digits2) {return new FloatLit(digits1.sourceString, digits2.sourceString);},
-    stringLit(lQuote, str, rQuote) {return new StringLit(str.sourceString)},
+    floatLit(digits1, period, digits2) {return new FloatLit(this.sourceString);},
+    stringLit(lQuote, content, rQuote) {return new StringLit(this.sourceString)},
     nullLit(nul) {return new NullLit()},
     keyword(word) {return word;},
-    id_variable(firstChar, rest) {return new IdVariable(firstChar.sourceString, rest.sourceString);},
-    id_constant(constId) {return new constId(constId.ast())},
+    id_variable(firstChar, rest) {return new IdVariable(this.sourceString);},
+    id_constant(constId) {return new constId(this.sourceString)},                  //TODO: fix constID
     idrest(character) {return character},
     constId(underscores, words) {return new ConstId(words)},
     classId(upper, idrests) {return new ClassId(idrests.ast())}

@@ -2,6 +2,7 @@ fs = require('fs');
 path = require('path');
 ohm = require('ohm-js');
 assert = require('assert');
+util = require('util');
 parser = require(path.resolve('./guavascript_AST_generator.js'));
 validPrograms = path.resolve('./test/parser/programs/valid');
 invalidPrograms = path.resolve('./test/parser/programs/invalid');
@@ -14,7 +15,7 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('parser\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
           function() {
-            // console.log(parser(file.code).toString().localeCompare(file.ast));
+            console.log(util.inspect(parser(file.code), {depth: null}));
             assert.equal(parser(file.code).toString(), asts[file.name],
               'Returned: ' + grammarResult);
         });
@@ -48,11 +49,13 @@ tests = function(validFiles, invalidFiles) {
     // astString = require(path.resolve(validProgramAsts + '/' + fileName.replace('.guav', '.js'))).getAst();
     // console.log(astString);
 
+    // if(fileName == "class1.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
       // ast: astString
     });
+    // }
   });
 
   // fs.readdirSync(invalidPrograms).forEach(function(fileName) {

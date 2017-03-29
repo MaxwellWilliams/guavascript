@@ -1,17 +1,18 @@
-fs = require('fs');
-ohm = require('ohm-js');
-grammarContents = fs.readFileSync('guavascript.ohm');
-grammar = ohm.grammar(grammarContents);
+const fs = require('fs');
+const ohm = require('ohm-js');
+const grammarContents = fs.readFileSync('guavascript.ohm');
+const grammar = ohm.grammar(grammarContents);
+const Context = require('./semantics/context');
 
-var spacer = "    ";
+const spacer = "    ";
 
 class Program {
     constructor(block) {
         this.block = block;
     }
-    analyze() {
-        console.log("Analyze was called on a program!");
-        // TODO
+    analyze(context = new Context()) {
+        console.log("DEBUG: Analyze was called on a program!");
+        this.block.analyze(context.createChildContextForBlock());
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Program\n${this.block.toString(++indent)})`;
@@ -22,8 +23,8 @@ class Block {
     constructor(body) {
         this.body = body;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.body.forEach(statement => statement.analyze(context));
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Block`;

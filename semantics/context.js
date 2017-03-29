@@ -98,7 +98,7 @@ class Context {
     }
 
     // Use these when a Program is newly created:
-    Context.INITIAL = new Context();
+    // Context.INITIAL = new Context();  // eslint doesn't like the "." after Context ???
 
 }
 

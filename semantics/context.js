@@ -29,11 +29,31 @@ class Context {
         return new Context(this, currentFunction, false);
     }
 
-    addVariable(id, value) {
+    // TODO: Do we need both addVariable and setVariable? Our language has no instantiation syntax...
+
+    addVariable(id, value, type) {
         if (id in this.symbolTable) {
             throw new Error(`${id} has already been declared within this scope`);
         }
-        this.symbolTable[id] = value;
+        this.symbolTable[id] = {value: value, type: type};
+    }
+
+    setVariable(id, value, type) {
+
+        // Case 1- updating the value of a variable within the current scope:
+        if (id in this.symbolTable) {
+
+            // Make sure the new value has the correct type:
+            if (this.symbolTable[id].type === type) {
+                this.symbolTable[id] = {value: value, type: type};
+            } else {
+                throw new Error(`Expected type ${this.symbolTable[id].type} but got ${type}`)
+            }
+        } else {
+
+            // Case 2- either creating a new variable or shadowing an old one:
+            this.addVariable(id, value, type);
+        }
     }
 
     get(id) {
@@ -50,6 +70,8 @@ class Context {
             return this.parent.lookup(id);
         }
     }
+
+
 
     assertIsInFunction(message) {
         if (!this.currentFunction) {

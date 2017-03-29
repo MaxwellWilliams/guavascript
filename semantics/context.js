@@ -32,6 +32,8 @@ class Context {
     // TODO: Do we need both addVariable and setVariable? Our language has no instantiation syntax...
 
     addVariable(id, value, type) {
+
+        // Only one uniqueness bucket - functions and non-functions cannot have the same id:
         if (id in this.symbolTable) {
             throw new Error(`${id} has already been declared within this scope`);
         }

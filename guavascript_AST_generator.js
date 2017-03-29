@@ -10,6 +10,7 @@ class Program {
         this.block = block;
     }
     analyze() {
+        console.log("Analyze was called on a program!");
         // TODO
     }
     toString(indent = 0) {

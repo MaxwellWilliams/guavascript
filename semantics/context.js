@@ -43,7 +43,7 @@ class Context {
         // Case 1- updating the value of a variable within the current scope:
         if (id in this.symbolTable) {
 
-            // Make sure the new value has the correct type:
+            // Make sure the new value has the correct type (static typing):
             if (this.symbolTable[id].type === type) {
                 this.symbolTable[id] = {value: value, type: type};
             } else {

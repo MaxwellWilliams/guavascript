@@ -13,8 +13,8 @@ class Context {
         this.currentFunction = currentFunction || null;
         this.isInLoop = isInLoop;
 
-        // Need Object.create(null) so things like toString are not in this.variables
-        this.variables = Object.create(null);
+        // Need Object.create(null) so things like toString are not in this.symbolTable
+        this.symbolTable = Object.create(null);
     }
 
     createChildContextForBlock() {
@@ -30,15 +30,15 @@ class Context {
     }
 
     addVariable(id, value) {
-        if (id in this.variables) {
+        if (id in this.symbolTable) {
             throw new Error(`${id} has already been declared within this scope`);
         }
-        this.variables[id] = value;
+        this.symbolTable[id] = value;
     }
 
     get(id) {
-        if (id in this.variables) {
-            return this.variables[id];
+        if (id in this.symbolTable) {
+            return this.symbolTable[id];
         } else if (this.parent === null) {
 
             // If we are at the topmost block and didn't find id:
@@ -62,6 +62,14 @@ class Context {
     assertIsFunction(value) {  // eslint-disable-line class-methods-use-this
         if (value.constructor !== astClasses.FunctionDeclarationStatement) {
             throw new Error(`${value.id} is not a function`);
+        }
+    }
+
+    assertVariableIsNotAlreadyDeclared(id) {
+
+        // Only check the current level context:
+        if (this.symbolTable[id]) {
+            throw new Error(`${id} has already been declared`);
         }
     }
 

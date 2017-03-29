@@ -11,10 +11,10 @@ const argv = require('yargs')
 
 const usageString = `Guavascript Usage:
 
-./guavascript.js -a <filename>
+node guavascript.js -a <filename>
     The '-a' option prints the abstract syntax tree.
 
-./guavascript.js -s <filename>
+node guavascript.js -s <filename>
     The '-s' option runs a complete semantic analysis and prints errors, if any.`
 
 const fs = require('fs');

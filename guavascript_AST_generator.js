@@ -103,9 +103,6 @@ class FunctionDeclarationStatement extends Statement {
         this.id = id;
         this.parameterArray = parameterArray;
         this.block = block;
-
-        // TODO: Fix up that nasty split array, use this for string printing
-        this.parameters = this.paramater1.join(this.parameterArray);
     }
     analyze(context) {
         console.log("DEBUG: FunctionDeclarationStatement analyzing");
@@ -113,7 +110,7 @@ class FunctionDeclarationStatement extends Statement {
         this.block.analyze(context.createChildContextForFunction());
         context.addVariable(this.id,
             {
-                parameters: this.parameters,
+                parameters: this.parameterArray,
                 closure: context.symbolTable,
                 block: this.block
             },
@@ -123,11 +120,8 @@ class FunctionDeclarationStatement extends Statement {
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Func\n${spacer.repeat(++indent)}(id ${this.id})\n${spacer.repeat(indent)}(Parameters`;
         indent++;
-        // console.log(this.parameterArray);
-        if (this.parameterArray !== []) {
+        if (this.parameterArray !== [] && this.parameterArray !== [null] && this.parameterArray !== null) {
             for (var parameterIndex in this.parameterArray) {
-                // console.log(this.parameterArray['Parameter']);
-                console.log(indent);
                 string += `\n${this.parameterArray[parameterIndex].toString(indent)}`;
             }
         }
@@ -146,8 +140,6 @@ class Parameter {
         // TODO: I'm not sure there is anything semantic-wise to check here...
     }
     toString(indent = 0) {
-      console.log(indent);
-      // console.log(this.id);
         return `${spacer.repeat(indent)}(id ${this.id}, default ${this.defaultValue})`;
     }
 }
@@ -641,8 +633,12 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Program(block) {return new Program(block.ast());},
     Block(statements) {return new Block(statements.ast());},
     Statement_conditional(exp, question, block1, colon, block2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
-    Statement_funcDecl(id, lParen, parameter1, commas, parameterArray, rParen, lCurly, block, rCurly) {return new FunctionDeclarationStatement(
-      id.sourceString, parameter1.ast().concat(parameterArray.ast()), block.ast());},
+    Statement_funcDecl(id, lParen, parameter1, commas, parameterArray, rParen, lCurly, block, rCurly) {
+        let parameters = parameter1.ast();
+        if (unpack(parameterArray.ast()) !== null) {
+            parameters = parameters.concat(unpack(parameterArray.ast()));
+        }
+        return new FunctionDeclarationStatement(id.sourceString, parameters, block.ast());},
     Statement_classDecl(clas, id, lCurly, block, rCurly) {return new ClassDeclarationStatement(id.sourceString, block.ast());},
     Statement_match(matchExp) {return new MatchStatement(matchExp.ast());},
     Statement_ifElse(i, exp, lCurly1, block1, rCurly1, els, lCurly2, block2, rCurly2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
@@ -683,7 +679,11 @@ semantics = grammar.createSemantics().addOperation('ast', {
     List(lBracket, list, rBracket) {return new List(list.ast());},
     Tuple(lParen, tuple, rParen) {return new Tuple(tuple.ast());},
     Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {
-      return new Dictionary(IdValuePair.ast().concat(unpack(IdValuePairs.ast())));},
+        let pairs = IdValuePair.ast();
+        if (unpack(IdValuePairs.ast()) !== null) {
+            pairs = pairs.concat(unpack(IdValuePairs.ast()));
+        }
+        return new Dictionary(pairs);},
     IdValuePair(id, colon, variable) {return new IdValuePair(id.sourceString, variable.ast());},
     VarList(firstElem, commas, restElems) {return new VarList(firstElem.ast(), restElems.ast());},
     orOp(operator) {return operator;},

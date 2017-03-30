@@ -67,7 +67,7 @@ tests = function(validFiles, invalidFiles) {
   //   });
   // });
 
-  // This is a change
+  // This is a change again
 
   tests(validFiles, invalidFiles);
 }());

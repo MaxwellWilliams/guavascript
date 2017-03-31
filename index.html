@@ -12,7 +12,13 @@
 
 </head>
 <body>
+  <script src="//code.jquery.com/jquery-latest.min.js"></script>
+  <script src="js/typed.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/railroad.js"></script>
+  <script src="js/railroad_insert.js"></script>
 
+  <script src="js/railroad.js"></script>
   <div class="vertical-center navbar" style="display: flex;" id="navbar-large-screens">
     <div id="intro"></div>
     <div class="col-xs-6">
@@ -142,6 +148,13 @@
     </div>
   </div>
 
+  <div id="syntax-trees">
+    <script>
+    $('#syntax-trees').append($(railroad_insert(`Diagram(NonTerminal('Block')).addTo();`)));
+    $('#syntax-trees').append($(railroad_insert(`Diagram(NonTerminal('Block')).addTo();`)));
+    </script>
+  </div>
+
   <div id="footer">
     <div class="container vertical-center text-center">
       <div class="row vertical-center" style="min-height: 100%; min-width: 100%;">
@@ -152,10 +165,6 @@
       </div>
     </div>
   </div>
-
-<script src="//code.jquery.com/jquery-latest.min.js"></script>
-<script src="js/typed.js"></script>
-<script src="js/script.js"></script>
 
 </body>
 </html>

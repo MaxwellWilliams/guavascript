@@ -151,7 +151,9 @@
   <div id="syntax-trees">
     <script>
     $('#syntax-trees').append($(railroad_insert(`Diagram(NonTerminal('Block')).addTo();`, "Program")));
+
     $('#syntax-trees').append($(railroad_insert(`Diagram(ZeroOrMore('Statement')).addTo();`, "Block")));
+
     $('#syntax-trees').append($(railroad_insert(`
       Diagram(
         Choice(0,
@@ -167,7 +169,142 @@
       Sequence('IdExp'),
       Sequence('"ret"', 'Exp')
       )).addTo();`, "Statement")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('id', Optional(Sequence('"="', 'Var'))))
+      )
+      .addTo();`, "Param")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "MatchExp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "Match")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "Exp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "BoolAndExp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "RelExp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "AddExp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "MulExp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "ExponExp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "PrefixExp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "ParenExp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "Var")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "IdExp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "IdExpBody")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "periodId")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "Arguments")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "IdSelector")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "idPostOp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "List")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "Tuple")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "Dictionary")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "IdValuePair")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "VarList")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "orOp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "andOp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "exponOp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "assignOp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "addOp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "mulOp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "relOp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "prefixOp")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "boolit")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "intlit")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "floatlit")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "stringlit")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "nullLit")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "keyword")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "id")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "idrest")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "constId")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "classId")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "space")));
+
+    $('#syntax-trees').append($(railroad_insert(`
+      .addTo();`, "comment")));
+
     </script>
+
   </div>
 
   <div id="footer">

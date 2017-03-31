@@ -33,7 +33,7 @@
             <a href="#intro"><li class="frontpage-nav">Intro</li></a>
             <a href="#about"><li class="about-nav">About</li></a>
             <a href="#examples"><li class="projects-nav">Examples</li></a>
-            <a href="#diagrams"><li class="contact-nav">Diagrams</li></a>
+            <a href="#syntax-diagrams-section"><li class="contact-nav">Diagrams</li></a>
         </ul>
       </nav>
     </div>
@@ -52,7 +52,7 @@
     </div>
   </div>
 
-  <div class="one-half" id="about">
+  <div class="one-third" id="about">
     <div class="container vertical-center">
       <div class="row horizontal-center">
         <div class="col-xs-12 text-center">
@@ -62,11 +62,24 @@
     </div>
   </div>
 
-  <div class="one-third examples" id="examples">
+  <br>
+  <br>
+
+  <div class="one-fifth" id="examples">
+    <div class="container vertical-center">
+      <div class="row horizontal-center">
+        <div class="col-xs-12 text-center">
+          <h3>Example Programs</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="one-third examples">
     <div class="container example vertical-center">
       <div class="row horizontal-center">
         <div class="col-xs-12 text-center">
-          <h5>Variable Declarations</h5>
+          <h4>Variable Declarations</h4>
           <br>
           <br>
           <p>let name = guav</p>
@@ -81,7 +94,7 @@
     <div class="container example vertical-center">
       <div class="row horizontal-center">
         <div class="col-xs-12 text-center">
-          <h5>Constant Declarations</h5>
+          <h4>Constant Declarations</h4>
           <br>
           <br>
           <p>PI = 3.14159265359</p>
@@ -94,7 +107,7 @@
     <div class="container example vertical-center">
       <div class="row horizontal-center">
         <div class="col-xs-12 text-center">
-          <h5>Arithmetic</h5>
+          <h4>Arithmetic</h4>
           <br>
           <br>
           <p>x = ((2 + 3) * (6 - 1) ^ 2) / 4</p>
@@ -107,7 +120,7 @@
     <div class="container example vertical-center">
       <div class="row horizontal-center">
         <div class="col-xs-12">
-          <h5 class="text-center">Functions</h5>
+          <h4 class="text-center">Functions</h4>
           <br>
           <br>
           <p>numbers = [1, 2, 3, 4, 5, 6]</p>
@@ -129,7 +142,7 @@
     <div class="container example vertical-center">
       <div class="row horizontal-center">
         <div class="col-xs-12">
-          <h5 class="text-center">Class Declarations</h5>
+          <h4 class="text-center">Class Declarations</h4>
           <br>
           <br>
           <p>class Ball {</p>
@@ -148,13 +161,26 @@
     </div>
   </div>
 
-  <div id="syntax-trees">
+  <br>
+  <br>
+
+  <div class="one-fifth" id="syntax-diagrams-section">
+    <div class="container vertical-center">
+      <div class="row horizontal-center">
+        <div class="col-xs-12 text-center">
+          <h3>Syntax Diagrams</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="syntax-diagrams">
     <script>
-    $('#syntax-trees').append($(railroad_insert(`Diagram(NonTerminal('Block')).addTo();`, "Program")));
+    $('#syntax-diagrams').append($(railroad_insert(`Diagram(NonTerminal('Block')).addTo();`, "Program")));
 
-    $('#syntax-trees').append($(railroad_insert(`Diagram(ZeroOrMore('Statement')).addTo();`, "Block")));
+    $('#syntax-diagrams').append($(railroad_insert(`Diagram(ZeroOrMore('Statement')).addTo();`, "Block")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
           Sequence('Exp', '"?"', 'Block', '":"', 'Block'),
@@ -170,28 +196,28 @@
       Sequence('"ret"', 'Exp')
       )).addTo();`, "Statement")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('id', Optional(Sequence('"="', 'Var'))))
       )
       .addTo();`, "Param")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Stack('"Match"', 'IdExp', '"with"', Optional('"|"'), 'Var', 'Match', ZeroOrMore(Sequence('"|"', 'Var', 'Match')), Optional(Sequence('"|"', '"_"', 'Match')))  
       ))
       .addTo();`, "MatchExp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('"->"', Choice(0, 'Block', 'Var'))
       ))
       .addTo();`, "Match")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('Exp', 'orOp', 'BoolAndExp'),
@@ -199,7 +225,7 @@
       ))
       .addTo();`, "Exp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('BoolAndExp', 'andOp', 'RelExp'),
@@ -207,7 +233,7 @@
       ))
       .addTo();`, "BoolAndExp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('AddExp', 'relOp', 'AddExp'),
@@ -215,7 +241,7 @@
       ))
       .addTo();`, "RelExp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('AddExp', 'addOp', 'MulExp'),
@@ -223,7 +249,7 @@
       ))
       .addTo();`, "AddExp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('MulExp', 'mulOp', 'ExponExp'),
@@ -231,7 +257,7 @@
       ))
       .addTo();`, "MulExp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('PrefixExp', 'exponOp', 'AddExp'),
@@ -239,7 +265,7 @@
       ))
       .addTo();`, "ExponExp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('prefixOp', 'ParenExp'),
@@ -247,7 +273,7 @@
       ))
       .addTo();`, "PrefixExp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('"("', 'Exp', '")"'),
@@ -255,148 +281,229 @@
       ))
       .addTo();`, "ParenExp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         'booLit', 'IdExp', 'List', 'Tuple', 'Dictionary', 'intLit', 'floatLit', 'stringLit', 'nullLit'
       ))
       .addTo();`, "Var")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('IdExpBody', Optional('idPostOp'))
       ))
       .addTo();`, "IdExp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('IdExpBody', Choice(0, 'periodId', 'Arguments', 'IdSelector', 'id', '"this"'))
       ))
       .addTo();`, "IdExpBody")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('"."', 'id')
       ))
       .addTo();`, "periodId")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('"("', 'VarList', '")"')
       ))
       .addTo();`, "Arguments")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('"["', 'VarList', '"]"')
       ))
       .addTo();`, "IdSelector")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         '"++"', '"--"'
       ))
       .addTo();`, "idPostOp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('"["', 'VarList', '"]"')
       ))
       .addTo();`, "List")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('"("', 'VarList', '")"')
       ))
       .addTo();`, "Tuple")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('"{"', Optional(Sequence('IdValuePair', ZeroOrMore(Sequence('","', 'IdValuePair')))), '"}"')
       ))
       .addTo();`, "Dictionary")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Sequence('id', '":"', 'Var')
       ))
       .addTo();`, "IdValuePair")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
       Diagram(
         Choice(0,
         Optional(Sequence('Var', ZeroOrMore(Sequence('","', 'Var'))))
       ))
       .addTo();`, "VarList")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"||"'
+      ))
       .addTo();`, "orOp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"&&"'
+      ))
       .addTo();`, "andOp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"^"'
+      ))
       .addTo();`, "exponOp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"="', '"+="', '"-="', '"*="', '"/="'
+      ))
       .addTo();`, "assignOp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"+"', '"-"'
+      ))
       .addTo();`, "addOp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"*"', '"//"', '"/"', '"%"'
+      ))
       .addTo();`, "mulOp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"<="', '"<"', '"=="', '"!="', '">="', '">"'
+      ))
       .addTo();`, "relOp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"--"', '"-"', '"!"', '"++"'
+      ))
       .addTo();`, "prefixOp")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"true"', '"false"'
+      ))
       .addTo();`, "boolit")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+       Comment('Negative Lookahead floatLit'),
+      OneOrMore('digit')
+      ))
       .addTo();`, "intlit")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+      Sequence(OneOrMore('digit'),
+      '"."', OneOrMore('digit'))
+      ))
       .addTo();`, "floatlit")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"<forward-slash>""', ZeroOrMore(Choice(0, '"<forward-slash><forward-slash><forward-slash>""', Sequence(Comment('negative lookahead "<forward-slash>""'), 'any'))), '"<forward-slash>""')
+      ))
       .addTo();`, "stringlit")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"null"'
+      ))
       .addTo();`, "nullLit")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence(Choice(0,'"class"', '"true"', '"false"', '"match"', '"with"', '"if"', '"else"', '"while"', '"for"', '"in"', '"this"', '"print"', '"ret"', '"null"'), Comment('negative lookahead idrest'))
+      ))
       .addTo();`, "keyword")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Choice(0, Sequence(Comment('negative lookahead keyword'), 'letter', ZeroOrMore('idrest')), 'constId')
+      ))
       .addTo();`, "id")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Choice(0, '"_"', 'alnum')))
       .addTo();`, "idrest")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence(Comment('negative lookahead keyword'), 'upper', ZeroOrMore(Choice(0, '"_"', 'upper'))
+       )))
       .addTo();`, "constId")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('upper', ZeroOrMore('idrest'))
+       ))
       .addTo();`, "classId")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        OneOrMore('comment')
+       ))
       .addTo();`, "space")));
 
-    $('#syntax-trees').append($(railroad_insert(`
+    $('#syntax-diagrams').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"#"', ZeroOrMore(Sequence(Comment('negative lookahead <forward-slash> n'), 'any')), '<forward-slash> n')
+       ))
       .addTo();`, "comment")));
 
     </script>

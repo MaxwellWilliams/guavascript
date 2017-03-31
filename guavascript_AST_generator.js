@@ -4,10 +4,20 @@ const grammarContents = fs.readFileSync('guavascript.ohm');
 const grammar = ohm.grammar(grammarContents);
 const Context = require('./semantics/context');
 
-const spacer = "    ";
+const spacer = "  ";
 
-function unpack(a) {
-  return a.length === 0 ? null : a[0];
+function unpack(elem) {
+    elem = elem.ast();
+    elem = Array.isArray(elem) ? elem : [elem];
+    return elem.length === 0 ? null : elem[0];
+}
+
+function joinParams(parameter, parameters) {
+    parameter = Array.isArray(parameter.ast()) ? parameter.ast() : [parameter.ast()];
+    if (unpack(parameters) !== null) {
+        return parameter.concat(unpack(parameters));
+    }
+    return parameter;
 }
 
 class Program {
@@ -19,7 +29,9 @@ class Program {
         this.block.analyze(context.createChildContextForBlock());
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Program\n${this.block.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(Program` +
+               `\n${this.block.toString(++indent)}` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -32,12 +44,11 @@ class Block {
         this.body.forEach(s => s.analyze(context));
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(Block`;
-        indent++;
+        var string = `${spacer.repeat(indent++)}(Block`;
         for (var statementIndex in this.body) {
             string += `\n${this.body[statementIndex].toString(indent)}`;
         }
-        string += `)`;
+        string += `\n${spacer.repeat(--indent)})`;
         return string;
     }
 }
@@ -55,47 +66,59 @@ class Statement {
 
 // Use this for both conditional and if/else statement
 class BranchStatement extends Statement {
-    constructor(cases, elseBlock) {
+    constructor(conditions, thenBlocks, elseBlock) {
         super();
-        this.cases = cases;
-        this.elseBlock = elseBlock[0];
+        this.conditions = conditions;
+        this.thenBlocks = thenBlocks;
+        this.elseBlock = elseBlock;
     }
     analyze(context) {
         console.log("DEBUG: BranchStatement analyzing");
-        this.cases.forEach(c => c.analyze(context));
+        this.conditions.forEach(c => c.analyze(context));
+        this.thenBlocks.forEach(c => c.analyze(context));
         if (this.elseBlock) {
             this.elseBlock.analyze(context.createChildContextForBlock());
         }
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(if`;
-        indent++;
-        for (var i in this.cases) {
-            string += `\n${this.cases[i].toString(indent)}`;
+        var string = `${spacer.repeat(indent++)}(If`;
+        for (var i in this.conditions) {
+            string += `\n${spacer.repeat(indent)}(Case` +
+                      `\n${spacer.repeat(++indent)}(Condition` +
+                      `\n${this.conditions[i].toString(++indent)}` +
+                      `\n${spacer.repeat(--indent)})` +
+                      `\n${spacer.repeat(indent)}(Body` +
+                      `\n${this.thenBlocks[i].toString(++indent)}` +
+                      `\n${spacer.repeat(--indent)})` +
+                      `\n${spacer.repeat(--indent)})`;
         }
-        if (typeof this.elseBlock != 'undefined') {
-            string += `\n${this.elseBlock.toString(indent)}`;
+        if (this.elseBlock !== null) {
+            string += `\n${spacer.repeat(indent)}(Else` +
+                      `\n${this.elseBlock.toString(++indent)}` +
+                      `\n${spacer.repeat(--indent)})`;
         }
-        string += `)`;
+        string += `\n${spacer.repeat(--indent)})`;
         return string;
     }
 }
 
-class Case {
-    constructor(exp, block) {
-        this.exp = exp;
-        this.block = block;
-    }
-    analyze(context) {
-        console.log("DEBUG: Case analyzing");
-        // TODO: How to check that this.exp is of type BOOL?
-        this.exp.analyze(context);
-        this.block.analyze(context.createChildContextForBlock);
-    }
-    toString(indent = 0) {
-        return `${spacer.repeat(indent)}(case${(this.exp === 'undefined') ? "" : `\n${this.exp.toString(++indent)}`}\n${this.block.toString(++indent)})`;
-    }
-}
+// class Case {
+//     constructor(exp, block) {
+//         this.exp = exp;
+//         this.block = block;
+//     }
+//     analyze(context) {
+//         console.log("DEBUG: Case analyzing");
+//         // TODO: How to check that this.exp is of type BOOL?
+//         this.exp.analyze(context);
+//         this.block.analyze(context.createChildContextForBlock);
+//     }
+//     toString(indent = 0) {
+//         return `${spacer.repeat(indent)}(case` +
+//                `${(this.exp == 'undefined') ? '' : `?!?\n${this.exp.toString(++indent)}`}` +
+//                `\n${this.block.toString(indent)})`;
+//     }
+// }
 
 class FunctionDeclarationStatement extends Statement {
     constructor(id, parameterArray, block) {
@@ -118,14 +141,20 @@ class FunctionDeclarationStatement extends Statement {
         // TODO: Do we need to analyze the parameters?
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(Func\n${spacer.repeat(++indent)}(id ${this.id})\n${spacer.repeat(indent)}(Parameters`;
-        indent++;
-        if (this.parameterArray !== [] && this.parameterArray !== [null] && this.parameterArray !== null) {
+        var string = `${spacer.repeat(indent)}(Func` +
+                    `\n${spacer.repeat(++indent)}(id ${this.id})` +
+                    `\n${spacer.repeat(indent++)}(Parameters`;
+        if (this.parameterArray.length !== 0) {
             for (var parameterIndex in this.parameterArray) {
                 string += `\n${this.parameterArray[parameterIndex].toString(indent)}`;
             }
+            string += `\n${spacer.repeat(--indent)})`;
+        } else {
+          string += `)`;
+          indent -= 1;
         }
-        string += `)\n${this.block.toString(--indent)})`;
+        string += `\n${this.block.toString(indent)}` +
+                  `\n${spacer.repeat(--indent)})`;
         return string;
     }
 }
@@ -159,7 +188,10 @@ class ClassDeclarationStatement extends Statement {
         context.addVariable(this.id, this.block, "class");
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Class\n${spacer.repeat(++indent)}(id ${this.id})\n${this.block.toString(indent)})`;
+        return `${spacer.repeat(indent)}(Class` +
+               `\n${spacer.repeat(++indent)}(id ${this.id})` +
+               `\n${this.block.toString(indent)}` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -186,7 +218,14 @@ class WhileStatement extends Statement {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(While\n${this.exp.toString(++indent)}\n${this.block.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(While` +
+          `\n${spacer.repeat(++indent)}(Condition` +
+               `\n${this.exp.toString(++indent)}` +
+               `\n${spacer.repeat(--indent)})` +
+               `\n${spacer.repeat(indent)}(Body` +
+               `\n${this.block.toString(++indent)}` +
+               `\n${spacer.repeat(--indent)})` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -201,7 +240,10 @@ class ForInStatement extends Statement {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(For id (${this.id}) in\n${this.iDExp.toString(++indent)}\n${this.block.toString(indent)})`;
+        return `${spacer.repeat(indent)}(For id (${this.id}) in` +
+               `\n${this.iDExp.toString(++indent)}` +
+               `\n${this.block.toString(indent)}` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -214,7 +256,9 @@ class PrintStatement extends Statement {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Print\n${this.exp.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(Print` +
+               `\n${this.exp.toString(++indent)}` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -229,7 +273,10 @@ class AssignmentStatement extends Statement {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.assignOp}\n${this.idExp.toString(++indent)}\n${this.exp.toString(indent)})`;
+        return `${spacer.repeat(indent)}(${this.assignOp}` +
+               `\n${this.idExp.toString(++indent)}` +
+               `\n${this.exp.toString(indent)}` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -242,7 +289,9 @@ class IdentifierStatement extends Statement {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Identifier Statement\n${this.iDExp.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(Identifier Statement` +
+              `\n${this.iDExp.toString(++indent)}` +
+              `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -255,7 +304,9 @@ class ReturnStatement extends Statement {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Return\n${this.exp.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(Return` +
+               `\n${this.exp.toString(++indent)}` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -267,28 +318,36 @@ class Expression {
 }
 
 class MatchExpression extends Expression {
-    constructor(idExp, var1, varArray, match1, matchArray, matchFinal) {
+    constructor(idExp, varArray, matchArray, matchFinal) {
         super();
         this.idExp = idExp;
-        this.var1 = var1;
         this.varArray = varArray;
-        this.match1 = match1;
         this.matchArray = matchArray;
-        this.matchFinal = matchFinal[0];
+        this.matchFinal = matchFinal;
     }
     analyze() {
         // TODO
     }
     toString(indent = 0) {
-        var string = `${spacer.repeat(indent)}(Match Expression\n${this.idExp.toString(++indent)}\n${spacer.repeat(indent)}(Matches`;
-        string += (this.var1.length != 0 && this.match1.length != 0) ? `\n${spacer.repeat(++indent)}(Match\n${this.var1.toString(++indent)} ->\n${this.match1.toString(indent)})` : "";
-        if (this.varArray.length == this.matchArray.length && this.varArray.length != 0) {
+        var string = `${spacer.repeat(indent)}(Match Expression` +
+                     `\n${this.idExp.toString(++indent)}` +
+                     `\n${spacer.repeat(indent++)}(Matches`;
+        if (this.varArray.length != 0 && this.varArray.length == this.matchArray.length) {
             for (var varIndex in this.varArray) {
-                string += `\n${spacer.repeat(--indent)}(Match\n${this.varArray[varIndex].toString(++indent)} ->\n${this.matchArray[varIndex].toString(indent)})`
+                string += `\n${spacer.repeat(indent)}(Match` +
+                          `\n${this.varArray[varIndex].toString(++indent)} ->` +
+                          `\n${this.matchArray[varIndex].toString(indent)}` +
+                          `\n${spacer.repeat(--indent)})`
             }
         }
-        string += (this.matchFinal && this.matchFinal.length != 0) ? `\n${spacer.repeat(--indent)}(Match\n${spacer.repeat(++indent)} _ ->\n${this.matchFinal.toString(indent)})` : "";
-        string += "))";
+        if (this.matchFinal.length > 0) {
+          string += `\n${spacer.repeat(indent)}(Match` +
+                    `\n${spacer.repeat(++indent)}_ ->` +
+                    `\n${spacer.repeat(indent)}${this.matchFinal.toString(indent)}` +
+                    `\n${spacer.repeat(--indent)})`;
+        }
+        string += `\n${spacer.repeat(--indent)})` +
+                  `\n${spacer.repeat(--indent)})`;
         return string;
     }
 }
@@ -316,7 +375,10 @@ class BinaryExpression extends Expression {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.op}\n${this.left.toString(++indent)}\n${this.right.toString(indent)})`;
+        return `${spacer.repeat(indent)}(${this.op}` +
+               `\n${this.left.toString(++indent)}` +
+               `\n${this.right.toString(indent)}` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -372,7 +434,10 @@ class IdExpression extends Expression {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(IdExpression\n${this.idExpBody.toString(++indent)}${(this.idPostOp.length === 0) ? "" : `\n${spacer.repeat(++indent)}${this.idPostOp}`})`;
+        return  `${spacer.repeat(indent)}(IdExpression\n` +
+                `${this.idExpBody.toString(++indent)}` +
+                `${(this.idPostOp.length === 0) ? "" : `\n${spacer.repeat(++indent)}${this.idPostOp}`}` +
+                `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -386,7 +451,10 @@ class IdExpressionBodyRecursive {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.appendageOp}\n${this.idExpBody.toString(++indent)}\n${this.idAppendage.toString(indent)})`;
+        return `${spacer.repeat(indent)}(${this.appendageOp}` +
+               `\n${this.idExpBody.toString(++indent)}` +
+               `\n${this.idAppendage.toString(indent)}` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -428,7 +496,14 @@ class Arguments {
         return "()";
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Arguments${this.args.toString(++indent)})`;
+        var string = `${spacer.repeat(indent)}(Arguments`;
+        if (this.args.length > 0) {
+            string += `\n${this.args.toString(++indent)}` +
+                      `\n${spacer.repeat(--indent)})`;
+        } else {
+          string += `)`
+        }
+        return string;
     }
 }
 
@@ -455,7 +530,14 @@ class List {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(List${this.varList.toString(++indent)})`;
+        var string = `${spacer.repeat(indent)}(List`;
+        if (this.varList.length > 0) {
+            string += `\n${this.varList.toString(++indent)}` +
+                      `\n${spacer.repeat(--indent)})`;
+        } else {
+            string += `)`;
+        }
+        return string;
     }
 }
 
@@ -467,7 +549,9 @@ class Tuple {
         // TODO
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Tuple${this.elems.toString(++indent)})`;
+        return `${spacer.repeat(indent)}(Tuple` +
+               `\n${this.elems.toString(++indent)}` +
+               `\n${spacer.repeat(--indent)})`;
     }
 }
 
@@ -484,8 +568,10 @@ class Dictionary {
             for (var pairIndex in this.idValuePairs) {
                 string += `\n${this.idValuePairs[pairIndex].toString(indent)}`;
             }
+            string += `\n${spacer.repeat(--indent)})`;
+        } else {
+          string += `)`;
         }
-        string += ")"
         return string;
     }
 }
@@ -504,19 +590,22 @@ class IdValuePair {
 }
 
 class VarList {
-    constructor(firstVar, varArray) {
-        this.firstVar = firstVar;
-        this.varArray = (varArray.length == 0) ? [] : varArray[0];
+    constructor(variables) {
+        this.variables = variables;
+        this.length = variables.length;
     }
     analyze() {
         // TODO
     }
     toString(indent = 0) {
-        var string = (this.firstVar.length === 0) ? "" : `\n${spacer.repeat(indent)}${this.firstVar.toString(indent)}`;
-        if (this.varArray.length != 0) {
-            for (var variable in this.varArray) {
-                string += `\n${this.varArray[variable].toString(indent)}`
+        var string = `${spacer.repeat(indent++)}(VarList`;
+        if (this.variables.length !== 0) {
+            for (var variable in this.variables) {
+                string += `\n${this.variables[variable].toString(indent)}`
             }
+            string += `\n${spacer.repeat(--indent)})`;
+        } else {
+          string += `)`;
         }
         return string;
     }
@@ -632,23 +721,25 @@ class ClassId {
 semantics = grammar.createSemantics().addOperation('ast', {
     Program(block) {return new Program(block.ast());},
     Block(statements) {return new Block(statements.ast());},
-    Statement_conditional(exp, question, block1, colon, block2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
+    Statement_conditional(exp, question, ifBlock, colon, elseBlock) {
+      return new BranchStatement([exp.ast()], [ifBlock.ast()], unpack(elseBlock));},
     Statement_funcDecl(id, lParen, parameter1, commas, parameterArray, rParen, lCurly, block, rCurly) {
-        let parameters = parameter1.ast();
-        if (unpack(parameterArray.ast()) !== null) {
-            parameters = parameters.concat(unpack(parameterArray.ast()));
-        }
-        return new FunctionDeclarationStatement(id.sourceString, parameters, block.ast());},
-    Statement_classDecl(clas, id, lCurly, block, rCurly) {return new ClassDeclarationStatement(id.sourceString, block.ast());},
+      return new FunctionDeclarationStatement(id.sourceString, joinParams(parameter1, parameterArray), block.ast());},
+    Statement_classDecl(clas, id, lCurly, block, rCurly) {
+      return new ClassDeclarationStatement(id.sourceString, block.ast());},
     Statement_match(matchExp) {return new MatchStatement(matchExp.ast());},
-    Statement_ifElse(i, exp, lCurly1, block1, rCurly1, els, lCurly2, block2, rCurly2) {return new BranchStatement(new Case(exp.ast(), block1.ast()), block2.ast());},
+    Statement_ifElse(i, ifExp, lCurly1, ifBlock, rCurly1, elif, exps, lCurly2, blocks, rCurly2, els, lCurly3, elseBlock, rCurly3) {
+      return new BranchStatement(joinParams(ifExp, exps), joinParams(ifBlock, blocks), unpack(elseBlock));},
     Statement_while(whil, exp, lCurly, block, rCurly) {return new WhileStatement(exp.ast(), block.ast());},
-    Statement_forIn(fo, id, iN, iDExp, lCurly, block, rCurly) {return new ForInStatement(id.sourceString, iDExp.ast(), block.ast());},
+    Statement_forIn(fo, id, iN, iDExp, lCurly, block, rCurly) {
+      return new ForInStatement(id.sourceString, iDExp.ast(), block.ast());},
     Statement_print(print, lCurly, exp, rCurly) {return new PrintStatement(exp.ast());},
-    Statement_assign(idExp, assignOp, exp) {return new AssignmentStatement(idExp.ast(), assignOp.sourceString, exp.ast());},
+    Statement_assign(idExp, assignOp, exp) {
+      return new AssignmentStatement(idExp.ast(), assignOp.sourceString, exp.ast());},
     Statement_identifier(iDExp) {return new IdentifierStatement(iDExp.ast());},
     Statement_return(ret, exp) {return new ReturnStatement(exp.ast());},
-    MatchExp(matchStr, idExp, wit, line1, var1, match1, lines, varArray, matchArray, lineFinal, _, matchFinal) {return new MatchExpression(idExp.ast(), var1.ast(), varArray.ast(), match1.ast(), matchArray.ast(), matchFinal.ast());},
+    MatchExp(matchStr, idExp, wit, line1, var1, match1, lines, varArray, matchArray, lineFinal, _, matchFinal) {
+        return new MatchExpression(idExp.ast(), [var1.ast()].concat(varArray.ast()), [match1.ast()].concat(matchArray.ast()), matchFinal.ast());},
     Match (arrow, matchee) {return new Match(matchee.ast())},
     Param(id, equals, variable) {return new Parameter(id.sourceString, variable.ast())},
     Exp_reg(left, op, right) {return new BinaryExpression(left.ast(), op.sourceString, right.ast());},
@@ -679,13 +770,9 @@ semantics = grammar.createSemantics().addOperation('ast', {
     List(lBracket, list, rBracket) {return new List(list.ast());},
     Tuple(lParen, tuple, rParen) {return new Tuple(tuple.ast());},
     Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {
-        let pairs = IdValuePair.ast();
-        if (unpack(IdValuePairs.ast()) !== null) {
-            pairs = pairs.concat(unpack(IdValuePairs.ast()));
-        }
-        return new Dictionary(pairs);},
+        return new Dictionary(joinParams(IdValuePair, IdValuePairs));},
     IdValuePair(id, colon, variable) {return new IdValuePair(id.sourceString, variable.ast());},
-    VarList(firstElem, commas, restElems) {return new VarList(firstElem.ast(), restElems.ast());},
+    VarList(firstElem, commas, restElems) {return new VarList(joinParams(firstElem, restElems));},
     orOp(operator) {return operator;},
     andOp(operator) {return operator;},
     exponOp(operator) {return operator;},

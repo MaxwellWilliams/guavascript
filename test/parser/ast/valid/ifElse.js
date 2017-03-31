@@ -1,15 +1,32 @@
 module.exports.getAst = function() {
     return `(Program
-    (Block
-        (if
-            (==
-                (IdExpression
-                    (x))
-                (true))
-            (Block
-                (Return
-                    (true)))
-            (Block
-                (Return
-                    (false))))))`;
+  (Block
+    (If
+      (Case
+        (Condition
+          (==
+            (IdExpression
+              (x)
+            )
+            (true)
+          )
+        )
+        (Body
+          (Block
+            (Return
+              (true)
+            )
+          )
+        )
+      )
+      (Else
+        (Block
+          (Return
+            (false)
+          )
+        )
+      )
+    )
+  )
+)`;
 }

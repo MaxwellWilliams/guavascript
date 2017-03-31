@@ -1,9 +1,18 @@
 module.exports.getAst = function() {
     return `(Program
-    (Block
-        (While
+  (Block
+    (While
+      (Condition
+        (true)
+      )
+      (Body
+        (Block
+          (Return
             (true)
-                (Block
-                    (Return
-                        (true))))))`;
+          )
+        )
+      )
+    )
+  )
+)`;
 }

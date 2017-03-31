@@ -1,6 +1,9 @@
 module.exports.getAst = function() {
     return `(Program
-    (Block
-        (Print
-            (hello, world!))))`;
+  (Block
+    (Print
+      (hello, world!)
+    )
+  )
+)`;
 }

@@ -6,7 +6,9 @@ Guavascript {
                   "{" Block "}"                                         -- funcDecl
                 | "class" classId "{" Block "}"                         -- classDecl
                 | MatchExp                                              -- match
-                | "if" Exp "{" Block "}" ("else" "{" Block "}")?        -- ifElse
+                | "if" Exp "{" Block "}"
+                  ("elif" Exp "{" Block "}" )* 
+                  ("else" "{" Block "}")?                               -- ifElse
                 | "while" Exp "{" Block "}"                             -- while
                 | "for" id "in" IdExp "{" Block "}"                     -- forIn
                 | "print" "(" Exp ")"                                   -- print

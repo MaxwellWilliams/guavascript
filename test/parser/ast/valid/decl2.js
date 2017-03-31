@@ -1,8 +1,12 @@
 module.exports.getAst = function() {
     return `(Program
-    (Block
-        (=
-            (IdExpression
-                (age))
-            (21))))`;
+  (Block
+    (=
+      (IdExpression
+        (age)
+      )
+      (21)
+    )
+  )
+)`;
 }

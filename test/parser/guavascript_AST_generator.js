@@ -43,17 +43,10 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullAstPath = validProgramAsts + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-
-    // astFile = require(path.resolve(validProgramAsts + '/' + fileName.replace('.guav', '.js')));
-    // console.log(astFile.getAst());
-    // astString = require(path.resolve(validProgramAsts + '/' + fileName.replace('.guav', '.js'))).getAst();
-    // console.log(astString);
-
-    // if(fileName == "class1.guav") {
+    // if(fileName == "match1.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
-      // ast: astString
     });
     // }
   });

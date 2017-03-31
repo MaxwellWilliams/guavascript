@@ -19,7 +19,7 @@ node guavascript.js -s <filename>
 
 const fs = require('fs');
 const path = require('path');
-const parser = require(path.resolve('./guavascript_AST_generator.js'));
+const parser = require(path.resolve('./parser.js'));
 
 fs.readFile(argv._[0], 'utf-8', (err, text) => {
     let program = parser(text);

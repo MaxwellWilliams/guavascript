@@ -2,8 +2,8 @@
 
 if (false) {
     print("nope")
-} else if (5 < 3) {
+} elif (3 < 2) {
     print("still nope")
-} else if (47 <= 47) {
-    print("you bet")
+} elif (2 >= 1) {
+    print("ah yeah")
 }

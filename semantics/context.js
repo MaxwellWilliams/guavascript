@@ -1,6 +1,6 @@
 // Largely basing Context off of Dr. Toal's Plainscript...
 
-const astClasses = require('../guavascript_AST_generator.js');
+const astClasses = require('../parser.js');
 
 // Reminder: to access FunctionDeclarationStatement and Parameter:
 // let x = new astClasses.FunctionDeclarationStatement(...)

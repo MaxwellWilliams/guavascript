@@ -3,14 +3,14 @@ path = require('path');
 ohm = require('ohm-js');
 assert = require('assert');
 util = require('util');
-parser = require(path.resolve('./guavascript_AST_generator.js'));
+parser = require(path.resolve('./parser.js'));
 validPrograms = path.resolve('./test/parser/programs/valid');
 invalidPrograms = path.resolve('./test/parser/programs/invalid');
 validProgramAsts = path.resolve('./test/parser/ast/valid');
 // invalidProgramAsts = path.resolve('./test/parser/ast/invalid');
 
 tests = function(validFiles, invalidFiles) {
-  describe('guavascript_AST_generator.ohm', function() {
+  describe('Parser tests', function() {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
         it('parser\\programs\\valid\\' +file.name + ' should be accepted by the grammar',

@@ -2,31 +2,31 @@ fs = require('fs');
 path = require('path');
 ohm = require('ohm-js');
 assert = require('assert');
-grammarContents = fs.readFileSync('guavascript.ohm');
-grammar = ohm.grammar(grammarContents);
-validPrograms = path.resolve('./test/grammar/programs/valid');
-invalidPrograms = path.resolve('./test/grammar/programs/invalid');
+util = require('util');
+parser = require(path.resolve('./parser.js'));
+validPrograms = path.resolve('./test/semantics/programs/valid');
+invalidPrograms = path.resolve('./test/semantics/programs/invalid');
 
 tests = function(validFiles, invalidFiles) {
-  describe('guavascript.ohm', function() {
+  describe('Semantic analysis tests', function() {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
-        it('grammar\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
+        it('parser\\programs\\valid\\' + file.name + ' should analze without any errors',
           function() {
-            grammarResult = grammar.match(file.code);
-            assert.equal(grammarResult.succeeded(), true,
-              'Returned: ' + grammarResult);
+            // console.log(util.inspect(parser(file.code), {depth: null}));
+            parser(file.code).analyze();
+            //done();
         });
       });
     });
 
     describe('Test invalid example programs', function() {
       invalidFiles.forEach(function(file) {
-        it('grammar\\programs\\invalid\\' + file.name + ' should be rejected by the grammar',
+        it('parser\\programs\\invalid\\' + file.name + ' should throw a semantic error',
           function() {
-            grammarResult = grammar.match(file.code);
-            assert.equal(grammarResult.succeeded(), false,
-              'Returned: ' + grammarResult);
+            const errorPattern = RegExp(file.name.replace('.guav', '').replace(/-/g, ' '), 'i');
+            assert.throws(() => parser(file.code).analyze(), errorPattern);
+            //done();
         });
       });
     });
@@ -38,11 +38,11 @@ tests = function(validFiles, invalidFiles) {
   invalidFiles = [];
 
   fs.readdirSync(validPrograms).forEach(function(fileName) {
-    fullFilePath = validPrograms + '/' + fileName;
-    fileContents = fs.readFileSync(fullFilePath, 'utf-8');
+    fullProgramPath = validPrograms + '/' + fileName;
+    programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
     validFiles.push({
       name: fileName,
-      code: fileContents
+      code: programFileContents
     });
   });
 

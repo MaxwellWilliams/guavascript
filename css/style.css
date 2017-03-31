@@ -117,7 +117,7 @@ h4, h5, h6, p, li {
   font-family: 'Roboto Mono', monospace, sans-serif !important;
 }
 
-p, li {
+p, li, #names {
   font-weight: 300 !important;
   line-height: 240%;
   font-size: 1.3rem !important;

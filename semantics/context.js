@@ -1,5 +1,3 @@
-// Largely basing Context off of Dr. Toal's Plainscript...
-
 const astClasses = require('../parser.js');
 
 const semanticErrors = {

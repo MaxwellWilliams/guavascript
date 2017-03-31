@@ -51,14 +51,6 @@ class Block {
     }
 }
 
-/*******************************
-* Statements
-* Note: statement toString methods include an `indent` parameter, indicating how indented
-* the particular printed statement should be. To illustrate the tree structure, a language
-* class passes the `indent` + 1 to its children unless the child is trivial and printed
-* directly in the parent node.
-*******************************/
-
 class Statement {
 }
 
@@ -293,10 +285,6 @@ class ReturnStatement extends Statement {
                `\n${spacer.repeat(--indent)})`;
     }
 }
-
-/*******************************
-* Expressions
-*******************************/
 
 class Expression {
 }

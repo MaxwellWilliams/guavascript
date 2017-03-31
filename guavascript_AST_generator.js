@@ -25,7 +25,6 @@ class Program {
         this.block = block;
     }
     analyze(context = new Context()) {
-        console.log("DEBUG: Program analyzing");
         this.block.analyze(context.createChildContextForBlock());
     }
     toString(indent = 0) {
@@ -40,7 +39,6 @@ class Block {
         this.body = body;
     }
     analyze(context) {
-        console.log("DEBUG: Block analyzing");
         this.body.forEach(s => s.analyze(context));
     }
     toString(indent = 0) {
@@ -73,7 +71,6 @@ class BranchStatement extends Statement {
         this.elseBlock = elseBlock;
     }
     analyze(context) {
-        console.log("DEBUG: BranchStatement analyzing");
         this.conditions.forEach(c => c.analyze(context));
         this.thenBlocks.forEach(c => c.analyze(context));
         if (this.elseBlock) {
@@ -128,7 +125,6 @@ class FunctionDeclarationStatement extends Statement {
         this.block = block;
     }
     analyze(context) {
-        console.log("DEBUG: FunctionDeclarationStatement analyzing");
         context.assertVariableIsNotAlreadyDeclared(this.id);
         this.block.analyze(context.createChildContextForFunction());
         context.addVariable(this.id,
@@ -165,7 +161,6 @@ class Parameter {
         this.defaultValue = defaultValue;
     }
     analyze() {
-        console.log("DEBUG: Parameter analyzing");
         // TODO: I'm not sure there is anything semantic-wise to check here...
     }
     toString(indent = 0) {
@@ -180,11 +175,10 @@ class ClassDeclarationStatement extends Statement {
         this.block = block;
     }
     analyze(context) {
-        console.log("DEBUG: ClassDeclarationStatement analyzing");
         context.assertVariableIsNotAlreadyDeclared(this.id);
 
         // TODO: I THINK the block should be analyzed before adding it to the context??
-        this.block.analyze(context);
+        this.block.analyze(context.createChildContextForBlock());
         context.addVariable(this.id, this.block, "class");
     }
     toString(indent = 0) {

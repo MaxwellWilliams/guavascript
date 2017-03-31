@@ -10,7 +10,7 @@ validProgramAsts = path.resolve('./test/parser/ast/valid');
 // invalidProgramAsts = path.resolve('./test/parser/ast/invalid');
 
 tests = function(validFiles, invalidFiles) {
-  describe('guavascript_AST_generator.ohm', function() {
+  describe('Parser tests', function() {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
         it('parser\\programs\\valid\\' +file.name + ' should be accepted by the grammar',

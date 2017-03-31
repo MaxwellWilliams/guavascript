@@ -2,8 +2,10 @@
 
 if (false) {
     print("nope")
-} else if (5 < 3) {
-    print("still nope")
-} else if (47 <= 47) {
-    print("you bet")
+} else {
+    if (5 < 3) {
+        print("still nope")
+    } else {
+        print("you bet")
+    }
 }

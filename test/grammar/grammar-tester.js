@@ -8,7 +8,7 @@ validPrograms = path.resolve('./test/grammar/programs/valid');
 invalidPrograms = path.resolve('./test/grammar/programs/invalid');
 
 tests = function(validFiles, invalidFiles) {
-  describe('guavascript.ohm', function() {
+  describe('Grammar tests', function() {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
         it('grammar\\programs\\valid\\' +file.name + ' should be accepted by the grammar',

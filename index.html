@@ -151,7 +151,22 @@
   <div id="syntax-trees">
     <script>
     $('#syntax-trees').append($(railroad_insert(`Diagram(NonTerminal('Block')).addTo();`, "Program")));
-    $('#syntax-trees').append($(railroad_insert(`Diagram(NonTerminal('Block')).addTo();`, "Program")));
+    $('#syntax-trees').append($(railroad_insert(`Diagram(ZeroOrMore('Statement')).addTo();`, "Block")));
+    $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+          Sequence('Exp', '"?"', 'Block', '":"', 'Block'),
+          Sequence('id', '"("', Optional(Sequence('(Param', ZeroOrMore(Sequence('","', 'Param)')))),'")"'),
+          Sequence('"class"', 'classId', '"{"', 'Block', '"}"'),
+          Sequence('MatchExp'),
+          Sequence('"if"', 'Exp', '"{"', 'Block', '"}"', ZeroOrMore(Sequence('"elif"', 'Exp', '"{"', 'Block', '"}"')), Optional(Sequence('"else"', '"{"', 'Block', '"}"'))),
+      Sequence('"while"', 'Exp', '"{"', 'Block', '"}"'),
+      Sequence('"for"', 'id', '"in"', 'IdExp', '"{"', 'Block', '"}"'),
+      Sequence('"print"', '"("', 'Exp', '")"'),
+      Sequence('IdExp', 'assignOp', Choice(0, 'Exp', 'MatchExp')),
+      Sequence('IdExp'),
+      Sequence('"ret"', 'Exp')
+      )).addTo();`, "Statement")));
     </script>
   </div>
 

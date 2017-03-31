@@ -29,17 +29,6 @@ class Context {
         return new Context(this, currentFunction, false);
     }
 
-    // TODO: Do we need both addVariable and setVariable? Our language has no instantiation syntax...
-
-    addVariable(id, value, type) {
-
-        // Only one uniqueness bucket - functions and non-functions cannot have the same id:
-        if (id in this.symbolTable) {
-            throw new Error(`${id} has already been declared within this scope`);
-        }
-        this.symbolTable[id] = {value: value, type: type};
-    }
-
     setVariable(id, value, type) {
 
         // Case 1- updating the value of a variable within the current scope:
@@ -54,7 +43,7 @@ class Context {
         } else {
 
             // Case 2- either creating a new variable or shadowing an old one:
-            this.addVariable(id, value, type);
+            this.symbolTable[id] = {value: value, type: type};
         }
     }
 

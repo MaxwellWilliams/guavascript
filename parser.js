@@ -71,8 +71,11 @@ class BranchStatement extends Statement {
         this.elseBlock = elseBlock;
     }
     analyze(context) {
-        this.conditions.forEach(c => c.analyze(context));
-        this.thenBlocks.forEach(c => c.analyze(context));
+        this.conditions.forEach(function(c) {
+            c.analyze(context);
+            context.assertIsTypeBoolean(c);
+        });
+        this.thenBlocks.forEach(c => c.analyze(context.createChildContextForBlock()));
         if (this.elseBlock) {
             this.elseBlock.analyze(context.createChildContextForBlock());
         }
@@ -107,7 +110,6 @@ class FunctionDeclarationStatement extends Statement {
         this.block = block;
     }
     analyze(context) {
-        context.assertVariableIsNotAlreadyDeclared(this.id);
         this.block.analyze(context.createChildContextForFunction());
         context.setVariable(this.id,
             {
@@ -157,7 +159,6 @@ class ClassDeclarationStatement extends Statement {
         this.block = block;
     }
     analyze(context) {
-        context.assertVariableIsNotAlreadyDeclared(this.id);
         this.block.analyze(context.createChildContextForBlock());
         context.setVariable(this.id, this.block, "class");
     }
@@ -243,8 +244,17 @@ class AssignmentStatement extends Statement {
         this.assignOp = assignOp;
         this.exp = exp;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.idExp.analyze(context);
+        this.exp.analyze(context);
+
+        // console.log(util.inspect(this, {depth: null}));
+
+        if (this.assignOp == "=") {
+            // TODO: Not sure what the input id should be. Change from sourceString when we figure it out
+            // console.log(`Set ${this.idExp.id} to ${this.exp} with type ${this.exp.type}`);
+            context.setVariable(this.idExp.id, this.exp, this.exp.type);
+        }
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.assignOp}` +
@@ -344,9 +354,10 @@ class BinaryExpression extends Expression {
         this.left = left;
         this.op = op;
         this.right = right;
+        this.type;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        // TODO: calculate type in here
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.op}` +
@@ -388,8 +399,11 @@ class Variable extends Expression {
     constructor(variable) {
         super();
         this.var = variable;
+        this.type;
     }
-    analyze() {
+    analyze(context) {
+        this.var.analyze(context);
+        this.type = this.var.type;
         // TODO
     }
     toString(indent = 0) {
@@ -499,6 +513,7 @@ class IdSelector {
 class List {
     constructor(varList) {
         this.varList = varList;
+        this.type = "list"
     }
     analyze() {
         // TODO
@@ -518,6 +533,7 @@ class List {
 class Tuple {
     constructor(elems) {
         this.elems = elems;
+        this.type = "tuple"
     }
     analyze() {
         // TODO
@@ -532,6 +548,7 @@ class Tuple {
 class Dictionary {
     constructor(idValuePairs) {
         this.idValuePairs = idValuePairs;
+        this.type = "dictionary"
     }
     analyze() {
         // TODO
@@ -588,6 +605,7 @@ class VarList {
 class IntLit {
     constructor(digits) {
         this.digits = digits;
+        this.type = "integer";
     }
     analyze() {
         // TODO
@@ -600,6 +618,7 @@ class IntLit {
 class FloatLit {
     constructor(value) {
         this.value = value;
+        this.type = "float";
     }
     analyze() {
         // TODO
@@ -612,6 +631,7 @@ class FloatLit {
 class StringLit {
     constructor(value) {
         this.value = value.substring(1, value.length - 1);
+        this.type = "string";
     }
     analyze() {
         // TODO
@@ -624,6 +644,7 @@ class StringLit {
 class BoolLit {
     constructor(boolVal) {
         this.boolVal = boolVal;
+        this.type = "boolean";
     }
     analyze() {
         // TODO
@@ -634,7 +655,9 @@ class BoolLit {
 }
 
 class NullLit {
-    constructor() {}
+    constructor() {
+        this.type = "null"
+    }
     analyze() {
         // TODO
     }

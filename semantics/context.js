@@ -2,9 +2,43 @@
 
 const astClasses = require('../parser.js');
 
-// Reminder: to access FunctionDeclarationStatement and Parameter:
-// let x = new astClasses.FunctionDeclarationStatement(...)
-// let x = new astClasses.Parameter(...)
+const semanticErrors = {
+    changedImmutableType(id, expectedType, receivedType) {
+        return `ChangedImmutableType error: tried to change ${id} `
+            + `from type ${expectedType} to ${receivedType}`;
+    },
+    useBeforeDeclaration(id) {
+        return `UseBeforeDeclaration error: ${id} was used but undeclared`;
+    },
+    isNotAFunction(id) {
+        return `IsNotAFunction error: ${id} is not a function`;
+    },
+    isNotAList(id) {
+        return `IsNotAList error: ${id} is not a list`;
+    },
+    isNotADictionary(id) {
+        return `IsNotADictionary error: ${id} is not a dictionary`;
+    },
+    invalidBinaryOperands(leftType, op, rightType) {
+        return `InvalidBinaryOperands error: ${leftType} and ${rightType} cannot be used with ${op}`;
+    },
+    invalidUnaryOperand(type, op) {
+        return `InvalidUnaryOperand error: ${type} cannot be used with ${op}`;
+    },
+    parameterArgumentMismatch(id, parameterTypeList, argumentTypeList) {
+        return `ParameterArgumentMismatch error: ${id} has signature ${parameterTypeList} `
+            + `but was called with signature ${argumentTypeList}`;
+    },
+    incompleteMatch() {
+        return `IncompleteMatch error: match statement is non-exhaustive`;
+    },
+    expressionIsNotTypeBoolean(exp, receivedType) {
+        return `ExpressionIsNotTypeBoolean error: ${exp} is type ${receivedType} but must be type boolean`;
+    },
+    unusedLocalVariable(id) {
+        return `UnusedLocalVariable error: local variable ${id} is declared but never used`;
+    }
+};
 
 class Context {
 
@@ -38,7 +72,7 @@ class Context {
             if (this.symbolTable[id].type === type) {
                 this.symbolTable[id] = {value: value, type: type};
             } else {
-                throw new Error(`Expected type ${this.symbolTable[id].type} but got ${type}`)
+                throw new Error(semanticErrors.changedImmutableType(id, this.symbolTable[id].type, type))
             }
         } else {
 
@@ -53,7 +87,7 @@ class Context {
         } else if (this.parent === null) {
 
             // If we are at the topmost block and didn't find id:
-            throw new Error(`${id} has not been declared`);
+            throw new Error(semanticErrors.useBeforeDeclaration(id));
 
         } else {
 
@@ -74,15 +108,13 @@ class Context {
 
     assertIsFunction(value) {  // eslint-disable-line class-methods-use-this
         if (value.constructor !== astClasses.FunctionDeclarationStatement) {
-            throw new Error(`${value.id} is not a function`);
+            throw new Error(semanticErrors.isNotAFunction(value.id));
         }
     }
 
-    assertVariableIsNotAlreadyDeclared(id) {
-
-        // Only check the current level context:
-        if (this.symbolTable[id]) {
-            throw new Error(`${id} has already been declared`);
+    assertIsTypeBoolean(exp) {
+        if (!exp.type == "boolean") {
+            throw new Error(semanticErrors.expressionIsNotTypeBoolean(exp, exp.type));
         }
     }
 

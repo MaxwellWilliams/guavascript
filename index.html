@@ -178,69 +178,165 @@
       .addTo();`, "Param")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Stack('"Match"', 'IdExp', '"with"', Optional('"|"'), 'Var', 'Match', ZeroOrMore(Sequence('"|"', 'Var', 'Match')), Optional(Sequence('"|"', '"_"', 'Match')))  
+      ))
       .addTo();`, "MatchExp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"->"', Choice(0, 'Block', 'Var'))
+      ))
       .addTo();`, "Match")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('Exp', 'orOp', 'BoolAndExp'),
+        'BoolAndExp'
+      ))
       .addTo();`, "Exp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('BoolAndExp', 'andOp', 'RelExp'),
+        'RelExp'
+      ))
       .addTo();`, "BoolAndExp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('AddExp', 'relOp', 'AddExp'),
+        'AddExp'
+      ))
       .addTo();`, "RelExp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('AddExp', 'addOp', 'MulExp'),
+        'MulExp'
+      ))
       .addTo();`, "AddExp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('MulExp', 'mulOp', 'ExponExp'),
+        'ExponExp'
+      ))
       .addTo();`, "MulExp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('PrefixExp', 'exponOp', 'AddExp'),
+        'PrefixExp'
+      ))
       .addTo();`, "ExponExp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('prefixOp', 'ParenExp'),
+        'ParenExp'
+      ))
       .addTo();`, "PrefixExp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"("', 'Exp', '")"'),
+        'Var'
+      ))
       .addTo();`, "ParenExp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        'booLit', 'IdExp', 'List', 'Tuple', 'Dictionary', 'intLit', 'floatLit', 'stringLit', 'nullLit'
+      ))
       .addTo();`, "Var")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('IdExpBody', Optional('idPostOp'))
+      ))
       .addTo();`, "IdExp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('IdExpBody', Choice(0, 'periodId', 'Arguments', 'IdSelector', 'id', '"this"'))
+      ))
       .addTo();`, "IdExpBody")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"."', 'id')
+      ))
       .addTo();`, "periodId")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"("', 'VarList', '")"')
+      ))
       .addTo();`, "Arguments")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"["', 'VarList', '"]"')
+      ))
       .addTo();`, "IdSelector")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        '"++"', '"--"'
+      ))
       .addTo();`, "idPostOp")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"["', 'VarList', '"]"')
+      ))
       .addTo();`, "List")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"("', 'VarList', '")"')
+      ))
       .addTo();`, "Tuple")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('"{"', Optional(Sequence('IdValuePair', ZeroOrMore(Sequence('","', 'IdValuePair')))), '"}"')
+      ))
       .addTo();`, "Dictionary")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Sequence('id', '":"', 'Var')
+      ))
       .addTo();`, "IdValuePair")));
 
     $('#syntax-trees').append($(railroad_insert(`
+      Diagram(
+        Choice(0,
+        Optional(Sequence('Var', ZeroOrMore(Sequence('","', 'Var'))))
+      ))
       .addTo();`, "VarList")));
 
     $('#syntax-trees').append($(railroad_insert(`

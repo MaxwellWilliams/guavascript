@@ -3,7 +3,7 @@ path = require('path');
 ohm = require('ohm-js');
 assert = require('assert');
 util = require('util');
-parser = require(path.resolve('./guavascript_AST_generator.js'));
+parser = require(path.resolve('./parser.js'));
 validPrograms = path.resolve('./test/semantics/programs/valid');
 invalidPrograms = path.resolve('./test/semantics/programs/invalid');
 

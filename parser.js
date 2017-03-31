@@ -99,24 +99,6 @@ class BranchStatement extends Statement {
     }
 }
 
-// class Case {
-//     constructor(exp, block) {
-//         this.exp = exp;
-//         this.block = block;
-//     }
-//     analyze(context) {
-//         console.log("DEBUG: Case analyzing");
-//         // TODO: How to check that this.exp is of type BOOL?
-//         this.exp.analyze(context);
-//         this.block.analyze(context.createChildContextForBlock);
-//     }
-//     toString(indent = 0) {
-//         return `${spacer.repeat(indent)}(case` +
-//                `${(this.exp == 'undefined') ? '' : `?!?\n${this.exp.toString(++indent)}`}` +
-//                `\n${this.block.toString(indent)})`;
-//     }
-// }
-
 class FunctionDeclarationStatement extends Statement {
     constructor(id, parameterArray, block) {
         super();
@@ -127,7 +109,7 @@ class FunctionDeclarationStatement extends Statement {
     analyze(context) {
         context.assertVariableIsNotAlreadyDeclared(this.id);
         this.block.analyze(context.createChildContextForFunction());
-        context.addVariable(this.id,
+        context.setVariable(this.id,
             {
                 parameters: this.parameterArray,
                 closure: context.symbolTable,
@@ -176,10 +158,8 @@ class ClassDeclarationStatement extends Statement {
     }
     analyze(context) {
         context.assertVariableIsNotAlreadyDeclared(this.id);
-
-        // TODO: I THINK the block should be analyzed before adding it to the context??
         this.block.analyze(context.createChildContextForBlock());
-        context.addVariable(this.id, this.block, "class");
+        context.setVariable(this.id, this.block, "class");
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Class` +

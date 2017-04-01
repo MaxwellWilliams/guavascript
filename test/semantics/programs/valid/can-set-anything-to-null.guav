@@ -13,7 +13,7 @@ a = null
 b = null
 b = null
 d () {
-    ret 1;
+    ret 1
 }
 d = null
 c = class Thing() {x = 1}

@@ -14,7 +14,7 @@ const TYPE = {
     LIST: "LIST",
     DICTIONARY: "DICTIONARY",
     TUPLE: "TUPLE",
-    FUNCTION: "FUNCTION"
+    FUNCTION: "FUNCTION",
     CLASS: "CLASS",
     NULL: "NULL"
 }

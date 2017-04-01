@@ -311,11 +311,44 @@ class AssignmentStatement extends Statement {
         this.idExp.analyze(context);
         this.exp.analyze(context);
 
+        let expectedPairs;
+        let idType;
+
         // console.log(util.inspect(this, {depth: null}));
 
         if (this.assignOp == "=") {
             // TODO: Not sure what the input id should be. Change from sourceString when we figure it out
             // console.log(`Set ${this.idExp.id} to ${this.exp} with type ${this.exp.type}`);
+            context.setVariable(this.idExp.id, {type: this.exp.type});
+        } else if (this.assignOp == "+=") {
+            idType = context.get(this.idExp.id).type;
+            expectedPairs = [
+                [TYPE.INTEGER, TYPE. INTEGER],
+                [TYPE.INTEGER, TYPE.FLOAT],
+                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.FLOAT, TYPE.FLOAT],
+                [TYPE.STRING, TYPE.STRING]
+            ];
+            context.assertBinaryOperandIsOneOfTypePairs(
+                this.assignOp,
+                expectedPairs,
+                [idType, this.exp.type]
+            );
+            context.setVariable(this.idExp.id, {type: this.exp.type});
+        } else if (["-=", "*=", "/="].indexOf(this.assignOp) > -1) {
+            idType = context.get(this.idExp.id).type;
+            expectedPairs = [
+                [TYPE.INTEGER, TYPE. INTEGER],
+                [TYPE.INTEGER, TYPE.FLOAT],
+                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.FLOAT, TYPE.FLOAT],
+                [TYPE.STRING, TYPE.STRING]
+            ];
+            context.assertBinaryOperandIsOneOfTypePairs(
+                this.assignOp,
+                expectedPairs,
+                [idType, this.exp.type]
+            );
             context.setVariable(this.idExp.id, {type: this.exp.type});
         }
     }

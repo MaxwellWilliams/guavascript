@@ -60,7 +60,7 @@ class Context {
         this.isInLoop = isInLoop;
 
         // Need Object.create(null) so things like toString are not in this.symbolTable
-        this.symbolTable = Object.create(null);
+        this.symbolTable = {};
     }
 
     createChildContextForBlock() {
@@ -78,8 +78,7 @@ class Context {
     setVariable(id, signature) {
 
         // Case 1- updating the value of a variable within the current scope:
-        if (id in this.symbolTable) {
-
+        if (this.symbolTable.hasOwnProperty(id)) {
             // Make sure the new value has the correct type (static typing):
             if (this.symbolTable[id].type === signature.type || signature.type === "NULL") {
                 this.symbolTable[id] = signature;
@@ -93,8 +92,13 @@ class Context {
         }
     }
 
+<<<<<<< HEAD
     get(id, silent = false, onlyThisContext = false) {
         if (id in this.symbolTable) {
+=======
+    get(id) {
+        if (this.symbolTable.hasOwnProperty(id)) {
+>>>>>>> origin/master
             return this.symbolTable[id];
         } else if (this.parent === null) {
             if (silent) {

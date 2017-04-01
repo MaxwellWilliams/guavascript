@@ -13,7 +13,7 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('parser\\programs\\valid\\' + file.name + ' should analze without any errors',
           function() {
-            // console.log(util.inspect(parser(file.code), {depth: null}));
+            console.log(util.inspect(parser(file.code), {depth: null}));
             parser(file.code).analyze();
             //done();
         });

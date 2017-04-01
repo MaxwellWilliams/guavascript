@@ -6,6 +6,14 @@ const Context = require('./semantics/context');
 
 const spacer = "  ";
 
+const TYPES = {
+    BOOLEAN: 0,
+    INTEGER: 1,
+    FLOAT: 2,
+    STRING: 3,
+    
+}
+
 function unpack(elem) {
     elem = elem.ast();
     elem = Array.isArray(elem) ? elem : [elem];
@@ -345,7 +353,9 @@ class BinaryExpression extends Expression {
         this.type;
     }
     analyze(context) {
-        // TODO: calculate type in here
+
+
+
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.op}` +
@@ -360,9 +370,18 @@ class UnaryExpression extends Expression {
         super();
         this.op = op;
         this.operand = operand;
+        this.type;
     }
     analyze() {
-        // TODO
+        this.operand.analyze(context);
+        if (this.op == "--" || this.op == "++") {
+            context.assertUnaryOperandIsOneOfTypes(this.op, ["integer"], this.operand.type);
+        } else if (this.op == "-") {
+            context.assertUnaryOperandIsOneOfTypes(this.op, ["integer", "float"], this.operand.type);
+        } else if (this.op == "!") {
+            context.assertUnaryOperandIsOneOfTypes(this.op, ["boolean"], this.operand.type);
+        }
+        this.type = this.operand.type;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.op}\n${this.operand.toString(++indent)})`;
@@ -373,9 +392,11 @@ class ParenthesisExpression extends Expression {
     constructor(exp) {
         super();
         this.exp = exp;
+        this.type;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.exp.analyze(context);
+        this.type = this.exp.type;
     }
     toString(indent = 0) {
         // Don't increase indent, as the semantic meaning of parenthesis are already captured in the tree
@@ -392,7 +413,6 @@ class Variable extends Expression {
     analyze(context) {
         this.var.analyze(context);
         this.type = this.var.type;
-        // TODO
     }
     toString(indent = 0) {
         // Don't increase indent, we already know literals and other data types are variables

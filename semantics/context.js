@@ -94,8 +94,6 @@ class Context {
         }
     }
 
-
-
     assertIsInFunction(message) {
         if (!this.currentFunction) {
 
@@ -113,6 +111,12 @@ class Context {
     assertIsTypeBoolean(exp) {
         if (!exp.type == "boolean") {
             throw new Error(semanticErrors.expressionIsNotTypeBoolean(exp, exp.type));
+        }
+    }
+
+    assertUnaryOperandIsOneOfTypes(op, expected, received) {
+        if (!(received in expected) {
+            throw new Error(semanticErrors.invalidUnaryOperand(received, op));
         }
     }
 

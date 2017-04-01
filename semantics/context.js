@@ -130,6 +130,12 @@ class Context {
         }
     }
 
+    assertBinaryOperandIsOneOfTypePairs(op, expected, received) {
+        if (!(received in expected)) {
+            throw new Error(semanticErrors.invalidBinaryOperand(received[0], op, received[1]));
+        }
+    }
+
     // Use these when a Program is newly created:
     // Context.INITIAL = new Context();  // eslint doesn't like the "." after Context ???
 

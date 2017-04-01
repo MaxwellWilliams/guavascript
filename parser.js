@@ -359,7 +359,56 @@ class BinaryExpression extends Expression {
     }
     analyze(context) {
 
+        this.left.analyze(context);
+        this.right.analyze(context);
 
+        let expectedPairs;
+
+        if (this.op == "||" || this.op == "&&") {
+            expectedPairs = [[TYPE.BOOLEAN, TYPE.BOOLEAN]];
+        } else if (this.op == "+") {
+            expectedPairs = [
+                [TYPE.INTEGER, TYPE.INTEGER],
+                [TYPE.INTEGER, TYPE.FLOAT],
+                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.FLOAT, TYPE.FLOAT],
+                [TYPE.STRING, TYPE.STRING],
+                [TYPE.LIST, TYPE.LIST],
+                [TYPE.DICTIONARY, TYPE.DICTIONARY]
+            ];
+        } else if (this.op in ["-", "/", "<=", "<", ">=", ">", "^"]) {
+            expectedPairs = [
+                [TYPE.INTEGER, TYPE.INTEGER],
+                [TYPE.INTEGER, TYPE.FLOAT],
+                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.FLOAT, TYPE.FLOAT]
+            ];
+        } else if (this.op == "*") {
+            expectedPairs = [
+                [TYPE.INTEGER, TYPE.INTEGER],
+                [TYPE.INTEGER, TYPE.FLOAT],
+                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.FLOAT, TYPE.FLOAT],
+                [TYPE.STRING, TYPE.INTEGER]
+            ];
+        } else if (this.op == "//" || this.op == "%") {
+            expectedPairs = [
+                [TYPE.INTEGER, TYPE.INTEGER],
+                [TYPE.FLOAT, TYPE.INTEGER]
+            ];
+        } else if (this.op == "==" || this.op == "!=") {
+            expectedPairs = allTypePairs;
+        }
+
+        context.assertBinaryOperandIsOneOfTypePairs(
+            this.op,
+            expectedPairs,
+            [this.left.type, this.right.type]
+        );
+
+        // Important: the type of the expression is always the type of it's left operand
+        // Example: "string" * 5 is TYPE.STRING
+        this.type = this.left.type;
 
     }
     toString(indent = 0) {

@@ -501,12 +501,14 @@ class IdExpression extends Expression {
         this.idExpBody = idExpBody;
         this.idPostOp = idPostOp;
         this.id;  // baseline identifier. example: x in x.doThis(3)[1].lalala
+        this.type;
     }
     analyze(context) {
         this.idExpBody.analyze(context);
         if (this.idPostOp == "++" || this.idPostOp == "--") {
             context.assertUnaryOperandIsOneOfTypes(this.idPostOp, [TYPE.INTEGER], this.idExpBody.type)
         }
+        this.id = this.idExpBody.id;
         this.type = this.idExpBody.type;
     }
     toString(indent = 0) {
@@ -522,9 +524,13 @@ class IdExpressionBodyRecursive {
         this.idExpBody = idExpBody;
         this.idAppendage = idAppendage;
         this.appendageOp = idAppendage === 'undefined' ? 'undefined' : idAppendage.getOp();
+        this.id;
+        this.type;
     }
     analyze(context) {
-        
+        this.idExpBody.analyze(context);
+        this.id = this.idExpBody.id;
+        this.type = this.idExpBody.type;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.appendageOp}` +
@@ -537,6 +543,7 @@ class IdExpressionBodyRecursive {
 class IdExpressionBodyBase {
     constructor(id) {
         this.id = id;
+        this.type;
     }
     analyze(context) {
         // TODO

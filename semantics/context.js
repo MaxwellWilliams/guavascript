@@ -38,7 +38,7 @@ const semanticErrors = {
     }
 };
 
-checkArrayinArray(arrA, arrB) {
+function checkArrayinArray(arrA, arrB) {
     var hash = {};
     for (b in arrB) {
         obj[arrB[b]] = b;

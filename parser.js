@@ -19,6 +19,22 @@ const TYPE = {
     NULL: 9
 }
 
+function defineTypePairs() {
+    allTypePairs = [];
+    for (let i in TYPE) {
+        if (TYPE.hasOwnProperty(i)) {
+            for (let j in TYPE) {
+                if (TYPE.hasOwnProperty(j)) {
+                    allTypePairs.push([i, j]);
+                }
+            }
+        }
+    }
+}
+defineTypePairs();
+
+console.log(allTypePairs);
+
 function unpack(elem) {
     elem = elem.ast();
     elem = Array.isArray(elem) ? elem : [elem];

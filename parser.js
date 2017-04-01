@@ -6,12 +6,17 @@ const Context = require('./semantics/context');
 
 const spacer = "  ";
 
-const TYPES = {
+const TYPE = {
     BOOLEAN: 0,
     INTEGER: 1,
     FLOAT: 2,
     STRING: 3,
-    
+    LIST: 4,
+    DICTIONARY: 5,
+    TUPLE: 6,
+    FUNCTION: 7,
+    CLASS: 8,
+    NULL: 9
 }
 
 function unpack(elem) {
@@ -375,11 +380,11 @@ class UnaryExpression extends Expression {
     analyze() {
         this.operand.analyze(context);
         if (this.op == "--" || this.op == "++") {
-            context.assertUnaryOperandIsOneOfTypes(this.op, ["integer"], this.operand.type);
+            context.assertUnaryOperandIsOneOfTypes(this.op, [TYPE.INTEGER], this.operand.type);
         } else if (this.op == "-") {
-            context.assertUnaryOperandIsOneOfTypes(this.op, ["integer", "float"], this.operand.type);
+            context.assertUnaryOperandIsOneOfTypes(this.op, [TYPE.INTEGER, TYPE.FLOAT], this.operand.type);
         } else if (this.op == "!") {
-            context.assertUnaryOperandIsOneOfTypes(this.op, ["boolean"], this.operand.type);
+            context.assertUnaryOperandIsOneOfTypes(this.op, [TYPE.BOOLEAN], this.operand.type);
         }
         this.type = this.operand.type;
     }
@@ -521,7 +526,7 @@ class IdSelector {
 class List {
     constructor(varList) {
         this.varList = varList;
-        this.type = "list"
+        this.type = TYPE.LIST;
     }
     analyze() {
         // TODO
@@ -541,7 +546,7 @@ class List {
 class Tuple {
     constructor(elems) {
         this.elems = elems;
-        this.type = "tuple"
+        this.type = TYPE.LIST
     }
     analyze() {
         // TODO
@@ -556,7 +561,7 @@ class Tuple {
 class Dictionary {
     constructor(idValuePairs) {
         this.idValuePairs = idValuePairs;
-        this.type = "dictionary"
+        this.type = TYPE.DICTIONARY
     }
     analyze() {
         // TODO
@@ -613,7 +618,7 @@ class VarList {
 class IntLit {
     constructor(digits) {
         this.digits = digits;
-        this.type = "integer";
+        this.type = TYPE.INTEGER;
     }
     analyze() {
         // TODO
@@ -626,7 +631,7 @@ class IntLit {
 class FloatLit {
     constructor(value) {
         this.value = value;
-        this.type = "float";
+        this.type = TYPE.FLOAT;
     }
     analyze() {
         // TODO
@@ -639,7 +644,7 @@ class FloatLit {
 class StringLit {
     constructor(value) {
         this.value = value.substring(1, value.length - 1);
-        this.type = "string";
+        this.type = TYPE.STRING;
     }
     analyze() {
         // TODO
@@ -652,7 +657,7 @@ class StringLit {
 class BoolLit {
     constructor(boolVal) {
         this.boolVal = boolVal;
-        this.type = "boolean";
+        this.type = TYPE.BOOLEAN;
     }
     analyze() {
         // TODO
@@ -664,7 +669,7 @@ class BoolLit {
 
 class NullLit {
     constructor() {
-        this.type = "null"
+        this.type = TYPE.NULL
     }
     analyze() {
         // TODO

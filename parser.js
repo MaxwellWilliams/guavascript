@@ -64,9 +64,22 @@ class Program {
 class Block {
     constructor(body) {
         this.body = body;
+        this.returnType;
+        this.numberOfReturnStatements = 0;
     }
     analyze(context) {
-        this.body.forEach(s => s.analyze(context));
+        let self = this;
+        this.body.forEach(function(statement) {
+            statement.analyze(context);
+            if (statement.constructor === ReturnStatement) {
+                self.numberOfReturnStatements++;
+                if (self.numberOfReturnStatements < 2) {
+                    self.returnType = statement.returnType;
+                } else {
+                    context.throwMultipleReturnsInABlockError();
+                }
+            }
+        });
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent++)}(Block`;
@@ -129,14 +142,47 @@ class FunctionDeclarationStatement extends Statement {
         this.block = block;
     }
     analyze(context) {
-        this.block.analyze(context.createChildContextForFunction());
-        // Block will contain types of parameter variables
-        // For every parameter, retrieve the type from the block symbolTable
-        // and construct a parameter signature
+
+        let blockContext = context.createChildContextForFunction(this.id);
+
+        // If there is a default value, instantiate the variable in the block.
+        // For all vars with a default, then they must match the type.
+        this.parameterArray.forEach(function(parameter) {
+            if (parameter.defaultValue) {
+                blockContext.setVariable(parameter.id, {type: parameter.defaultValue.type});
+            }
+        });
+
+        // But what about ambiguous variables? They will automatically be added to the
+        // context as they are declared. We would want the type of the first declaration
+        // to be the official type of the var. So, we get type checking for non-default vars
+        // in the rest of the function for free.
+
+        this.block.analyze(blockContext);
+
+        let signature = [];
+
+        // But, we still must check that the non-default variables were used.
+        this.parameterArray.forEach(function(parameter) {
+            if (!parameter.defaultValue) {
+                let entry = this.block.context.get(
+                    parameter.id,
+                    silent = true,
+                    onlyThisContext = true
+                );
+                if (!entry) {
+                    context.declareUnusedLocalVariable(parameter.id);
+                }
+            }
+            // At the same time, build the parameters signature
+            signature.push(context.get(parameter.id).type);
+        });
 
         // If you can't find a parameter in the block, throw unusedLocalVariable
-        context.setVariable(this.id, {type: TYPE.FUNCTION});
+        context.setVariable(this.id, {type: TYPE.FUNCTION, returnType: block.returnType, parameters: signature});
+
     }
+
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Func` +
                     `\n${spacer.repeat(++indent)}(id ${this.id})` +
@@ -300,9 +346,12 @@ class ReturnStatement extends Statement {
     constructor(exp) {
         super();
         this.exp = exp;
+        this.returnType;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        context.assertReturnInFunction();
+        this.exp.analyze();
+        this.returnType = this.exp.type;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Return` +

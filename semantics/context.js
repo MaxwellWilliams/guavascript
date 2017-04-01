@@ -35,6 +35,12 @@ const semanticErrors = {
     },
     unusedLocalVariable(id) {
         return `UnusedLocalVariable error: local variable ${id} is declared but never used`;
+    },
+    returnOutsideFunction() {
+        return `ReturnOutsideFunction error: found a return statement outside of a function`;
+    },
+    multipleReturnsInABlock(){
+        return `MultipleReturnsInABlock error: found more than one return statement in a block`;
     }
 };
 
@@ -87,26 +93,36 @@ class Context {
         }
     }
 
-    get(id) {
+    get(id, silent = false, onlyThisContext = false) {
         if (id in this.symbolTable) {
             return this.symbolTable[id];
         } else if (this.parent === null) {
-
-            // If we are at the topmost block and didn't find id:
-            throw new Error(semanticErrors.useBeforeDeclaration(id));
-
+            if (silent) {
+                return undefined;
+            } else {
+                throw new Error(semanticErrors.useBeforeDeclaration(id));
+            }
         } else {
-
-            // Keep looking if we have higher contexts to check:
-            return this.parent.lookup(id);
+            if (onlyThisContext) {
+                return undefined;
+            } else {
+                return this.parent.get(id);
+            }
         }
     }
 
+    // TODO: Possibly delete this
     assertIsInFunction(message) {
         if (!this.currentFunction) {
 
             // Use a more specific error message:
             throw new Error(message);
+        }
+    }
+
+    assertReturnInFunction() {
+        if (!this.currentFunction) {
+            throw new Error(semanticErrors.returnOutsideFunction());
         }
     }
 
@@ -123,10 +139,6 @@ class Context {
     }
 
     assertUnaryOperandIsOneOfTypes(op, expected, received) {
-        console.log("expected: ");
-        console.log(expected);
-        console.log("received: ");
-        console.log(received);
         if (expected.indexOf(received) === -1) {
             throw new Error(semanticErrors.invalidUnaryOperand(received, op));
         }
@@ -136,6 +148,14 @@ class Context {
         if (!checkArrayinArray(received, expected)) {
             throw new Error(semanticErrors.invalidBinaryOperands(received[0], op, received[1]));
         }
+    }
+
+    declareUnusedLocalVariable(id) {
+        throw new Error(semanticErrors.unusedLocalVariable(id));
+    }
+
+    throwMultipleReturnsInABlockError() {
+        throw new Error(semanticErrors.multipleReturnsInABlock());
     }
 
     // Use these when a Program is newly created:

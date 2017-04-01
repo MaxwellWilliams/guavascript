@@ -92,13 +92,8 @@ class Context {
         }
     }
 
-<<<<<<< HEAD
     get(id, silent = false, onlyThisContext = false) {
-        if (id in this.symbolTable) {
-=======
-    get(id) {
         if (this.symbolTable.hasOwnProperty(id)) {
->>>>>>> origin/master
             return this.symbolTable[id];
         } else if (this.parent === null) {
             if (silent) {

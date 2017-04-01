@@ -41,11 +41,9 @@ const semanticErrors = {
 function checkArrayinArray(arrA, arrB) {
     var hash = {};
     for (b in arrB) {
-        obj[arrB[b]] = b;
+        hash[arrB[b]] = b;
     }
-    if (hash.hasOwnProperty(arrA)) {
-        return true;
-    }
+    return hash.hasOwnProperty(arrA);
 };
 
 class Context {
@@ -131,8 +129,8 @@ class Context {
     }
 
     assertBinaryOperandIsOneOfTypePairs(op, expected, received) {
-        if (!(received in expected)) {
-            throw new Error(semanticErrors.invalidBinaryOperand(received[0], op, received[1]));
+        if (!checkArrayinArray(received, expected)) {
+            throw new Error(semanticErrors.invalidBinaryOperands(received[0], op, received[1]));
         }
     }
 

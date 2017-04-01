@@ -33,8 +33,6 @@ function defineTypePairs() {
 }
 defineTypePairs();
 
-console.log(allTypePairs);
-
 function unpack(elem) {
     elem = elem.ast();
     elem = Array.isArray(elem) ? elem : [elem];

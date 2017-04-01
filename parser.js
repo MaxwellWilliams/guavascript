@@ -7,16 +7,16 @@ const Context = require('./semantics/context');
 const spacer = "  ";
 
 const TYPE = {
-    BOOLEAN: 0,
-    INTEGER: 1,
-    FLOAT: 2,
-    STRING: 3,
-    LIST: 4,
-    DICTIONARY: 5,
-    TUPLE: 6,
-    FUNCTION: 7,
-    CLASS: 8,
-    NULL: 9
+    BOOLEAN: "BOOLEAN",
+    INTEGER: "INTEGER",
+    FLOAT: "FLOAT",
+    STRING: "STRING",
+    LIST: "LIST",
+    DICTIONARY: "DICTIONARY",
+    TUPLE: "TUPLE",
+    FUNCTION: "FUNCTION"
+    CLASS: "CLASS",
+    NULL: "NULL"
 }
 
 function defineTypePairs() {

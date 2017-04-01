@@ -130,14 +130,12 @@ class FunctionDeclarationStatement extends Statement {
     }
     analyze(context) {
         this.block.analyze(context.createChildContextForFunction());
-        context.setVariable(this.id,
-            {
-                parameters: this.parameterArray,
-                closure: context.symbolTable,
-                block: this.block
-            },
-            "function");
-        // TODO: Do we need to analyze the parameters?
+        // Block will contain types of parameter variables
+        // For every parameter, retrieve the type from the block symbolTable
+        // and construct a parameter signature
+
+        // If you can't find a parameter in the block, throw unusedLocalVariable
+        context.setVariable(this.id, {type: TYPE.FUNCTION});
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Func` +
@@ -179,7 +177,7 @@ class ClassDeclarationStatement extends Statement {
     }
     analyze(context) {
         this.block.analyze(context.createChildContextForBlock());
-        context.setVariable(this.id, this.block, "class");
+        context.setVariable(this.id, {type: TYPE.CLASS});
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Class` +
@@ -272,7 +270,7 @@ class AssignmentStatement extends Statement {
         if (this.assignOp == "=") {
             // TODO: Not sure what the input id should be. Change from sourceString when we figure it out
             // console.log(`Set ${this.idExp.id} to ${this.exp} with type ${this.exp.type}`);
-            context.setVariable(this.idExp.id, this.exp, this.exp.type);
+            context.setVariable(this.idExp.id, {type: this.exp.type});
         }
     }
     toString(indent = 0) {

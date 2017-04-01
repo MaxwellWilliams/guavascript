@@ -1,6 +1,4 @@
 const astClasses = require('../parser.js');
-console.log("AST Classes: ");
-console.log(astClasses.FunctionDeclarationStatement);
 
 const semanticErrors = {
     changedImmutableType(id, expectedType, receivedType) {
@@ -71,21 +69,21 @@ class Context {
         return new Context(this, currentFunction, false);
     }
 
-    setVariable(id, value, type) {
+    setVariable(id, signature) {
 
         // Case 1- updating the value of a variable within the current scope:
         if (id in this.symbolTable) {
 
             // Make sure the new value has the correct type (static typing):
-            if (this.symbolTable[id].type === type || type === "NULL") {
-                this.symbolTable[id] = {value: value, type: type};
+            if (this.symbolTable[id].type === signature.type || signature.type === "NULL") {
+                this.symbolTable[id] = signature;
             } else {
-                throw new Error(semanticErrors.changedImmutableType(id, this.symbolTable[id].type, type))
+                throw new Error(semanticErrors.changedImmutableType(id, this.symbolTable[id].type, signature.type))
             }
         } else {
 
             // Case 2- either creating a new variable or shadowing an old one:
-            this.symbolTable[id] = {value: value, type: type};
+            this.symbolTable[id] = signature;
         }
     }
 
@@ -125,7 +123,11 @@ class Context {
     }
 
     assertUnaryOperandIsOneOfTypes(op, expected, received) {
-        if (expected.indexOf(received) > -1) {
+        console.log("expected: ");
+        console.log(expected);
+        console.log("received: ");
+        console.log(received);
+        if (expected.indexOf(received) === -1) {
             throw new Error(semanticErrors.invalidUnaryOperand(received, op));
         }
     }

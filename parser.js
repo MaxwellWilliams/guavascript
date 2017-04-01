@@ -390,7 +390,7 @@ class BinaryExpression extends Expression {
                 [TYPE.LIST, TYPE.LIST],
                 [TYPE.DICTIONARY, TYPE.DICTIONARY]
             ];
-        } else if (this.op in ["-", "/", "<=", "<", ">=", ">", "^"]) {
+        } else if (["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1) {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
@@ -413,6 +413,13 @@ class BinaryExpression extends Expression {
         } else if (this.op == "==" || this.op == "!=") {
             expectedPairs = allTypePairs;
         }
+
+        // console.log("left type:  " + this.left.type);
+        // console.log("right type: " + this.right.type);
+        // console.log("op:         " + this.op);
+        // console.log("op in expe: " + (["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1));
+        // console.log("expectedPairs:");
+        // console.log(expectedPairs);
 
         context.assertBinaryOperandIsOneOfTypePairs(
             this.op,

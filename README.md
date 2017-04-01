@@ -1,5 +1,5 @@
 
-![Guavascript Logo] (/images/Guavascript logo.png)
+![alt text](/images/Guavascript logo.png "Guavascript Logo")
 
 :( Why is the logo broken?
 

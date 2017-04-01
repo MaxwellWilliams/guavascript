@@ -125,7 +125,7 @@ class Context {
     }
 
     assertUnaryOperandIsOneOfTypes(op, expected, received) {
-        if (!(received in expected)) {
+        if (expected.indexOf(received) > -1) {
             throw new Error(semanticErrors.invalidUnaryOperand(received, op));
         }
     }

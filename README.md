@@ -1,7 +1,4 @@
-
-![Guavascript Logo] (/images/Guavascript logo.png)
-
-:( Why is the logo broken?
+![Guavascript Logo](https://raw.githubusercontent.com/AnsonAdams/guavascript/master/images/Guavascript%20logo.png "Guavascript Logo")
 
 https://ansonadams.github.io/guavascript/
 

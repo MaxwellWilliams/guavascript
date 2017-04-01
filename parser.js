@@ -496,8 +496,12 @@ class IdExpression extends Expression {
         this.idExpBody = idExpBody;
         this.idPostOp = idPostOp;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.idExpBody.analyze(context);
+        if (this.idPostOp == "++" || this.idPostOp == "--") {
+            context.assertUnaryOperandIsOneOfTypes(this.idPostOp, [TYPE.INTEGER], this.idExpBody.type)
+        }
+        this.type = this.idExpBody.type;
     }
     toString(indent = 0) {
         return  `${spacer.repeat(indent)}(IdExpression\n` +

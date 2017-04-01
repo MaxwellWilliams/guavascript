@@ -11,7 +11,7 @@ tests = function(validFiles, invalidFiles) {
   describe('Semantic analysis tests', function() {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
-        it('parser\\programs\\valid\\' + file.name + ' should analze without any errors',
+        it('parser\\programs\\valid\\' + file.name + ' should analyze without any errors',
           function() {
             //console.log(util.inspect(parser(file.code), {depth: null}));
             parser(file.code).analyze();

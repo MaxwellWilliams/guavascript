@@ -887,5 +887,6 @@ module.exports = (program) => {
   }
 }
 
-module.exports.FunctionDeclarationStatement = FunctionDeclarationStatement;
-module.exports.Parameter = Parameter;
+global.FunctionDeclarationStatement = FunctionDeclarationStatement;
+global.Parameter = Parameter;
+global.TYPE = TYPE;

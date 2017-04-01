@@ -1,4 +1,6 @@
 const astClasses = require('../parser.js');
+console.log("AST Classes: ");
+console.log(astClasses.FunctionDeclarationStatement);
 
 const semanticErrors = {
     changedImmutableType(id, expectedType, receivedType) {
@@ -75,7 +77,7 @@ class Context {
         if (id in this.symbolTable) {
 
             // Make sure the new value has the correct type (static typing):
-            if (this.symbolTable[id].type === type) {
+            if (this.symbolTable[id].type === type || type === "NULL") {
                 this.symbolTable[id] = {value: value, type: type};
             } else {
                 throw new Error(semanticErrors.changedImmutableType(id, this.symbolTable[id].type, type))

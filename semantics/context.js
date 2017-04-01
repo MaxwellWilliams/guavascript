@@ -54,7 +54,7 @@ class Context {
         this.isInLoop = isInLoop;
 
         // Need Object.create(null) so things like toString are not in this.symbolTable
-        this.symbolTable = Object.create(null);
+        this.symbolTable = {};
     }
 
     createChildContextForBlock() {
@@ -72,8 +72,7 @@ class Context {
     setVariable(id, signature) {
 
         // Case 1- updating the value of a variable within the current scope:
-        if (id in this.symbolTable) {
-
+        if (this.symbolTable.hasOwnProperty(id)) {
             // Make sure the new value has the correct type (static typing):
             if (this.symbolTable[id].type === signature.type || signature.type === "NULL") {
                 this.symbolTable[id] = signature;
@@ -88,7 +87,7 @@ class Context {
     }
 
     get(id) {
-        if (id in this.symbolTable) {
+        if (this.symbolTable.hasOwnProperty(id)) {
             return this.symbolTable[id];
         } else if (this.parent === null) {
 
@@ -123,10 +122,6 @@ class Context {
     }
 
     assertUnaryOperandIsOneOfTypes(op, expected, received) {
-        console.log("expected: ");
-        console.log(expected);
-        console.log("received: ");
-        console.log(received);
         if (expected.indexOf(received) === -1) {
             throw new Error(semanticErrors.invalidUnaryOperand(received, op));
         }

@@ -38,6 +38,16 @@ const semanticErrors = {
     }
 };
 
+checkArrayinArray(arrA, arrB) {
+    var hash = {};
+    for (b in arrB) {
+        obj[arrB[b]] = b;
+    }
+    if (hash.hasOwnProperty(arrA)) {
+        return true;
+    }
+};
+
 class Context {
 
     constructor(parent, currentFunction, isInLoop) {

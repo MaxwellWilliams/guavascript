@@ -330,7 +330,7 @@ class AssignmentStatement extends Statement {
                 [TYPE.FLOAT, TYPE.FLOAT],
                 [TYPE.STRING, TYPE.STRING]
             ];
-        } else if (["-=", "*=", "/="].indexOf(this.assignOp) > -1) {
+        } else if (this.assignOp == "*=") {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE. INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
@@ -338,6 +338,13 @@ class AssignmentStatement extends Statement {
                 [TYPE.FLOAT, TYPE.FLOAT],
                 [TYPE.STRING, TYPE.STRING],
                 [TYPE.STRING, TYPE.INTEGER]
+            ];
+        } else if (["-=", "/="].indexOf(this.assignOp) > -1) {
+            expectedPairs = [
+                [TYPE.INTEGER, TYPE. INTEGER],
+                [TYPE.INTEGER, TYPE.FLOAT],
+                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.FLOAT, TYPE.FLOAT],
             ];
         }
         context.assertBinaryOperandIsOneOfTypePairs(

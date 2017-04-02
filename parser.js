@@ -145,6 +145,8 @@ class FunctionDeclarationStatement extends Statement {
 
         let blockContext = context.createChildContextForFunction(this.id);
 
+        let self = this;
+
         // If there is a default value, instantiate the variable in the block.
         // For all vars with a default, then they must match the type.
         this.parameterArray.forEach(function(parameter) {
@@ -165,7 +167,7 @@ class FunctionDeclarationStatement extends Statement {
         // But, we still must check that the non-default variables were used.
         this.parameterArray.forEach(function(parameter) {
             if (!parameter.defaultValue) {
-                let entry = this.block.context.get(
+                let entry = self.block.context.get(
                     parameter.id,
                     silent = true,
                     onlyThisContext = true
@@ -312,7 +314,7 @@ class AssignmentStatement extends Statement {
         this.exp.analyze(context);
 
         let expectedPairs;
-        let idType;
+        let idType = this.idExp.type;
 
         // console.log(util.inspect(this, {depth: null}));
 
@@ -321,7 +323,6 @@ class AssignmentStatement extends Statement {
             // console.log(`Set ${this.idExp.id} to ${this.exp} with type ${this.exp.type}`);
             context.setVariable(this.idExp.id, {type: this.exp.type});
         } else if (this.assignOp == "+=") {
-            idType = context.get(this.idExp.id).type;
             expectedPairs = [
                 [TYPE.INTEGER, TYPE. INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
@@ -329,14 +330,7 @@ class AssignmentStatement extends Statement {
                 [TYPE.FLOAT, TYPE.FLOAT],
                 [TYPE.STRING, TYPE.STRING]
             ];
-            context.assertBinaryOperandIsOneOfTypePairs(
-                this.assignOp,
-                expectedPairs,
-                [idType, this.exp.type]
-            );
-            context.setVariable(this.idExp.id, {type: this.exp.type});
         } else if (["-=", "*=", "/="].indexOf(this.assignOp) > -1) {
-            idType = context.get(this.idExp.id).type;
             expectedPairs = [
                 [TYPE.INTEGER, TYPE. INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
@@ -344,13 +338,13 @@ class AssignmentStatement extends Statement {
                 [TYPE.FLOAT, TYPE.FLOAT],
                 [TYPE.STRING, TYPE.STRING]
             ];
-            context.assertBinaryOperandIsOneOfTypePairs(
-                this.assignOp,
-                expectedPairs,
-                [idType, this.exp.type]
-            );
-            context.setVariable(this.idExp.id, {type: this.exp.type});
         }
+        context.assertBinaryOperandIsOneOfTypePairs(
+            this.assignOp,
+            expectedPairs,
+            [idType, this.exp.type]
+        );
+        context.setVariable(this.idExp.id, {type: this.exp.type});
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.assignOp}` +
@@ -626,7 +620,7 @@ class IdExpressionBodyBase {
         this.type;
     }
     analyze(context) {
-        // TODO
+        this.type = context.get(this.id).type;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id})`;

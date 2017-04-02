@@ -342,7 +342,8 @@ class AssignmentStatement extends Statement {
                 [TYPE.INTEGER, TYPE.FLOAT],
                 [TYPE.FLOAT, TYPE.INTEGER],
                 [TYPE.FLOAT, TYPE.FLOAT],
-                [TYPE.STRING, TYPE.STRING]
+                [TYPE.STRING, TYPE.STRING],
+                [TYPE.STRING, TYPE.INTEGER]
             ];
             context.assertBinaryOperandIsOneOfTypePairs(
                 this.assignOp,
@@ -493,13 +494,6 @@ class BinaryExpression extends Expression {
         } else if (this.op == "==" || this.op == "!=") {
             expectedPairs = allTypePairs;
         }
-
-        // console.log("left type:  " + this.left.type);
-        // console.log("right type: " + this.right.type);
-        // console.log("op:         " + this.op);
-        // console.log("op in expe: " + (["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1));
-        // console.log("expectedPairs:");
-        // console.log(expectedPairs);
 
         context.assertBinaryOperandIsOneOfTypePairs(
             this.op,
@@ -708,7 +702,7 @@ class List {
 class Tuple {
     constructor(elems) {
         this.elems = elems;
-        this.type = TYPE.LIST
+        this.type = TYPE.TUPLE
     }
     analyze() {
         // TODO

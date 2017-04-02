@@ -344,7 +344,7 @@ class AssignmentStatement extends Statement {
                 [TYPE.INTEGER, TYPE. INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
                 [TYPE.FLOAT, TYPE.INTEGER],
-                [TYPE.FLOAT, TYPE.FLOAT],
+                [TYPE.FLOAT, TYPE.FLOAT]
             ];
         }
         context.assertBinaryOperandIsOneOfTypePairs(

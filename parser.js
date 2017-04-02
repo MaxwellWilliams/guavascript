@@ -52,7 +52,10 @@ class Program {
         this.block = block;
     }
     analyze(context = new Context()) {
-        this.block.analyze(context.createChildContextForBlock());
+
+        // Don't use createChildContextForBlock since we don't want an extra level.
+        // context.parent should equal null.
+        this.block.analyze(context);
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Program` +
@@ -169,8 +172,8 @@ class FunctionDeclarationStatement extends Statement {
             if (!parameter.defaultValue) {
                 let entry = self.block.context.get(
                     parameter.id,
-                    silent = true,
-                    onlyThisContext = true
+                    true,  // silent = true
+                    true  // onlyThisContext = true
                 );
                 if (!entry) {
                     context.declareUnusedLocalVariable(parameter.id);
@@ -310,6 +313,7 @@ class AssignmentStatement extends Statement {
         this.exp = exp;
     }
     analyze(context) {
+
         this.idExp.analyze(context);
         this.exp.analyze(context);
 
@@ -322,30 +326,31 @@ class AssignmentStatement extends Statement {
             // TODO: Not sure what the input id should be. Change from sourceString when we figure it out
             // console.log(`Set ${this.idExp.id} to ${this.exp} with type ${this.exp.type}`);
             context.setVariable(this.idExp.id, {type: this.exp.type});
-        } else if (this.assignOp == "+=") {
-            expectedPairs = [
-                [TYPE.INTEGER, TYPE. INTEGER],
-                [TYPE.INTEGER, TYPE.FLOAT],
-                [TYPE.FLOAT, TYPE.INTEGER],
-                [TYPE.FLOAT, TYPE.FLOAT],
-                [TYPE.STRING, TYPE.STRING]
-            ];
-        } else if (["-=", "*=", "/="].indexOf(this.assignOp) > -1) {
-            expectedPairs = [
-                [TYPE.INTEGER, TYPE. INTEGER],
-                [TYPE.INTEGER, TYPE.FLOAT],
-                [TYPE.FLOAT, TYPE.INTEGER],
-                [TYPE.FLOAT, TYPE.FLOAT],
-                [TYPE.STRING, TYPE.STRING],
-                [TYPE.STRING, TYPE.INTEGER]
-            ];
+        } else {
+            if (this.assignOp == "+=") {
+                expectedPairs = [
+                    [TYPE.INTEGER, TYPE. INTEGER],
+                    [TYPE.INTEGER, TYPE.FLOAT],
+                    [TYPE.FLOAT, TYPE.INTEGER],
+                    [TYPE.FLOAT, TYPE.FLOAT],
+                    [TYPE.STRING, TYPE.STRING]
+                ];
+            } else if (["-=", "*=", "/="].indexOf(this.assignOp) > -1) {
+                expectedPairs = [
+                    [TYPE.INTEGER, TYPE. INTEGER],
+                    [TYPE.INTEGER, TYPE.FLOAT],
+                    [TYPE.FLOAT, TYPE.INTEGER],
+                    [TYPE.FLOAT, TYPE.FLOAT],
+                    [TYPE.STRING, TYPE.STRING],
+                    [TYPE.STRING, TYPE.INTEGER]
+                ];
+            }
+            context.assertBinaryOperandIsOneOfTypePairs(
+                this.assignOp,
+                expectedPairs,
+                [idType, this.exp.type]
+            );
         }
-        context.assertBinaryOperandIsOneOfTypePairs(
-            this.assignOp,
-            expectedPairs,
-            [idType, this.exp.type]
-        );
-        context.setVariable(this.idExp.id, {type: this.exp.type});
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.assignOp}` +
@@ -614,7 +619,8 @@ class IdExpressionBodyBase {
         this.type;
     }
     analyze(context) {
-        this.type = context.get(this.id).type;
+        let entry = context.get(this.id, true);
+        this.type = (typeof entry !== "undefined") ? entry.type : "undefined";
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id})`;

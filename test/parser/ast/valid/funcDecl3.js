@@ -10,8 +10,8 @@ module.exports.getAst = function() {
     (Func
       (id computeSomething)
       (Parameters
-        (id x, default )
-        (id y, default )
+        (id x)
+        (id y)
       )
       (Block
         (=

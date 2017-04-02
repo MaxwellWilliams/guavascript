@@ -76,7 +76,7 @@ module.exports.getAst = function() {
         (Func
           (id setParam1)
           (Parameters
-            (id newParam, default )
+            (id newParam)
           )
           (Block
             (=
@@ -95,8 +95,8 @@ module.exports.getAst = function() {
         (Func
           (id checkIfEqual)
           (Parameters
-            (id paramX, default )
-            (id paramY, default )
+            (id paramX)
+            (id paramY)
           )
           (Block
             (Return
@@ -117,9 +117,9 @@ module.exports.getAst = function() {
             (Func
               (id Sub)
               (Parameters
-                (id x, default )
-                (id y, default )
-                (id z, default )
+                (id x)
+                (id y)
+                (id z)
               )
               (Block
                 (=
@@ -160,7 +160,7 @@ module.exports.getAst = function() {
             (Func
               (id checkVariables)
               (Parameters
-                (id var1, default )
+                (id var1)
               )
               (Block
                 (Identifier Statement
@@ -223,9 +223,9 @@ module.exports.getAst = function() {
             (Func
               (id Collections)
               (Parameters
-                (id dict, default )
-                (id list, default )
-                (id tup, default )
+                (id dict)
+                (id list)
+                (id tup)
               )
               (Block
                 (=
@@ -266,8 +266,8 @@ module.exports.getAst = function() {
             (Func
               (id addToDict)
               (Parameters
-                (id id, default )
-                (id value, default )
+                (id id)
+                (id value)
               )
               (Block
                 (=
@@ -291,7 +291,7 @@ module.exports.getAst = function() {
             (Func
               (id getDict)
               (Parameters
-                (id id, default )
+                (id id)
               )
               (Block
                 (Return

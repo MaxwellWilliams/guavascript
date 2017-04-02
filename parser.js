@@ -76,7 +76,7 @@ class Block {
             statement.analyze(context);
             if (statement.constructor === ReturnStatement) {
                 self.numberOfReturnStatements++;
-                if (self.numberOfReturnStatements < 2) {
+                if (self.numberOfReturnStatements <= 1) {
                     self.returnType = statement.returnType;
                 } else {
                     context.throwMultipleReturnsInABlockError();
@@ -106,12 +106,12 @@ class BranchStatement extends Statement {
         this.elseBlock = elseBlock;
     }
     analyze(context) {
-        this.conditions.forEach(function(c) {
-            c.analyze(context);
-            context.assertIsTypeBoolean(c);
+        this.conditions.forEach(function(condition) {
+            condition.analyze(context);
+            context.assertIsTypeBoolean(condition);
         });
-        this.thenBlocks.forEach(c => c.analyze(context.createChildContextForBlock()));
-        if (this.elseBlock) {
+        this.thenBlocks.forEach(block => block.analyze(context.createChildContextForBlock()));
+        if (this.elseBlock !== null) {
             this.elseBlock.analyze(context.createChildContextForBlock());
         }
     }
@@ -153,7 +153,7 @@ class FunctionDeclarationStatement extends Statement {
         // If there is a default value, instantiate the variable in the block.
         // For all vars with a default, then they must match the type.
         this.parameterArray.forEach(function(parameter) {
-            if (parameter.defaultValue) {
+            if (parameter.defaultValue !== null) {
                 blockContext.setVariable(parameter.id, {type: parameter.defaultValue.type});
             }
         });
@@ -169,7 +169,7 @@ class FunctionDeclarationStatement extends Statement {
 
         // But, we still must check that the non-default variables were used.
         this.parameterArray.forEach(function(parameter) {
-            if (!parameter.defaultValue) {
+            if (parameter.defaultValue == null) {
                 let entry = self.block.context.get(
                     parameter.id,
                     true,  // silent = true
@@ -216,7 +216,12 @@ class Parameter {
         // TODO: I'm not sure there is anything semantic-wise to check here...
     }
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(id ${this.id}, default ${this.defaultValue})`;
+        var string = `${spacer.repeat(indent)}(id ${this.id}`;
+        if(this.defaultValue !== null) {
+            string += `, default ${this.defaultValue}`;
+        }
+        string += `)`
+        return string
     }
 }
 
@@ -914,7 +919,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     MatchExp(matchStr, idExp, wit, line1, var1, match1, lines, varArray, matchArray, lineFinal, _, matchFinal) {
         return new MatchExpression(idExp.ast(), [var1.ast()].concat(varArray.ast()), [match1.ast()].concat(matchArray.ast()), matchFinal.ast());},
     Match (arrow, matchee) {return new Match(matchee.ast())},
-    Param(id, equals, variable) {return new Parameter(id.sourceString, variable.ast())},
+    Param(id, equals, variable) {return new Parameter(id.sourceString, unpack(variable))},
     Exp_reg(left, op, right) {return new BinaryExpression(left.ast(), op.sourceString, right.ast());},
     Exp_pass(otherExp) {return otherExp.ast();},
     BoolAndExp_reg(left, op, right) {return new BinaryExpression(left.ast(), op.sourceString, right.ast());},

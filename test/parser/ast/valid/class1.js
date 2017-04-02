@@ -7,7 +7,7 @@ module.exports.getAst = function() {
         (Func
           (id Ball)
           (Parameters
-            (id radius, default )
+            (id radius)
             (id weight, default (1.0))
           )
           (Block

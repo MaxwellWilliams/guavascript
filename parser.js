@@ -146,15 +146,17 @@ class FunctionDeclarationStatement extends Statement {
     }
     analyze(context) {
 
-        let blockContext = context.createChildContextForFunction(this.id);
-
+        let blockContext = context.createChildContextForFunction(this);
         let self = this;
 
         // If there is a default value, instantiate the variable in the block.
         // For all vars with a default, then they must match the type.
         this.parameterArray.forEach(function(parameter) {
             if (parameter.defaultValue !== null) {
-                blockContext.setVariable(parameter.id, {type: parameter.defaultValue.type});
+                parameter.defaultValue.analyze(context);
+                blockContext.setVariable(parameter.id, parameter.defaultValue.type);
+            } else {
+                blockContext.setVariable(parameter.id, "NULL");
             }
         });
 
@@ -170,6 +172,7 @@ class FunctionDeclarationStatement extends Statement {
         // But, we still must check that the non-default variables were used.
         this.parameterArray.forEach(function(parameter) {
             if (parameter.defaultValue == null) {
+
                 let entry = self.block.context.get(
                     parameter.id,
                     true,  // silent = true
@@ -395,7 +398,7 @@ class ReturnStatement extends Statement {
     }
     analyze(context) {
         context.assertReturnInFunction();
-        this.exp.analyze();
+        this.exp.analyze(context);
         this.returnType = this.exp.type;
     }
     toString(indent = 0) {
@@ -509,7 +512,7 @@ class BinaryExpression extends Expression {
         context.assertBinaryOperandIsOneOfTypePairs(
             this.op,
             expectedPairs,
-            [this.left.type, this.right.type]
+            [this.left, this.right]
         );
 
         // Important: the type of the expression is always the type of it's left operand
@@ -568,7 +571,7 @@ class Variable extends Expression {
     constructor(variable) {
         super();
         this.var = variable;
-        this.type;
+        this.type = "NULL";
     }
     analyze(context) {
         this.var.analyze(context);

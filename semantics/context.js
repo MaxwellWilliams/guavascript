@@ -75,35 +75,41 @@ class Context {
         return new Context(this, currentFunction, false);
     }
 
-    setVariable(id, signature) {
-
+    setVariable(id, type) {
         // Case 1- updating the value of a variable within the current scope:
-        if (this.symbolTable.hasOwnProperty(id)) {
+        if(this.symbolTable.hasOwnProperty(id)) {
             // Make sure the new value has the correct type (static typing):
-            if (this.symbolTable[id].type === signature.type || signature.type === "NULL") {
-                this.symbolTable[id] = signature;
+            if(this.symbolTable[id].type === type || type === "NULL") {
+                this.symbolTable[id].type = type;
+                this.symbolTable[id].used = true;
             } else {
-                throw new Error(semanticErrors.changedImmutableType(id, this.symbolTable[id].type, signature.type))
+                throw new Error(semanticErrors.changedImmutableType(id, this.symbolTable[id].type, type));
             }
         } else {
-
             // Case 2- either creating a new variable or shadowing an old one:
-            this.symbolTable[id] = signature;
+            this.symbolTable[id] = {};
+            this.symbolTable[id].type = type;
+            this.symbolTable[id].used = false;
         }
     }
 
     get(id, silent = false, onlyThisContext = false) {
-        if (this.symbolTable.hasOwnProperty(id)) {
+        if(this.symbolTable.hasOwnProperty(id)) {
+            this.symbolTable[id].used = true;
             return this.symbolTable[id];
-        } else if (this.parent === null) {
-            if (silent) {
+        } else if(this.parent === null) {
+            if(silent) {
                 return undefined;
             } else {
                 throw new Error(semanticErrors.useBeforeDeclaration(id));
             }
         } else {
-            if (onlyThisContext) {
-                return undefined;
+            if(onlyThisContext) {
+              if(silent) {
+                  return undefined;
+              } else {
+                  throw new Error(semanticErrors.useBeforeDeclaration(id));
+              }
             } else {
                 return this.parent.get(id);
             }
@@ -112,7 +118,7 @@ class Context {
 
     // TODO: Possibly delete this
     assertIsInFunction(message) {
-        if (!this.currentFunction) {
+        if(!this.currentFunction) {
 
             // Use a more specific error message:
             throw new Error(message);
@@ -120,32 +126,41 @@ class Context {
     }
 
     assertReturnInFunction() {
-        if (!this.currentFunction) {
+        if(!this.currentFunction) {
             throw new Error(semanticErrors.returnOutsideFunction());
         }
     }
 
     assertIsFunction(value) {  // eslint-disable-line class-methods-use-this
-        if (value.constructor !== astClasses.FunctionDeclarationStatement) {
+        if(value.constructor !== astClasses.FunctionDeclarationStatement) {
             throw new Error(semanticErrors.isNotAFunction(value.id));
         }
     }
 
     assertIsTypeBoolean(exp) {
-        if (!exp.type == "boolean") {
+        if(!exp.type == "boolean") {
             throw new Error(semanticErrors.expressionIsNotTypeBoolean(exp, exp.type));
         }
     }
 
     assertUnaryOperandIsOneOfTypes(op, expected, received) {
-        if (expected.indexOf(received) === -1) {
+        if(expected.indexOf(received) === -1) {
             throw new Error(semanticErrors.invalidUnaryOperand(received, op));
         }
     }
 
     assertBinaryOperandIsOneOfTypePairs(op, expected, received) {
-        if (!checkArrayinArray(received, expected)) {
-            throw new Error(semanticErrors.invalidBinaryOperands(received[0], op, received[1]));
+        var receivedTypes = [received[0].type, received[1].type];
+
+        if(receivedTypes[0] == "NULL" && receivedTypes[1] !== "NULL") {
+          receivedTypes[0] = receivedTypes[1];
+          this.setVariable(received[0].id, receivedTypes[0]);
+        } else if(received[0].type !== "NULL" && received[1].type == "NULL") {
+          receivedTypes[1] = receivedTypes[0];
+          this.setVariable(received[1].id, receivedTypes[1]);
+        }
+        if(!checkArrayinArray(receivedTypes, expected)) {
+            throw new Error(semanticErrors.invalidBinaryOperands(receivedTypes[0], op, receivedTypes[1]));
         }
     }
 

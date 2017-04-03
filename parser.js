@@ -83,7 +83,14 @@ class Block {
                 }
             }
         });
+
+        for (var symbol in context.symbolTable) {
+            if (symbol.used === false) {
+                context.declareUnusedLocalVariable(symbol);
+            }
+        }
     }
+
     toString(indent = 0) {
         var string = `${spacer.repeat(indent++)}(Block`;
         for (var statementIndex in this.body) {
@@ -170,24 +177,24 @@ class FunctionDeclarationStatement extends Statement {
         let signature = [];
 
         // But, we still must check that the non-default variables were used.
-        this.parameterArray.forEach(function(parameter) {
-            if (parameter.defaultValue == null) {
+        // this.parameterArray.forEach(function(parameter) {
+        //     if (parameter.defaultValue == null) {
 
-                let entry = self.block.context.get(
-                    parameter.id,
-                    true,  // silent = true
-                    true  // onlyThisContext = true
-                );
-                if (!entry) {
-                    context.declareUnusedLocalVariable(parameter.id);
-                }
-            }
-            // At the same time, build the parameters signature
-            signature.push(context.get(parameter.id).type);
-        });
+        //         let entry = self.block.context.get(
+        //             parameter.id,
+        //             true,  // silent = true
+        //             true  // onlyThisContext = true
+        //         );
+        //         if (!entry) {
+        //             context.declareUnusedLocalVariable(parameter.id);
+        //         }
+        //     }
+        //     // At the same time, build the parameters signature
+        //     signature.push(context.get(parameter.id).type);
+        // });
 
         // If you can't find a parameter in the block, throw unusedLocalVariable
-        context.setVariable(this.id, {type: TYPE.FUNCTION, returnType: block.returnType, parameters: signature});
+        // context.setVariable(this.id, {type: TYPE.FUNCTION, returnType: block.returnType, parameters: signature});
 
     }
 
@@ -321,7 +328,6 @@ class AssignmentStatement extends Statement {
         this.exp = exp;
     }
     analyze(context) {
-
         this.idExp.analyze(context);
         this.exp.analyze(context);
 
@@ -473,6 +479,11 @@ class BinaryExpression extends Expression {
 
         let expectedPairs;
 
+        function appendNullToExpectedPairs(otherType) {
+            expectedPairs.push([TYPE.NULL, otherType]);
+            expectedPairs.push([otherType, TYPE.NULL]);
+        }
+
         if (this.op == "||" || this.op == "&&") {
             expectedPairs = [[TYPE.BOOLEAN, TYPE.BOOLEAN]];
         } else if (this.op == "+") {
@@ -485,6 +496,16 @@ class BinaryExpression extends Expression {
                 [TYPE.LIST, TYPE.LIST],
                 [TYPE.DICTIONARY, TYPE.DICTIONARY]
             ];
+
+            if (context.currentFunction) {
+                appendNullToExpectedPairs(TYPE.INTEGER);
+                appendNullToExpectedPairs(TYPE.FLOAT);
+                appendNullToExpectedPairs(TYPE.STRING);
+                appendNullToExpectedPairs(TYPE.LIST);
+                appendNullToExpectedPairs(TYPE.DICTIONARY);
+                appendNullToExpectedPairs(TYPE.NULL);
+            }
+
         } else if (["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1) {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
@@ -492,19 +513,41 @@ class BinaryExpression extends Expression {
                 [TYPE.FLOAT, TYPE.INTEGER],
                 [TYPE.FLOAT, TYPE.FLOAT]
             ];
+
+            if (context.currentFunction) {
+                appendNullToExpectedPairs(TYPE.INTEGER);
+                appendNullToExpectedPairs(TYPE.FLOAT);
+                appendNullToExpectedPairs(TYPE.NULL);
+            }
+
         } else if (this.op == "*") {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
                 [TYPE.FLOAT, TYPE.INTEGER],
                 [TYPE.FLOAT, TYPE.FLOAT],
-                [TYPE.STRING, TYPE.INTEGER]
+                [TYPE.STRING, TYPE.INTEGER]         //?
             ];
+
+            if (context.currentFunction) {
+                appendNullToExpectedPairs(TYPE.INTEGER);
+                appendNullToExpectedPairs(TYPE.FLOAT);
+                appendNullToExpectedPairs(TYPE.NULL);
+            }
+
+
         } else if (this.op == "//" || this.op == "%") {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.FLOAT, TYPE.INTEGER]
             ];
+
+            if (context.currentFunction) {
+                appendNullToExpectedPairs(TYPE.INTEGER);
+                appendNullToExpectedPairs(TYPE.FLOAT);
+                appendNullToExpectedPairs(TYPE.NULL);
+            }
+
         } else if (this.op == "==" || this.op == "!=") {
             expectedPairs = allTypePairs;
         }

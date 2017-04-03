@@ -39,14 +39,14 @@ tests = function(validFiles, invalidFiles) {
   invalidFiles = [];
 
   fs.readdirSync(validPrograms).forEach(function(fileName) {
-    fullProgramPath = validPrograms + '/' + fileName;
-    programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "bool-func-if-condition.guav") {
-    validFiles.push({
-      name: fileName,
-      code: programFileContents
-    });
-    // }
+      fullProgramPath = validPrograms + '/' + fileName;
+      programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
+      // if(fileName == "bool-func-if-condition.guav") {
+      validFiles.push({
+        name: fileName,
+        code: programFileContents
+      });
+    //}
   });
 
   fs.readdirSync(invalidPrograms).forEach(function(fileName) {

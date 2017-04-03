@@ -59,8 +59,8 @@ class Context {
         this.currentFunction = currentFunction || null;
         this.isInLoop = isInLoop;
 
-        // Need Object.create(null) so things like toString are not in this.symbolTable
-        this.symbolTable = {};
+        // Need Object.create(null) so things like toString are not in this.variableTable
+        this.variableTable = {};
     }
 
     createChildContextForBlock() {
@@ -77,26 +77,26 @@ class Context {
 
     setVariable(id, type) {
         // Case 1- updating the value of a variable within the current scope:
-        if(this.symbolTable.hasOwnProperty(id)) {
+        if(this.variableTable.hasOwnProperty(id)) {
             // Make sure the new value has the correct type (static typing):
-            if(this.symbolTable[id].type === type || type === "NULL") {
-                this.symbolTable[id].type = type;
-                this.symbolTable[id].used = true;
+            if(this.variableTable[id].type === type || type === "NULL") {
+                this.variableTable[id].type = type;
+                this.variableTable[id].used = true;
             } else {
-                throw new Error(semanticErrors.changedImmutableType(id, this.symbolTable[id].type, type));
+                throw new Error(semanticErrors.changedImmutableType(id, this.variableTable[id].type, type));
             }
         } else {
             // Case 2- either creating a new variable or shadowing an old one:
-            this.symbolTable[id] = {};
-            this.symbolTable[id].type = type;
-            this.symbolTable[id].used = false;
+            this.variableTable[id] = {};
+            this.variableTable[id].type = type;
+            this.variableTable[id].used = false;
         }
     }
 
     get(id, silent = false, onlyThisContext = false) {
-        if(this.symbolTable.hasOwnProperty(id)) {
-            this.symbolTable[id].used = true;
-            return this.symbolTable[id];
+        if(this.variableTable.hasOwnProperty(id)) {
+            this.variableTable[id].used = true;
+            return this.variableTable[id];
         } else if(this.parent === null) {
             if(silent) {
                 return undefined;
@@ -114,6 +114,17 @@ class Context {
                 return this.parent.get(id);
             }
         }
+    }
+
+    assertAllLocalVarsUsed() {
+      for (var varName in this.variableTable) {
+        var variable = this.variableTable[varName];
+        console.log();
+        console.log(variable);
+          if (variable.used == false) {
+              this.declareUnusedLocalVariable(variable.id);
+          }
+      }
     }
 
     // TODO: Possibly delete this

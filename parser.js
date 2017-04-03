@@ -84,11 +84,7 @@ class Block {
             }
         });
 
-        for (var symbol in context.symbolTable) {
-            if (symbol.used === false) {
-                context.declareUnusedLocalVariable(symbol);
-            }
-        }
+        context.assertAllLocalVarsUsed()
     }
 
     toString(indent = 0) {

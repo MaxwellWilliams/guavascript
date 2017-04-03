@@ -320,22 +320,26 @@ class AssignmentStatement extends Statement {
     constructor(idExp, assignOp, exp) {
         super();
         this.idExp = idExp;
+        this.idExpBody = idExp.idExpBody;
+        this.idPostOp = idExp.idPostOp;
         this.assignOp = assignOp;
         this.exp = exp;
     }
     analyze(context) {
-        this.idExp.analyze(context);
+        // If variable is being declared temporarily make type null
+        if(context.get(this.idExpBody.id, true) == undefined) {
+            context.setVariable(this.idExpBody.id, null)
+        }
+
         this.exp.analyze(context);
 
         let expectedPairs;
-        let idType = this.idExp.type;
-
+        let idType = this.idExpBody.type;
         // console.log(util.inspect(this, {depth: null}));
 
         if (this.assignOp == "=") {
-            // TODO: Not sure what the input id should be. Change from sourceString when we figure it out
-            // console.log(`Set ${this.idExp.id} to ${this.exp} with type ${this.exp.type}`);
-            context.setVariable(this.idExp.id, {type: this.exp.type});
+            context.setVariable(this.idExpBody.id, this.exp.type);
+            this.idExpBody.analyze(context);
         } else {
             if (this.assignOp == "+=") {
                 expectedPairs = [
@@ -356,7 +360,7 @@ class AssignmentStatement extends Statement {
                 ];
             } else if (["-=", "/="].indexOf(this.assignOp) > -1) {
                 expectedPairs = [
-                    [TYPE.INTEGER, TYPE. INTEGER],
+                    [TYPE.INTEGER, TYPE.INTEGER],
                     [TYPE.INTEGER, TYPE.FLOAT],
                     [TYPE.FLOAT, TYPE.INTEGER],
                     [TYPE.FLOAT, TYPE.FLOAT],
@@ -670,11 +674,13 @@ class IdExpressionBodyRecursive {
 class IdExpressionBodyBase {
     constructor(id) {
         this.id = id;
-        this.type;
+        this.type = undefined;
     }
     analyze(context) {
-        let entry = context.get(this.id, true);
-        this.type = (typeof entry !== "undefined") ? entry.type : "undefined";
+        // let entry = context.get(this.id, true);
+        // this.type = (typeof entry !== undefined) ? entry.type : "undefined";
+
+        // this.type = context.get(this.id).type;  TODO: Is this necessicary (Max removed it)
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id})`;

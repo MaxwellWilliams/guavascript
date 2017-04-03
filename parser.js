@@ -395,7 +395,7 @@ class ReturnStatement extends Statement {
     }
     analyze(context) {
         context.assertReturnInFunction();
-        this.exp.analyze();
+        this.exp.analyze(context);
         this.returnType = this.exp.type;
     }
     toString(indent = 0) {

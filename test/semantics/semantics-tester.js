@@ -13,7 +13,7 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('parser\\programs\\valid\\' + file.name + ' should analyze without any errors',
           function() {
-            //console.log(util.inspect(parser(file.code), {depth: null}));
+            console.log(util.inspect(parser(file.code), {depth: null}));
             parser(file.code).analyze();
             //done();
         });
@@ -38,22 +38,24 @@ tests = function(validFiles, invalidFiles) {
   invalidFiles = [];
 
   fs.readdirSync(validPrograms).forEach(function(fileName) {
-    fullProgramPath = validPrograms + '/' + fileName;
-    programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    validFiles.push({
-      name: fileName,
-      code: programFileContents
-    });
+    if (fileName === "all-local-vars-called.guav") {
+      fullProgramPath = validPrograms + '/' + fileName;
+      programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
+      validFiles.push({
+        name: fileName,
+        code: programFileContents
+      });
+    }
   });
 
-  fs.readdirSync(invalidPrograms).forEach(function(fileName) {
-    fullFilePath = invalidPrograms + '/' + fileName;
-    fileContents = fs.readFileSync(fullFilePath, 'utf-8');
-    invalidFiles.push({
-      name: fileName,
-      code: fileContents
-    });
-  });
+  // fs.readdirSync(invalidPrograms).forEach(function(fileName) {
+  //   fullFilePath = invalidPrograms + '/' + fileName;
+  //   fileContents = fs.readFileSync(fullFilePath, 'utf-8');
+  //   invalidFiles.push({
+  //     name: fileName,
+  //     code: fileContents
+  //   });
+  // });
 
   tests(validFiles, invalidFiles);
 }());

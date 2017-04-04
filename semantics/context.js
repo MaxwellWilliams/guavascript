@@ -53,10 +53,10 @@ function checkArrayinArray(arrA, arrB) {
 };
 
 class Context {
-
-    constructor(parent, currentFunction, isInLoop) {
+    constructor(parent, currentFunction, inFunctionDelaration, isInLoop) {
         this.parent = parent || null;
         this.currentFunction = currentFunction || null;
+        this.inFunctionDelaration = inFunctionDelaration;
         this.isInLoop = isInLoop;
 
         // Need Object.create(null) so things like toString are not in this.variableTable
@@ -64,33 +64,30 @@ class Context {
     }
 
     createChildContextForBlock() {
-        return new Context(this, this.currentFunction, this.inLoop);
+        return new Context(this, this.currentFunction, false, this.inLoop);
     }
 
     createChildContextForLoop() {
-        return new Context(this, this.currentFunction, true);
+        return new Context(this, this.currentFunction, false, true);
     }
 
     createChildContextForFunction(currentFunction) {
-        return new Context(this, currentFunction, false);
+        return new Context(this, currentFunction, false, false);
+    }
+
+    createChildContextForFunctionDeclaration(currentFunction) {
+        return new Context(this, currentFunction, true, false);
     }
 
     setVariable(id, type) {
         // Case 1- Updating the value of an existing variable within the current scope:
         if(id in this.variableTable) {
-          if(this.variableTable[id].type == null) {
-              //Updating recently declared variable with type (AssignmentStatement)
-              console.log("this.variableTable[id].type == null");
-              console.log(type)
-          }
-
             // Make sure the new value has the correct type (static typing):
             if(this.variableTable[id].type === type || this.variableTable[id].type === "NULL") {
                 this.variableTable[id].type = type;
                 this.variableTable[id].used = true;
             } else if(this.variableTable[id].type == null) {
                 //Updating recently declared variable with type (AssignmentStatement)
-                console.log("this.variableTable[id].type == null");
                 this.variableTable[id].type = type;
             } else {
                 throw new Error(semanticErrors.changedImmutableType(id, this.variableTable[id].type, type));
@@ -101,15 +98,9 @@ class Context {
             this.variableTable[id].type = type;
             this.variableTable[id].used = false;
         }
-        console.log(this.variableTable);
     }
 
     get(id, silent = false, onlyThisContext = false) {
-      // console.log();
-      // console.log(id);
-      // console.log(this.variableTable);
-      // console.log(id in this.variableTable);
-
         if(id in this.variableTable) {
             this.variableTable[id].used = true;
             return this.variableTable[id];
@@ -133,8 +124,6 @@ class Context {
     }
 
     assertAllLocalVarsUsed() {
-      console.log();
-      console.log(this.variableTable);
       for (var varName in this.variableTable) {
         var variable = this.variableTable[varName];
           if (variable.used == false) {

@@ -83,8 +83,7 @@ class Block {
                 }
             }
         });
-
-        context.assertAllLocalVarsUsed()
+        context.assertAllLocalVarsUsed();
     }
 
     toString(indent = 0) {
@@ -148,8 +147,7 @@ class FunctionDeclarationStatement extends Statement {
         this.block = block;
     }
     analyze(context) {
-
-        let blockContext = context.createChildContextForFunction(this);
+        let blockContext = context.createChildContextForFunctionDeclaration(this);
         let self = this;
 
         // If there is a default value, instantiate the variable in the block.
@@ -159,7 +157,7 @@ class FunctionDeclarationStatement extends Statement {
                 parameter.defaultValue.analyze(context);
                 blockContext.setVariable(parameter.id, parameter.defaultValue.type);
             } else {
-                blockContext.setVariable(parameter.id, "NULL");
+                blockContext.setVariable(parameter.id, undefined);
             }
         });
 
@@ -306,8 +304,8 @@ class PrintStatement extends Statement {
         super();
         this.exp = exp;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.exp.analyze(context);
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Print` +
@@ -328,7 +326,7 @@ class AssignmentStatement extends Statement {
     analyze(context) {
         // If variable is being declared temporarily make type null
         if(context.get(this.idExpBody.id, true) == undefined) {
-            context.setVariable(this.idExpBody.id, null)
+            context.setVariable(this.idExpBody.id, undefined)
         }
 
         this.exp.analyze(context);
@@ -339,7 +337,6 @@ class AssignmentStatement extends Statement {
 
         if (this.assignOp == "=") {
             context.setVariable(this.idExpBody.id, this.exp.type);
-            this.idExpBody.analyze(context);
         } else {
             if (this.assignOp == "+=") {
                 expectedPairs = [
@@ -478,14 +475,13 @@ class BinaryExpression extends Expression {
         this.right.analyze(context);
 
         let expectedPairs;
-
-        function appendNullToExpectedPairs(otherType) {
-            expectedPairs.push([TYPE.NULL, otherType]);
-            expectedPairs.push([otherType, TYPE.NULL]);
+        function expectParamAndType(type) {
+            expectedPairs.push([undefined, type]);
+            expectedPairs.push([type, undefined]);
         }
 
         if (this.op == "||" || this.op == "&&") {
-            expectedPairs = [[TYPE.BOOLEAN, TYPE.BOOLEAN]];
+            expectedPairs = expectedPairs.push([TYPE.BOOLEAN, TYPE.BOOLEAN]);
         } else if (this.op == "+") {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
@@ -494,18 +490,17 @@ class BinaryExpression extends Expression {
                 [TYPE.FLOAT, TYPE.FLOAT],
                 [TYPE.STRING, TYPE.STRING],
                 [TYPE.LIST, TYPE.LIST],
-                [TYPE.DICTIONARY, TYPE.DICTIONARY]
+                [TYPE.DICTIONARY, TYPE.DICTIONARY],
             ];
 
-            if (context.currentFunction) {
-                appendNullToExpectedPairs(TYPE.INTEGER);
-                appendNullToExpectedPairs(TYPE.FLOAT);
-                appendNullToExpectedPairs(TYPE.STRING);
-                appendNullToExpectedPairs(TYPE.LIST);
-                appendNullToExpectedPairs(TYPE.DICTIONARY);
-                appendNullToExpectedPairs(TYPE.NULL);
+            if(context.inFunctionDelaration) {
+                expectParamAndType(TYPE.INTEGER);
+                expectParamAndType(TYPE.FLOAT);
+                expectParamAndType(TYPE.STRING);
+                expectParamAndType(TYPE.LIST);
+                expectParamAndType(TYPE.DICTIONARY);
+                expectParamAndType(undefined);
             }
-
         } else if (["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1) {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
@@ -514,12 +509,11 @@ class BinaryExpression extends Expression {
                 [TYPE.FLOAT, TYPE.FLOAT]
             ];
 
-            if (context.currentFunction) {
-                appendNullToExpectedPairs(TYPE.INTEGER);
-                appendNullToExpectedPairs(TYPE.FLOAT);
-                appendNullToExpectedPairs(TYPE.NULL);
+            if(context.inFunctionDelaration) {
+                expectParamAndType(TYPE.INTEGER);
+                expectParamAndType(TYPE.FLOAT);
+                expectParamAndType(undefined);
             }
-
         } else if (this.op == "*") {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
@@ -529,29 +523,29 @@ class BinaryExpression extends Expression {
                 [TYPE.STRING, TYPE.INTEGER]         //?
             ];
 
-            if (context.currentFunction) {
-                appendNullToExpectedPairs(TYPE.INTEGER);
-                appendNullToExpectedPairs(TYPE.FLOAT);
-                appendNullToExpectedPairs(TYPE.NULL);
+            if(context.inFunctionDelaration) {
+                expectParamAndType(TYPE.INTEGER);
+                expectParamAndType(TYPE.FLOAT);
+                expectParamAndType(undefined);
             }
-
-
         } else if (this.op == "//" || this.op == "%") {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.FLOAT, TYPE.INTEGER]
             ];
 
-            if (context.currentFunction) {
-                appendNullToExpectedPairs(TYPE.INTEGER);
-                appendNullToExpectedPairs(TYPE.FLOAT);
-                appendNullToExpectedPairs(TYPE.NULL);
+            if(context.inFunctionDelaration) {
+                expectParamAndType(TYPE.INTEGER);
+                expectParamAndType(TYPE.FLOAT);
+                expectParamAndType(undefined);
             }
-
         } else if (this.op == "==" || this.op == "!=") {
             expectedPairs = allTypePairs;
-        }
 
+            if(context.inFunctionDelaration) {
+                expectParamAndType(undefined);
+            }
+        }
         context.assertBinaryOperandIsOneOfTypePairs(
             this.op,
             expectedPairs,
@@ -679,8 +673,7 @@ class IdExpressionBodyBase {
     analyze(context) {
         // let entry = context.get(this.id, true);
         // this.type = (typeof entry !== undefined) ? entry.type : "undefined";
-
-        // this.type = context.get(this.id).type;  TODO: Is this necessicary (Max removed it)
+        this.type = context.get(this.id).type;  // Dont Analyze on initial variable declarations
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id})`;
@@ -983,8 +976,8 @@ semantics = grammar.createSemantics().addOperation('ast', {
     PrefixExp_reg(prefixOp, exp) {return new UnaryExpression(prefixOp.sourceString, exp.ast());},
     PrefixExp_pass(otherExp) {return otherExp.ast();},
     ParenExp_reg(left, exp, right) {return new ParenthesisExpression(exp.ast());},
-    ParenExp_pass(variable) {return new Variable(variable.ast());},
-    Var(input) {return new Variable(input.ast());},
+    ParenExp_pass(variable) {return variable.ast();},
+    Var(input) {return input.ast();},
 
     IdExp(idExpBody, idPostOp) {return new IdExpression(idExpBody.ast(), idPostOp.ast());},
     IdExpBody_recursive(idExpBody, selector) {return new IdExpressionBodyRecursive(idExpBody.ast(), selector.ast());},
@@ -1014,9 +1007,9 @@ semantics = grammar.createSemantics().addOperation('ast', {
     nullLit(nul) {return new NullLit()},
     keyword(word) {return word;},
     id_variable(firstChar, rest) {return new IdVariable(this.sourceString);},
-    id_constant(constId) {return new constId(this.sourceString)},                  //TODO: fix constID
+    id_constant(constId) {return sourceString.ast()},
     idrest(character) {return character},
-    constId(underscores, words) {return new ConstId(words)},
+    constId(underscores, words) {return new ConstId(words)},          //TODO: fix constID
     classId(upper, idrests) {return new ClassId(idrests.ast())}
 });
 

@@ -326,7 +326,7 @@ class AssignmentStatement extends Statement {
     analyze(context) {
         // If variable is being declared temporarily make type null
         if(context.get(this.idExpBody.id, true) == undefined) {
-            context.setVariable(this.idExpBody.id, undefined)
+            context.setVariable(this.idExpBody.id, undefined);
         }
 
         this.exp.analyze(context);

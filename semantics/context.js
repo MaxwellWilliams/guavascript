@@ -137,7 +137,7 @@ class Context {
                   throw new Error(semanticErrors.useBeforeDeclaration(id));
               }
             } else {
-                return this.parent.get(id);
+                return this.parent.get(id, silent, onlyThisContext);
             }
         }
     }

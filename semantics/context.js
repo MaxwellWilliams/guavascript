@@ -143,7 +143,6 @@ class Context {
     }
 
     assertAllLocalVarsUsed() {
-      console.log(this.idTable);
       for (var varName in this.idTable) {
         var variable = this.idTable[varName];
           if (variable.used == false) {
@@ -172,7 +171,7 @@ class Context {
           throw new Error(semanticErrors.invalidParams(id, functionType, calledType));
         }
         for(var typeIndex in functionType) {
-            if((functionType[typeIndex] !== calledType[typeIndex] && functionType[typeIndex] !== undefined) ||
+            if(((functionType[typeIndex] !== calledType[typeIndex]) && (functionType[typeIndex] !== undefined)) ||
                (calledType[typeIndex] == undefined)) {
                  throw new Error(semanticErrors.invalidParams(id, functionType, calledType));
                }

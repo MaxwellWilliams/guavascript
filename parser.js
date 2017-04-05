@@ -378,21 +378,6 @@ class AssignmentStatement extends Statement {
     }
 }
 
-class IdentifierStatement extends Statement {
-    constructor(iDExp) {
-        super();
-        this.iDExp = iDExp;
-    }
-    analyze() {
-        // TODO
-    }
-    toString(indent = 0) {
-        return `${spacer.repeat(indent)}(Identifier Statement` +
-              `\n${this.iDExp.toString(++indent)}` +
-              `\n${spacer.repeat(--indent)})`;
-    }
-}
-
 class ReturnStatement extends Statement {
     constructor(exp) {
         super();
@@ -546,7 +531,6 @@ class BinaryExpression extends Expression {
                 expectParamAndType(undefined);
             }
         }
-        console.log(context.inFunctionDelaration);
         context.assertBinaryOperandIsOneOfTypePairs(
             this.op,
             expectedPairs,
@@ -661,7 +645,7 @@ class IdExpressionBodyRecursive {
         if(this.idExpBody.isFunction) {
             context.assertIdCalledAsFunction(this.id, this.appendageOp);
             this.idAppendage.analyze(context);
-            context.assertFunctionCalledWithValidParams(this.id, this.idAppendage.type, this.idExpBody.paramType);
+            context.assertFunctionCalledWithValidParams(this.id, this.idExpBody.paramType, this.idAppendage.type);
         }
     }
     toString(indent = 0) {
@@ -966,7 +950,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     Statement_print(print, lCurly, exp, rCurly) {return new PrintStatement(exp.ast());},
     Statement_assign(idExp, assignOp, exp) {
       return new AssignmentStatement(idExp.ast(), assignOp.sourceString, exp.ast());},
-    Statement_identifier(iDExp) {return new IdentifierStatement(iDExp.ast());},
+    Statement_identifier(idExp) {return idExp.ast();},
     Statement_return(ret, exp) {return new ReturnStatement(exp.ast());},
     MatchExp(matchStr, idExp, wit, line1, var1, match1, lines, varArray, matchArray, lineFinal, _, matchFinal) {
         return new MatchExpression(idExp.ast(), [var1.ast()].concat(varArray.ast()), [match1.ast()].concat(matchArray.ast()), matchFinal.ast());},

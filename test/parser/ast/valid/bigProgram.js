@@ -163,10 +163,8 @@ module.exports.getAst = function() {
                 (id var1)
               )
               (Block
-                (Identifier Statement
-                  (IdExpression
-                    (answer)
-                  )
+                (IdExpression
+                  (answer)
                 )
                 (If
                   (Case

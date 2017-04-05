@@ -41,7 +41,7 @@ tests = function(validFiles, invalidFiles) {
   fs.readdirSync(validPrograms).forEach(function(fileName) {
       fullProgramPath = validPrograms + '/' + fileName;
       programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-      // if(fileName == "bool-func-if-condition.guav") {
+      // if(fileName == "all-local-vars-called.guav") {
       validFiles.push({
         name: fileName,
         code: programFileContents

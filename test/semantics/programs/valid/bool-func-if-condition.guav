@@ -1,4 +1,4 @@
-# Should analyze fine since the function returns boolean.
+# Should analyze fine since the function returns Boolean.
 
 isPositive(n = 10) {
     ret n >= 0

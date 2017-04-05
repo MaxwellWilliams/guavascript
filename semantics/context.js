@@ -36,6 +36,13 @@ const semanticErrors = {
     unusedLocalVariable(id) {
         return `UnusedLocalVariable error: local variable ${id} is declared but never used`;
     },
+    notCalledAsFunction(id) {
+        return `notCalledAsFunction error: ${id} was expected to be called as a function`
+    },
+    invalidParams(id, functionType, calledType) {
+        return `invalidParams error: ${id} was expected to be called with ${functionType}` +
+               ` but was called with ${calledType}`
+    },
     returnOutsideFunction() {
         return `ReturnOutsideFunction error: found a return statement outside of a function`;
     },
@@ -53,57 +60,69 @@ function checkArrayinArray(arrA, arrB) {
 };
 
 class Context {
-    constructor(parent, currentFunction, inFunctionDelaration, isInLoop) {
+    constructor(parent, currentFunction, isInLoop, inFunctionDelaration = false) {
         this.parent = parent || null;
         this.currentFunction = currentFunction || null;
-        this.inFunctionDelaration = inFunctionDelaration;
         this.isInLoop = isInLoop;
+        this.inFunctionDelaration = inFunctionDelaration;
 
-        // Need Object.create(null) so things like toString are not in this.variableTable
-        this.variableTable = {};
+        // Need Object.create(null) so things like toString are not in this.idTable
+        this.idTable = {};
     }
 
     createChildContextForBlock() {
-        return new Context(this, this.currentFunction, false, this.inLoop);
+        return new Context(this, this.currentFunction, this.inLoop);
     }
 
     createChildContextForLoop() {
-        return new Context(this, this.currentFunction, false, true);
+        return new Context(this, this.currentFunction, true);
     }
 
     createChildContextForFunction(currentFunction) {
-        return new Context(this, currentFunction, false, false);
+        return new Context(this, currentFunction, false);
     }
 
     createChildContextForFunctionDeclaration(currentFunction) {
-        return new Context(this, currentFunction, true, false);
+        return new Context(this, currentFunction, false, true);
     }
 
-    setVariable(id, type) {
+    setId(id, type, isFunction = false, paramType = undefined) {
         // Case 1- Updating the value of an existing variable within the current scope:
-        if(id in this.variableTable) {
+        if(id in this.idTable) {
             // Make sure the new value has the correct type (static typing):
-            if(this.variableTable[id].type === type || this.variableTable[id].type === "NULL") {
-                this.variableTable[id].type = type;
-                this.variableTable[id].used = true;
-            } else if(this.variableTable[id].type == null) {
+            if((this.idTable[id].isFunction === isFunction) &&
+               (this.idTable[id].paramType === paramType) &&
+               (this.idTable[id].type === type || this.idTable[id].type === "NULL")) {
+                this.idTable[id].type = type;
+                this.idTable[id].used = true;
+            } else if(this.idTable[id].type == undefined) {
                 //Updating recently declared variable with type (AssignmentStatement)
-                this.variableTable[id].type = type;
+                this.idTable[id].type = type;
             } else {
-                throw new Error(semanticErrors.changedImmutableType(id, this.variableTable[id].type, type));
+                throw new Error(semanticErrors.changedImmutableType(id, this.idTable[id].type, type));
             }
         } else {
             // Case 3- Either creating a new variable or shadowing an old one:
-            this.variableTable[id] = {};
-            this.variableTable[id].type = type;
-            this.variableTable[id].used = false;
+            this.idTable[id] = {};
+            this.idTable[id].type = type;
+            this.idTable[id].isFunction = isFunction;
+            this.idTable[id].paramType = paramType;
+            this.idTable[id].used = false;
         }
     }
 
+    setVariable(id, type) {
+        this.setId(id, type);
+    }
+
+    setFunction(id, type, paramType) {
+        this.setId(id, type, true, paramType);
+    }
+
     get(id, silent = false, onlyThisContext = false) {
-        if(id in this.variableTable) {
-            this.variableTable[id].used = true;
-            return this.variableTable[id];
+        if(id in this.idTable) {
+            this.idTable[id].used = true;
+            return this.idTable[id];
         } else if(this.parent === null) {
             if(silent) {
                 return undefined;
@@ -124,10 +143,11 @@ class Context {
     }
 
     assertAllLocalVarsUsed() {
-      for (var varName in this.variableTable) {
-        var variable = this.variableTable[varName];
+      console.log(this.idTable);
+      for (var varName in this.idTable) {
+        var variable = this.idTable[varName];
           if (variable.used == false) {
-              this.declareUnusedLocalVariable(variable.id);
+              this.declareUnusedLocalVariable(varName);
           }
       }
     }
@@ -138,6 +158,24 @@ class Context {
 
             // Use a more specific error message:
             throw new Error(message);
+        }
+    }
+
+    assertIdCalledAsFunction(id, op) {
+        if(op !== "()") {
+            throw new Error(semanticErrors.notCalledAsFunction(id));
+        }
+    }
+
+    assertFunctionCalledWithValidParams(id, functionType, calledType) {
+        if(functionType.length !== calledType.length) {
+          throw new Error(semanticErrors.invalidParams(id, functionType, calledType));
+        }
+        for(var typeIndex in functionType) {
+            if((functionType[typeIndex] !== calledType[typeIndex] && functionType[typeIndex] !== undefined) ||
+               (calledType[typeIndex] == undefined)) {
+                 throw new Error(semanticErrors.invalidParams(id, functionType, calledType));
+               }
         }
     }
 

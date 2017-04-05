@@ -67,22 +67,22 @@ class Program {
 class Block {
     constructor(body) {
         this.body = body;
-        this.returnType;
         this.numberOfReturnStatements = 0;
+        this.returnType = undefined;
     }
     analyze(context) {
-        let self = this;
-        this.body.forEach(function(statement) {
+        for(var statementCounter in this.body) {
+            var statement = this.body[statementCounter];
             statement.analyze(context);
             if (statement.constructor === ReturnStatement) {
-                self.numberOfReturnStatements++;
-                if (self.numberOfReturnStatements <= 1) {
-                    self.returnType = statement.returnType;
+                this.numberOfReturnStatements++;
+                if (this.numberOfReturnStatements <= 1) {
+                    this.returnType = statement.returnType;
                 } else {
                     context.throwMultipleReturnsInABlockError();
                 }
             }
-        });
+        }
         context.assertAllLocalVarsUsed();
     }
 
@@ -145,6 +145,7 @@ class FunctionDeclarationStatement extends Statement {
         this.id = id;
         this.parameterArray = parameterArray;
         this.block = block;
+        this.paramType = [];
     }
     analyze(context) {
         let blockContext = context.createChildContextForFunctionDeclaration(this);
@@ -155,18 +156,17 @@ class FunctionDeclarationStatement extends Statement {
         this.parameterArray.forEach(function(parameter) {
             if (parameter.defaultValue !== null) {
                 parameter.defaultValue.analyze(context);
+                self.paramType.push(parameter.defaultValue.type);
                 blockContext.setVariable(parameter.id, parameter.defaultValue.type);
             } else {
+                self.paramType.push(undefined);
                 blockContext.setVariable(parameter.id, undefined);
             }
         });
 
-        // But what about ambiguous variables? They will automatically be added to the
-        // context as they are declared. We would want the type of the first declaration
-        // to be the official type of the var. So, we get type checking for non-default vars
-        // in the rest of the function for free.
-
         this.block.analyze(blockContext);
+
+        context.setFunction(this.id, this.block.returnType, this.paramType);
 
         let signature = [];
 
@@ -546,6 +546,7 @@ class BinaryExpression extends Expression {
                 expectParamAndType(undefined);
             }
         }
+        console.log(context.inFunctionDelaration);
         context.assertBinaryOperandIsOneOfTypePairs(
             this.op,
             expectedPairs,
@@ -648,7 +649,7 @@ class IdExpressionBodyRecursive {
     constructor(idExpBody, idAppendage) {
         this.idExpBody = idExpBody;
         this.idAppendage = idAppendage;
-        this.appendageOp = idAppendage === 'undefined' ? 'undefined' : idAppendage.getOp();
+        this.appendageOp = idAppendage == undefined ? undefined : idAppendage.op;
         this.id;
         this.type;
     }
@@ -656,6 +657,12 @@ class IdExpressionBodyRecursive {
         this.idExpBody.analyze(context);
         this.id = this.idExpBody.id;
         this.type = this.idExpBody.type;
+
+        if(this.idExpBody.isFunction) {
+            context.assertIdCalledAsFunction(this.id, this.appendageOp);
+            this.idAppendage.analyze(context);
+            context.assertFunctionCalledWithValidParams(this.id, this.idAppendage.type, this.idExpBody.paramType);
+        }
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.appendageOp}` +
@@ -669,11 +676,13 @@ class IdExpressionBodyBase {
     constructor(id) {
         this.id = id;
         this.type = undefined;
+        this.paramType = undefined;
     }
-    analyze(context) {
-        // let entry = context.get(this.id, true);
-        // this.type = (typeof entry !== undefined) ? entry.type : "undefined";
-        this.type = context.get(this.id).type;  // Dont Analyze on initial variable declarations
+    analyze(context) {                               // Dont Analyze on initial variable declarations
+        let variable = context.get(this.id);
+        this.type = variable.type;
+        this.isFunction = variable.isFunction;
+        this.paramType = variable.paramType ? variable.paramType : undefined;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id})`;
@@ -683,12 +692,10 @@ class IdExpressionBodyBase {
 class PeriodId {
     constructor(id) {
         this.id = id;
+        this.op = "."
     }
     analyze() {
         // TODO
-    }
-    getOp() {
-        return ".";
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id.toString(++indent)})`;
@@ -696,19 +703,19 @@ class PeriodId {
 }
 
 class Arguments {
-    constructor(args) {
-        this.args = args;
+    constructor(varList) {
+        this.varList = varList;
+        this.op = "()";
+        this.type = undefined;
     }
-    analyze() {
-        // TODO
-    }
-    getOp() {
-        return "()";
+    analyze(context) {
+        this.varList.analyze(context);
+        this.type = this.varList.type;
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Arguments`;
-        if (this.args.length > 0) {
-            string += `\n${this.args.toString(++indent)}` +
+        if (this.varList.length > 0) {
+            string += `\n${this.varList.toString(++indent)}` +
                       `\n${spacer.repeat(--indent)})`;
         } else {
           string += `)`
@@ -720,12 +727,10 @@ class Arguments {
 class IdSelector {
     constructor(variable) {
         this.variable = variable;
+        this.op = "[]"
     }
     analyze() {
         // TODO
-    }
-    getOp() {
-        return "[]";
     }
     toString(indent = 0) {
         return `${this.variable.toString(indent)}`;
@@ -806,9 +811,15 @@ class VarList {
     constructor(variables) {
         this.variables = variables;
         this.length = variables.length;
+        this.type = undefined;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.type = [];
+        for(var variableCounter in this.variables) {
+            var variable = this.variables[variableCounter];
+            variable.analyze(context);
+            this.type.push(variable.type);
+        }
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent++)}(VarList`;

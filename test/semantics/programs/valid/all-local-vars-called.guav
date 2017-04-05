@@ -9,3 +9,5 @@ print(x + y + z)
 f(n, m) {
     ret n + m
 }
+
+f(x, z)

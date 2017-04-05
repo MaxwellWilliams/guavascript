@@ -236,8 +236,11 @@ class ClassDeclarationStatement extends Statement {
         this.block = block;
     }
     analyze(context) {
-        this.block.analyze(context.createChildContextForBlock());
-        context.setVariable(this.id, {type: TYPE.CLASS});
+        context.setVariable(this.id, TYPE.CLASS);
+
+        let newContext = context.createChildContextForBlock();
+        newContext.setVariable('this', TYPE.DICTIONARY);
+        this.block.analyze(newContext);
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Class` +
@@ -332,10 +335,12 @@ class AssignmentStatement extends Statement {
         this.exp.analyze(context);
 
         let expectedPairs;
+        this.idExpBody.analyze(context);
         let idType = this.idExpBody.type;
         // console.log(util.inspect(this, {depth: null}));
 
         if (this.assignOp == "=") {
+            console.log(this.idExpBody);
             context.setVariable(this.idExpBody.id, this.exp.type);
         } else {
             if (this.assignOp == "+=") {

@@ -92,9 +92,14 @@ class Context {
             // Make sure the new value has the correct type (static typing):
             if((this.idTable[id].isFunction === isFunction) &&
                (this.idTable[id].paramType === paramType) &&
-               (this.idTable[id].type === type || this.idTable[id].type === "NULL")) {
+               ((this.idTable[id].type === type))) {
                 this.idTable[id].type = type;
                 this.idTable[id].used = true;
+            } else if(type === "NULL") {
+              this.idTable[id].type = type;
+              this.idTable[id].used = true;
+              this.idTable[id].isFunction = false;
+              this.idTable[id].paramType = undefined;
             } else if(this.idTable[id].type == undefined) {
                 //Updating recently declared variable with type (AssignmentStatement)
                 this.idTable[id].type = type;

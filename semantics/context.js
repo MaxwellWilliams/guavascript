@@ -1,5 +1,18 @@
 const astClasses = require('../parser.js');
 
+const TYPE = {
+    BOOLEAN: "BOOLEAN",
+    INTEGER: "INTEGER",
+    FLOAT: "FLOAT",
+    STRING: "STRING",
+    LIST: "LIST",
+    DICTIONARY: "DICTIONARY",
+    TUPLE: "TUPLE",
+    FUNCTION: "FUNCTION",
+    CLASS: "CLASS",
+    NULL: "NULL"
+}
+
 const semanticErrors = {
     changedImmutableType(id, expectedType, receivedType) {
         return `ChangedImmutableType error: tried to change ${id} `
@@ -8,8 +21,14 @@ const semanticErrors = {
     useBeforeDeclaration(id) {
         return `UseBeforeDeclaration error: ${id} was used but undeclared`;
     },
+    doesntHaveExpectedType(id, expectedType, actualType) {
+        return `${id} was expected to be type ${expectedType} but is type ${actualType}`;
+    },
     isNotAFunction(id) {
         return `IsNotAFunction error: ${id} is not a function`;
+    },
+    classWithoutConstructor(id) {
+        return `Class ${id} doesn't have a constructor`
     },
     isNotAList(id) {
         return `IsNotAList error: ${id} is not a list`;
@@ -60,30 +79,36 @@ function checkArrayinArray(arrA, arrB) {
 };
 
 class Context {
-    constructor(parent, currentFunction, isInLoop, inFunctionDelaration = false) {
-        this.parent = parent || null;
-        this.currentFunction = currentFunction || null;
+    constructor(parent = null, currentFunction = null, isInLoop, inFunctionDelaration = false, inClassDelaration = false, currentClassId = null) {
+        this.parent = parent;
+        this.currentFunction = currentFunction;
         this.isInLoop = isInLoop;
         this.inFunctionDelaration = inFunctionDelaration;
+        this.inClassDelaration = inClassDelaration;
+        this.currentClassId = currentClassId;
 
         // Need Object.create(null) so things like toString are not in this.idTable
         this.idTable = {};
     }
 
     createChildContextForBlock() {
-        return new Context(this, this.currentFunction, this.inLoop);
+        return new Context(this, this.currentFunction, this.inLoop, this.inFunctionDelaration, this.inClassDelaration, this.currentClassId);
     }
 
     createChildContextForLoop() {
-        return new Context(this, this.currentFunction, true);
+        return new Context(this, this.currentFunction, true, this.inFunctionDelaration, this.inClassDelaration, this.currentClassId);
     }
 
     createChildContextForFunction(currentFunction) {
-        return new Context(this, currentFunction, false);
+        return new Context(this, currentFunction, this.inLoop, this.inFunctionDelaration, this.inClassDelaration, this.currentClassId);
     }
 
     createChildContextForFunctionDeclaration(currentFunction) {
-        return new Context(this, currentFunction, false, true);
+        return new Context(this, this.currentFunction, this.inLoop, true, this.inClassDelaration, this.currentClassId);
+    }
+
+    createChildContextForClassDeclaration(currentClassId) {
+        return new Context(this, this.currentFunction, this.inLoop,  this.inFunctionDelaration, true, currentClassId);
     }
 
     setId(id, type, isFunction = false, paramType = undefined) {
@@ -92,7 +117,7 @@ class Context {
             // Make sure the new value has the correct type (static typing):
             if((this.idTable[id].isFunction === isFunction) &&
                (this.idTable[id].paramType === paramType) &&
-               ((this.idTable[id].type === type))) {
+               (this.idTable[id].type === type)) {
                 this.idTable[id].type = type;
                 this.idTable[id].used = true;
             } else if(type === "NULL") {
@@ -113,6 +138,11 @@ class Context {
             this.idTable[id].isFunction = isFunction;
             this.idTable[id].paramType = paramType;
             this.idTable[id].used = false;
+            
+            this.idTable[id].properities = undefined;
+            if( type === TYPE.CLASS) {this.idTable[id].properities = { constructors: [] };};
+            if(type === TYPE.DICTIONARY) {this.idTable[id].properities = {};};
+            if(type === TYPE.LIST || type === TYPE.TUPLE) {this.idTable[id].properities = [];};
         }
     }
 
@@ -122,6 +152,31 @@ class Context {
 
     setFunction(id, type, paramType) {
         this.setId(id, type, true, paramType);
+    }
+
+    addValueToId(id, value, key = undefined) {
+        let variable = this.get(id);
+        if(variable.type === TYPE.CLASS) {
+            if(key === undefined) {
+                throw new Error(`${id} is a dictionary and expects key value pairs`);
+            } else if(key === 'constructor') {
+                variable.properities['constructors'].push(value);
+            } else {
+                variable.properities[key] = value;
+            }
+        } else if(variable.type === TYPE.DICTIONARY) {
+            if(key = undefined) {
+              throw new Error(`${id} is a dictionary and expects key value pairs`);
+            }
+            variable.properities[key] = value;
+        } else if(variable.type === TYPE.LIST) {
+            variable.properities.push(value);
+        } else if(variable.type === TYPE.TUPLE) {
+            variable.properities.push(value);
+        } else {
+          throw new Error(`${id} has type ${variable.type} and therfore cannot have properities`);
+        }
+
     }
 
     get(id, silent = false, onlyThisContext = false) {
@@ -156,12 +211,23 @@ class Context {
       }
     }
 
-    // TODO: Possibly delete this
-    assertIsInFunction(message) {
-        if(!this.currentFunction) {
+    assertIsClass(id) {
+        if(this.get(id).type !== TYPE.CLASS) {
+            throw new Error(semanticErrors.doesntHaveExpectedType(id, this.get(id).type, 'class'));
+        }
+    }
 
-            // Use a more specific error message:
-            throw new Error(message);
+    assertClassHasConstructor(id) {
+        this.assertIsClass(id);
+        let classConstructors = this.get(id).properities['constructors'];
+        if(classConstructors.length < 1) {
+            throw new Error(semanticErrors.classWithoutConstructor(id));
+        }
+    }
+
+    assertInFunctionDeclaration() {
+        if(!this.inFunctionDelaration) {
+            throw new Error(semanticErrors.returnOutsideFunction());
         }
     }
 
@@ -180,12 +246,6 @@ class Context {
                (calledType[typeIndex] == undefined)) {
                  throw new Error(semanticErrors.invalidParams(id, functionType, calledType));
                }
-        }
-    }
-
-    assertReturnInFunction() {
-        if(!this.currentFunction) {
-            throw new Error(semanticErrors.returnOutsideFunction());
         }
     }
 

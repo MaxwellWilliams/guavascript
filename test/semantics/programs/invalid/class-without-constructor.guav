@@ -1,7 +1,7 @@
-# Should pass since class instantiation arguments match class constructor function parameters
+# Shouldn't pass since class doesn't have a constructor
 
 class Person {
-    constructor(name = "John Doe", height = 50.0, vocabulary = []) {
+    Person(name = "John Doe", height = 50.0, vocabulary = []) {
         this.name = name
         this.height = height
         this.vocabulary = vocabulary

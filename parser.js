@@ -83,7 +83,9 @@ class Block {
                 }
             }
         }
-        context.assertAllLocalVarsUsed();
+        if(!context.inClassDelaration) {
+            context.assertAllLocalVarsUsed();
+        }
     }
 
     toString(indent = 0) {
@@ -166,7 +168,15 @@ class FunctionDeclarationStatement extends Statement {
 
         this.block.analyze(blockContext);
 
-        context.setFunction(this.id, this.block.returnType, this.paramType);
+        if(context.inClassDelaration) {
+            let functionProperities = {
+                type: this.block.returnType,
+                paramType: this.paramType
+            }
+            context.addValueToId(context.currentClassId, functionProperities, this.id)
+        } else {
+            context.setFunction(this.id, this.block.returnType, this.paramType);
+        }
 
         let signature = [];
 
@@ -237,10 +247,9 @@ class ClassDeclarationStatement extends Statement {
     }
     analyze(context) {
         context.setVariable(this.id, TYPE.CLASS);
-
-        let newContext = context.createChildContextForBlock();
-        newContext.setVariable('this', TYPE.DICTIONARY);
+        let newContext = context.createChildContextForClassDeclaration(this.id);
         this.block.analyze(newContext);
+        context.assertClassHasConstructor(this.id);
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Class` +
@@ -327,12 +336,15 @@ class AssignmentStatement extends Statement {
         this.exp = exp;
     }
     analyze(context) {
+        this.exp.analyze(context);
+
         // If variable is being declared temporarily make type null
-        if(context.get(this.idExpBody.id, true) == undefined) {
+        if(context.inClassDelaration && (this.idExpBody.idExpBase.id === 'this')) {
+            context.addValueToId(context.currentClassId, this.exp, this.idExpBody.idAppendage.id)
+            return;
+        } else if(context.get(this.idExpBody.id, true) == undefined) {
             context.setVariable(this.idExpBody.id, undefined);
         }
-
-        this.exp.analyze(context);
 
         let expectedPairs;
         this.idExpBody.analyze(context);
@@ -340,7 +352,6 @@ class AssignmentStatement extends Statement {
         // console.log(util.inspect(this, {depth: null}));
 
         if (this.assignOp == "=") {
-            console.log(this.idExpBody);
             context.setVariable(this.idExpBody.id, this.exp.type);
         } else {
             if (this.assignOp == "+=") {
@@ -390,7 +401,7 @@ class ReturnStatement extends Statement {
         this.returnType;
     }
     analyze(context) {
-        context.assertReturnInFunction();
+        context.assertInFunctionDeclaration();
         this.exp.analyze(context);
         this.returnType = this.exp.type;
     }
@@ -635,27 +646,27 @@ class IdExpression extends Expression {
 }
 
 class IdExpressionBodyRecursive {
-    constructor(idExpBody, idAppendage) {
-        this.idExpBody = idExpBody;
+    constructor(idExpBase, idAppendage) {
+        this.idExpBase = idExpBase;
         this.idAppendage = idAppendage;
         this.appendageOp = idAppendage == undefined ? undefined : idAppendage.op;
         this.id;
         this.type;
     }
     analyze(context) {
-        this.idExpBody.analyze(context);
-        this.id = this.idExpBody.id;
-        this.type = this.idExpBody.type;
+        this.idExpBase.analyze(context);
+        this.id = this.idExpBase.id;
+        this.type = this.idExpBase.type;
 
-        if(this.idExpBody.isFunction) {
+        if(this.idExpBase.isFunction) {
             context.assertIdCalledAsFunction(this.id, this.appendageOp);
             this.idAppendage.analyze(context);
-            context.assertFunctionCalledWithValidParams(this.id, this.idExpBody.paramType, this.idAppendage.type);
+            context.assertFunctionCalledWithValidParams(this.id, this.idExpBase.paramType, this.idAppendage.type);
         }
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.appendageOp}` +
-               `\n${this.idExpBody.toString(++indent)}` +
+               `\n${this.idExpBase.toString(++indent)}` +
                `\n${this.idAppendage.toString(indent)}` +
                `\n${spacer.repeat(--indent)})`;
     }

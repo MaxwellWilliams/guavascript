@@ -85,12 +85,10 @@ class Block {
             var statement = this.body[statementCounter];
             statement.analyze(context);
             if (statement.constructor === ReturnStatement) {
-                this.numberOfReturnStatements++;
-                if (this.numberOfReturnStatements <= 1) {
-                    this.returnType = statement.returnType;
-                } else {
+                if (++this.numberOfReturnStatements > 1) {
                     context.throwMultipleReturnsInABlockError();
                 }
+                this.returnType = statement.type;
             }
         }
         if(!context.inClassDelaration) {
@@ -108,13 +106,9 @@ class Block {
     }
 }
 
-class Statement {
-}
-
 // Use this for both conditional and if/else statement
-class BranchStatement extends Statement {
+class BranchStatement {
     constructor(conditions, thenBlocks, elseBlock) {
-        super();
         this.conditions = conditions;
         this.thenBlocks = thenBlocks;
         this.elseBlock = elseBlock;
@@ -151,13 +145,13 @@ class BranchStatement extends Statement {
     }
 }
 
-class FunctionDeclarationStatement extends Statement {
+class FunctionDeclarationStatement {
     constructor(id, parameterArray, block) {
-        super();
         this.id = id;
         this.parameterArray = parameterArray;
         this.block = block;
         this.paramType = [];
+        this.type = undefined;
     }
     analyze(context) {
         let blockContext = context.createChildContextForFunctionDeclaration(this);
@@ -177,18 +171,19 @@ class FunctionDeclarationStatement extends Statement {
         });
 
         this.block.analyze(blockContext);
+        this.type = this.block.returnType;
 
         if(context.inClassDelaration) {
             let functionProperities = {
-                type: this.block.returnType,
+                type: this.type,
                 paramType: this.paramType
             }
             context.addValueToId(context.currentClassId, functionProperities, this.id)
         } else {
-            context.setFunction(this.id, this.block.returnType, this.paramType);
+            context.setFunction(this.id, this.type, this.paramType);
         }
 
-        let signature = [];
+        // let signature = [];
 
         // But, we still must check that the non-default variables were used.
         // this.parameterArray.forEach(function(parameter) {
@@ -249,9 +244,8 @@ class Parameter {
     }
 }
 
-class ClassDeclarationStatement extends Statement {
+class ClassDeclarationStatement {
     constructor(id, block) {
-        super();
         this.id = id;
         this.block = block;
     }
@@ -269,9 +263,8 @@ class ClassDeclarationStatement extends Statement {
     }
 }
 
-class MatchStatement extends Statement {
+class MatchStatement {
     constructor(matchExp) {
-        super();
         this.matchExp = matchExp;
     }
     analyze() {
@@ -282,9 +275,8 @@ class MatchStatement extends Statement {
     }
 }
 
-class WhileStatement extends Statement {
+class WhileStatement {
     constructor(exp, block) {
-        super();
         this.exp = exp;
         this.block = block;
     }
@@ -303,9 +295,8 @@ class WhileStatement extends Statement {
     }
 }
 
-class ForInStatement extends Statement {
+class ForInStatement {
     constructor(id, iDExp, block) {
-        super();
         this.id = id;
         this.iDExp = iDExp;
         this.block = block;
@@ -321,9 +312,8 @@ class ForInStatement extends Statement {
     }
 }
 
-class PrintStatement extends Statement {
+class PrintStatement {
     constructor(exp) {
-        super();
         this.exp = exp;
     }
     analyze(context) {
@@ -336,9 +326,8 @@ class PrintStatement extends Statement {
     }
 }
 
-class AssignmentStatement extends Statement {
+class AssignmentStatement {
     constructor(idExp, assignOp, exp) {
-        super();
         this.idExp = idExp;
         this.idExpBody = idExp.idExpBody;
         this.idPostOp = idExp.idPostOp;
@@ -427,16 +416,15 @@ class AssignmentStatement extends Statement {
     }
 }
 
-class ReturnStatement extends Statement {
+class ReturnStatement {
     constructor(exp) {
-        super();
         this.exp = exp;
-        this.returnType;
+        this.type = undefined;
     }
     analyze(context) {
         context.assertInFunctionDeclaration();
         this.exp.analyze(context);
-        this.returnType = this.exp.type;
+        this.type = this.exp.type;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Return` +
@@ -445,12 +433,8 @@ class ReturnStatement extends Statement {
     }
 }
 
-class Expression {
-}
-
-class MatchExpression extends Expression {
+class MatchExpression {
     constructor(idExp, varArray, matchArray, matchFinal) {
-        super();
         this.idExp = idExp;
         this.varArray = varArray;
         this.matchArray = matchArray;
@@ -495,13 +479,12 @@ class Match {
     }
 }
 
-class BinaryExpression extends Expression {
+class BinaryExpression {
     constructor(left, op, right) {
-        super();
         this.left = left;
         this.op = op;
         this.right = right;
-        this.type;
+        this.type = undefined;
     }
     analyze(context) {
 
@@ -510,6 +493,7 @@ class BinaryExpression extends Expression {
         let expectedPairs;
 
         if (this.op == "||" || this.op == "&&") {
+            this.type = TYPE.BOOLEAN;
             expectedPairs = expectedPairs.push([TYPE.BOOLEAN, TYPE.BOOLEAN]);
         } else if (this.op == "+") {
             expectedPairs = [
@@ -519,9 +503,9 @@ class BinaryExpression extends Expression {
                 [TYPE.FLOAT, TYPE.FLOAT],
                 [TYPE.STRING, TYPE.STRING],
                 [TYPE.STRING, TYPE.INTEGER],
-                [TYPE.INTEGER, TYPE.STRING],
                 [TYPE.STRING, TYPE.FLOAT],
-                [TYPE.FLOAT, TYPE.STRING],
+                [TYPE.STRING, TYPE.BOOLEAN],
+                [TYPE.BOOLEAN, TYPE.STRING],
                 [TYPE.LIST, TYPE.LIST]
             ];
 
@@ -532,7 +516,11 @@ class BinaryExpression extends Expression {
                 pushUndefinedAndType(expectedPairs, TYPE.LIST);
                 pushUndefinedAndType(expectedPairs, undefined);
             }
-        } else if (["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1) {
+        } else if(["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1) {
+            if(["<=", "<", ">=", ">"].indexOf(this.op) > -1) {
+                this.type = TYPE.BOOLEAN;
+            }
+
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
@@ -549,9 +537,10 @@ class BinaryExpression extends Expression {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
-                [TYPE.FLOAT, TYPE.INTEGER],
                 [TYPE.FLOAT, TYPE.FLOAT],
-                [TYPE.STRING, TYPE.INTEGER]         //?
+                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.STRING, TYPE.INTEGER],
+                [TYPE.INTEGER, TYPE.STRING]
             ];
 
             if(context.inFunctionDelaration) {
@@ -562,7 +551,8 @@ class BinaryExpression extends Expression {
         } else if (this.op == "//" || this.op == "%") {
             expectedPairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
-                [TYPE.FLOAT, TYPE.INTEGER]
+                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.INTEGER, TYPE.FLOAT]
             ];
 
             if(context.inFunctionDelaration) {
@@ -571,6 +561,8 @@ class BinaryExpression extends Expression {
                 pushUndefinedAndType(expectedPairs, undefined);
             }
         } else if (this.op == "==" || this.op == "!=") {
+            this.type = TYPE.BOOLEAN
+
             expectedPairs = allTypePairs;
 
             if(context.inFunctionDelaration) {
@@ -583,10 +575,13 @@ class BinaryExpression extends Expression {
             [this.left.type, this.right.type]
         );
 
-        // Important: the type of the expression is always the type of it's left operand
-        // Example: "string" * 5 is TYPE.STRING
-        this.type = this.left.type;
-
+        if(this.type === undefined) {
+            if(this.left.type === TYPE.STRING || this.right.type === TYPE.STRING) {
+                this.type = TYPE.STRING;
+            } else {
+                this.type = this.left.type;
+            }
+        }
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.op}` +
@@ -596,9 +591,8 @@ class BinaryExpression extends Expression {
     }
 }
 
-class UnaryExpression extends Expression {
+class UnaryExpression {
     constructor(op, operand) {
-        super();
         this.op = op;
         this.operand = operand;
         this.type;
@@ -619,9 +613,8 @@ class UnaryExpression extends Expression {
     }
 }
 
-class ParenthesisExpression extends Expression {
+class ParenthesisExpression {
     constructor(exp) {
-        super();
         this.exp = exp;
         this.type;
     }
@@ -635,9 +628,8 @@ class ParenthesisExpression extends Expression {
     }
 }
 
-class Variable extends Expression {
+class Variable {
     constructor(variable) {
-        super();
         this.var = variable;
         this.type = "NULL";
     }
@@ -651,9 +643,8 @@ class Variable extends Expression {
     }
 }
 
-class IdExpression extends Expression {
+class IdExpression {
     constructor(idExpBody, idPostOp) {
-        super();
         this.idExpBody = idExpBody;
         this.idPostOp = idPostOp;
         this.id;  // baseline identifier. example: x in x.doThis(3)[1].lalala

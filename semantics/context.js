@@ -242,7 +242,7 @@ class Context {
     }
 
     assertClassHasConstructor(id) {
-        this.assertIsClass(id);
+        this.assertIsType(id, TYPE.CLASS);
         let classConstructors = this.get(id).properities['constructors'];
         if(classConstructors.length < 1) {
             throw new Error(semanticErrors.classWithoutConstructor(id));
@@ -280,7 +280,6 @@ class Context {
     }
 
     assertConditionIsBoolean(exp) {
-      console.log(exp.type);
         if(exp.type !== "BOOLEAN") {
             throw new Error(semanticErrors.conditionIsNotBoolean(exp, exp.type));
         }

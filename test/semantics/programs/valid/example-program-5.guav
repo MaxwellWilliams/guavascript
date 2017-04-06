@@ -1,0 +1,15 @@
+# example program 5
+
+class Ball {
+   constructor (radius, weight = 1.0) {
+     this.radius = radius
+     this.weight = weight
+   }
+
+   is_round() {
+      ret true
+   }
+}
+
+bouncyBall = Ball(0.2)
+bouncyBall.is_round()

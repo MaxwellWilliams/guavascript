@@ -1,0 +1,14 @@
+# example program 4
+
+add_even_numbers() {
+	numbers = [1, 2, 3, 4, 5, 6]
+	result = 0
+	for num in numbers {
+		if num % 2 == 0 {
+			result += i
+		}
+	}
+	ret result
+}
+
+print(add_even_numbers())

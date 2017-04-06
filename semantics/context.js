@@ -181,13 +181,14 @@ class Context {
         } else {
           throw new Error(`${id} has type ${variable.type} and therfore cannot have properities`);
         }
-
     }
 
     getPropertyFromId(id, key) {
         let variable = this.get(id)
         if(variable.type == TYPE.CLASS || variable.type == TYPE.DICTIONARY) {
-            if(key in variable.properities[key]) {
+            //console.log(variable);
+            //console.log(variable.properities);
+            if(key in variable.properities) {
                 return variable.properities[key]
             } else {
                 throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));

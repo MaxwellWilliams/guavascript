@@ -1,0 +1,4 @@
+# Test nteger post op ++
+
+x = 2
+print(x++)

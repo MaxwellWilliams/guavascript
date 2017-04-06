@@ -1,0 +1,5 @@
+#example program 2
+
+PI = 3.14159265359
+
+print(PI)

@@ -1,0 +1,5 @@
+# example program 3
+
+x = ((2 + 3) * (6 - 1) ^ 2) / 4
+
+print(x)

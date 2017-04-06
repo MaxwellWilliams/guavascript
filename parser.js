@@ -664,8 +664,15 @@ class IdExpression extends Expression {
         if (this.idPostOp == "++" || this.idPostOp == "--") {
             context.assertUnaryOperandIsOneOfTypes(this.idPostOp, [TYPE.INTEGER], this.idExpBody.type)
         }
+
         this.id = this.idExpBody.id;
         this.type = this.idExpBody.type;
+
+        if (this.idExpBody.type == TYPE.CLASS || this.idExpBody.type == TYPE.DICTIONARY) {
+            getPropertyFromId(this.id, )
+        }
+
+        console.log(this.idExpBody.type);
     }
     toString(indent = 0) {
         return  `${spacer.repeat(indent)}(IdExpression\n` +

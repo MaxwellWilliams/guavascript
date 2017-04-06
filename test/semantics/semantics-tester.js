@@ -52,7 +52,7 @@ tests = function(validFiles, invalidFiles) {
   fs.readdirSync(invalidPrograms).forEach(function(fileName) {
     fullFilePath = invalidPrograms + '/' + fileName;
     fileContents = fs.readFileSync(fullFilePath, 'utf-8');
-    // if(fileName == "invalid-operation5.guav") {
+    // if(fileName == "invalid-dictionary-access.guav") {
     invalidFiles.push({
       name: fileName,
       code: fileContents

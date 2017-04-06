@@ -660,10 +660,8 @@ class IdExpression {
         this.type = this.idExpBody.type;
 
         if (this.idExpBody.type == TYPE.CLASS || this.idExpBody.type == TYPE.DICTIONARY) {
-            getPropertyFromId(this.id, )
+            getPropertyFromId(this.id, this.id.type)
         }
-
-        console.log(this.idExpBody.type);
     }
     toString(indent = 0) {
         return  `${spacer.repeat(indent)}(IdExpression\n` +

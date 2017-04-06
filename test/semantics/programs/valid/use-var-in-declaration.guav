@@ -1,3 +1,5 @@
 # Should be able to use a variable in its declaration
 
 y = 2 + 1
+
+print(y)

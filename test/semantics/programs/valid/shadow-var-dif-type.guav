@@ -4,6 +4,8 @@ x = 3
 
 if (true) {
     x = "string yay"
+    print(x)
 }
 
 y = x / 2
+print(y)

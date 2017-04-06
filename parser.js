@@ -346,18 +346,19 @@ class AssignmentStatement extends Statement {
         this.exp = exp;
     }
     analyze(context) {
+        let idType = undefined;
         this.exp.analyze(context);
 
         // If variable is being declared temporarily make type null
         if(context.inClassDelaration && (this.idExpBody.idExpBase.id === 'this')) {
             context.addValueToId(context.currentClassId, this.exp, this.idExpBody.idAppendage.id)
             return;
-        } else if(context.get(this.idExpBody.id, true) == undefined) {
-            context.setVariable(this.idExpBody.id, undefined);
         }
 
-        this.idExpBody.analyze(context);
-        let idType = this.idExpBody.type;
+        if(context.get(this.idExpBody.id, true, true) !== undefined) {
+            this.idExpBody.analyze(context);
+            idType = this.idExpBody.type;
+        }
         let expectedPairs;
 
         if (this.assignOp == "=") {
@@ -369,13 +370,15 @@ class AssignmentStatement extends Statement {
                     [TYPE.INTEGER, TYPE.FLOAT],
                     [TYPE.FLOAT, TYPE.INTEGER],
                     [TYPE.FLOAT, TYPE.FLOAT],
-                    [TYPE.STRING, TYPE.STRING]
+                    [TYPE.STRING, TYPE.STRING],
+                    [TYPE.LIST, TYPE.LIST]
                 ];
 
                 if(context.inFunctionDelaration) {
                     pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
                     pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
                     pushUndefinedAndType(expectedPairs, TYPE.STRING);
+                    pushUndefinedAndType(expectedPairs, TYPE.LIST);
                     pushUndefinedAndType(expectedPairs, undefined);
                 }
             } else if (this.assignOp == "*=") {

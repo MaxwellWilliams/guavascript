@@ -9,3 +9,5 @@ class Person {
 }
 
 littleGreenMan = Person("Yoda", 0.0001, ["Amazing", "Guavascript", "is!"])
+
+print(littleGreenMan)

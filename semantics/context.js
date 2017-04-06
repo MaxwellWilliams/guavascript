@@ -70,12 +70,17 @@ const semanticErrors = {
     }
 };
 
-function checkArrayinArray(arrA, arrB) {
-    var hash = {};
-    for (b in arrB) {
-        hash[arrB[b]] = b;
+function checkElementinArray(element, array) {
+    for (arrayCounter in array) {
+        if(array[arrayCounter].length === element.length) {
+            let equal = true;
+            for (elementCounter in element) {
+                if(element[elementCounter] !== array[arrayCounter][elementCounter]) {equal = false;}
+                if(equal) {return true;}
+            }
+        }
     }
-    return hash.hasOwnProperty(arrA);
+    return false;
 };
 
 class Context {
@@ -138,7 +143,7 @@ class Context {
             this.idTable[id].isFunction = isFunction;
             this.idTable[id].paramType = paramType;
             this.idTable[id].used = false;
-            
+
             this.idTable[id].properities = undefined;
             if( type === TYPE.CLASS) {this.idTable[id].properities = { constructors: [] };};
             if(type === TYPE.DICTIONARY) {this.idTable[id].properities = {};};
@@ -267,18 +272,9 @@ class Context {
         }
     }
 
-    assertBinaryOperandIsOneOfTypePairs(op, expected, received) {
-        var receivedTypes = [received[0].type, received[1].type];
-
-        if(receivedTypes[0] == "NULL" && receivedTypes[1] !== "NULL") {
-          receivedTypes[0] = receivedTypes[1];
-          this.setVariable(received[0].id, receivedTypes[0]);
-        } else if(received[0].type !== "NULL" && received[1].type == "NULL") {
-          receivedTypes[1] = receivedTypes[0];
-          this.setVariable(received[1].id, receivedTypes[1]);
-        }
-        if(!checkArrayinArray(receivedTypes, expected)) {
-            throw new Error(semanticErrors.invalidBinaryOperands(receivedTypes[0], op, receivedTypes[1]));
+    assertBinaryOperandIsOneOfTypePairs(op, expectedTypes, actualTypes) {
+        if(!checkElementinArray(actualTypes, expectedTypes)) {
+            throw new Error(semanticErrors.invalidBinaryOperands(actualTypes[0], op, actualTypes[1]));
         }
     }
 

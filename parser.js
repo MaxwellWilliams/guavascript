@@ -47,6 +47,16 @@ function joinParams(parameter, parameters) {
     return parameter;
 }
 
+function pushUndefinedAndType(array, type) {
+    if(type === undefined) {
+        array.push([undefined, undefined]);
+    } else {
+        array.push([undefined, type]);
+        array.push([type, undefined]);
+    }
+}
+
+
 class Program {
     constructor(block) {
         this.block = block;
@@ -346,31 +356,44 @@ class AssignmentStatement extends Statement {
             context.setVariable(this.idExpBody.id, undefined);
         }
 
-        let expectedPairs;
         this.idExpBody.analyze(context);
         let idType = this.idExpBody.type;
-        // console.log(util.inspect(this, {depth: null}));
+        let expectedPairs;
 
         if (this.assignOp == "=") {
             context.setVariable(this.idExpBody.id, this.exp.type);
         } else {
             if (this.assignOp == "+=") {
                 expectedPairs = [
-                    [TYPE.INTEGER, TYPE. INTEGER],
+                    [TYPE.INTEGER, TYPE.INTEGER],
                     [TYPE.INTEGER, TYPE.FLOAT],
                     [TYPE.FLOAT, TYPE.INTEGER],
                     [TYPE.FLOAT, TYPE.FLOAT],
                     [TYPE.STRING, TYPE.STRING]
                 ];
+
+                if(context.inFunctionDelaration) {
+                    pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
+                    pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
+                    pushUndefinedAndType(expectedPairs, TYPE.STRING);
+                    pushUndefinedAndType(expectedPairs, undefined);
+                }
             } else if (this.assignOp == "*=") {
                 expectedPairs = [
-                    [TYPE.INTEGER, TYPE. INTEGER],
+                    [TYPE.INTEGER, TYPE.INTEGER],
                     [TYPE.INTEGER, TYPE.FLOAT],
                     [TYPE.FLOAT, TYPE.INTEGER],
                     [TYPE.FLOAT, TYPE.FLOAT],
                     [TYPE.STRING, TYPE.STRING],
                     [TYPE.STRING, TYPE.INTEGER]
                 ];
+
+                if(context.inFunctionDelaration) {
+                    pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
+                    pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
+                    pushUndefinedAndType(expectedPairs, TYPE.STRING);
+                    pushUndefinedAndType(expectedPairs, undefined);
+                }
             } else if (["-=", "/="].indexOf(this.assignOp) > -1) {
                 expectedPairs = [
                     [TYPE.INTEGER, TYPE.INTEGER],
@@ -378,6 +401,12 @@ class AssignmentStatement extends Statement {
                     [TYPE.FLOAT, TYPE.INTEGER],
                     [TYPE.FLOAT, TYPE.FLOAT],
                 ];
+
+                if(context.inFunctionDelaration) {
+                    pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
+                    pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
+                    pushUndefinedAndType(expectedPairs, undefined);
+                }
             }
             context.assertBinaryOperandIsOneOfTypePairs(
                 this.assignOp,
@@ -474,12 +503,7 @@ class BinaryExpression extends Expression {
 
         this.left.analyze(context);
         this.right.analyze(context);
-
         let expectedPairs;
-        function expectParamAndType(type) {
-            expectedPairs.push([undefined, type]);
-            expectedPairs.push([type, undefined]);
-        }
 
         if (this.op == "||" || this.op == "&&") {
             expectedPairs = expectedPairs.push([TYPE.BOOLEAN, TYPE.BOOLEAN]);
@@ -495,12 +519,12 @@ class BinaryExpression extends Expression {
             ];
 
             if(context.inFunctionDelaration) {
-                expectParamAndType(TYPE.INTEGER);
-                expectParamAndType(TYPE.FLOAT);
-                expectParamAndType(TYPE.STRING);
-                expectParamAndType(TYPE.LIST);
-                expectParamAndType(TYPE.DICTIONARY);
-                expectParamAndType(undefined);
+                pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
+                pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
+                pushUndefinedAndType(expectedPairs, TYPE.STRING);
+                pushUndefinedAndType(expectedPairs, TYPE.LIST);
+                pushUndefinedAndType(expectedPairs, TYPE.DICTIONARY);
+                pushUndefinedAndType(expectedPairs, undefined);
             }
         } else if (["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1) {
             expectedPairs = [
@@ -511,9 +535,9 @@ class BinaryExpression extends Expression {
             ];
 
             if(context.inFunctionDelaration) {
-                expectParamAndType(TYPE.INTEGER);
-                expectParamAndType(TYPE.FLOAT);
-                expectParamAndType(undefined);
+                pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
+                pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
+                pushUndefinedAndType(expectedPairs, undefined);
             }
         } else if (this.op == "*") {
             expectedPairs = [
@@ -525,9 +549,9 @@ class BinaryExpression extends Expression {
             ];
 
             if(context.inFunctionDelaration) {
-                expectParamAndType(TYPE.INTEGER);
-                expectParamAndType(TYPE.FLOAT);
-                expectParamAndType(undefined);
+                pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
+                pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
+                pushUndefinedAndType(expectedPairs, undefined);
             }
         } else if (this.op == "//" || this.op == "%") {
             expectedPairs = [
@@ -536,21 +560,21 @@ class BinaryExpression extends Expression {
             ];
 
             if(context.inFunctionDelaration) {
-                expectParamAndType(TYPE.INTEGER);
-                expectParamAndType(TYPE.FLOAT);
-                expectParamAndType(undefined);
+                pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
+                pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
+                pushUndefinedAndType(expectedPairs, undefined);
             }
         } else if (this.op == "==" || this.op == "!=") {
             expectedPairs = allTypePairs;
 
             if(context.inFunctionDelaration) {
-                expectParamAndType(undefined);
+                pushUndefinedAndType(expectedPairs, undefined);
             }
         }
         context.assertBinaryOperandIsOneOfTypePairs(
             this.op,
             expectedPairs,
-            [this.left, this.right]
+            [this.left.type, this.right.type]
         );
 
         // Important: the type of the expression is always the type of it's left operand

@@ -106,13 +106,9 @@ class Block {
     }
 }
 
-class Statement {
-}
-
 // Use this for both conditional and if/else statement
-class BranchStatement extends Statement {
+class BranchStatement {
     constructor(conditions, thenBlocks, elseBlock) {
-        super();
         this.conditions = conditions;
         this.thenBlocks = thenBlocks;
         this.elseBlock = elseBlock;
@@ -149,9 +145,8 @@ class BranchStatement extends Statement {
     }
 }
 
-class FunctionDeclarationStatement extends Statement {
+class FunctionDeclarationStatement {
     constructor(id, parameterArray, block) {
-        super();
         this.id = id;
         this.parameterArray = parameterArray;
         this.block = block;
@@ -249,9 +244,8 @@ class Parameter {
     }
 }
 
-class ClassDeclarationStatement extends Statement {
+class ClassDeclarationStatement {
     constructor(id, block) {
-        super();
         this.id = id;
         this.block = block;
     }
@@ -269,9 +263,8 @@ class ClassDeclarationStatement extends Statement {
     }
 }
 
-class MatchStatement extends Statement {
+class MatchStatement {
     constructor(matchExp) {
-        super();
         this.matchExp = matchExp;
     }
     analyze() {
@@ -282,9 +275,8 @@ class MatchStatement extends Statement {
     }
 }
 
-class WhileStatement extends Statement {
+class WhileStatement {
     constructor(exp, block) {
-        super();
         this.exp = exp;
         this.block = block;
     }
@@ -303,9 +295,8 @@ class WhileStatement extends Statement {
     }
 }
 
-class ForInStatement extends Statement {
+class ForInStatement {
     constructor(id, iDExp, block) {
-        super();
         this.id = id;
         this.iDExp = iDExp;
         this.block = block;
@@ -321,9 +312,8 @@ class ForInStatement extends Statement {
     }
 }
 
-class PrintStatement extends Statement {
+class PrintStatement {
     constructor(exp) {
-        super();
         this.exp = exp;
     }
     analyze(context) {
@@ -336,9 +326,8 @@ class PrintStatement extends Statement {
     }
 }
 
-class AssignmentStatement extends Statement {
+class AssignmentStatement {
     constructor(idExp, assignOp, exp) {
-        super();
         this.idExp = idExp;
         this.idExpBody = idExp.idExpBody;
         this.idPostOp = idExp.idPostOp;
@@ -427,9 +416,8 @@ class AssignmentStatement extends Statement {
     }
 }
 
-class ReturnStatement extends Statement {
+class ReturnStatement {
     constructor(exp) {
-        super();
         this.exp = exp;
         this.type = undefined;
     }
@@ -445,12 +433,8 @@ class ReturnStatement extends Statement {
     }
 }
 
-class Expression {
-}
-
-class MatchExpression extends Expression {
+class MatchExpression {
     constructor(idExp, varArray, matchArray, matchFinal) {
-        super();
         this.idExp = idExp;
         this.varArray = varArray;
         this.matchArray = matchArray;
@@ -495,9 +479,8 @@ class Match {
     }
 }
 
-class BinaryExpression extends Expression {
+class BinaryExpression {
     constructor(left, op, right) {
-        super();
         this.left = left;
         this.op = op;
         this.right = right;
@@ -608,9 +591,8 @@ class BinaryExpression extends Expression {
     }
 }
 
-class UnaryExpression extends Expression {
+class UnaryExpression {
     constructor(op, operand) {
-        super();
         this.op = op;
         this.operand = operand;
         this.type;
@@ -631,9 +613,8 @@ class UnaryExpression extends Expression {
     }
 }
 
-class ParenthesisExpression extends Expression {
+class ParenthesisExpression {
     constructor(exp) {
-        super();
         this.exp = exp;
         this.type;
     }
@@ -647,9 +628,8 @@ class ParenthesisExpression extends Expression {
     }
 }
 
-class Variable extends Expression {
+class Variable {
     constructor(variable) {
-        super();
         this.var = variable;
         this.type = "NULL";
     }
@@ -663,9 +643,8 @@ class Variable extends Expression {
     }
 }
 
-class IdExpression extends Expression {
+class IdExpression {
     constructor(idExpBody, idPostOp) {
-        super();
         this.idExpBody = idExpBody;
         this.idPostOp = idPostOp;
         this.id;  // baseline identifier. example: x in x.doThis(3)[1].lalala

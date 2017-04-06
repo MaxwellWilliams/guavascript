@@ -1,0 +1,4 @@
+# Shouldn't pass since dictionaries cannot be combined
+
+oneToSeven = {one: 1, two: 2}
+oneToSeven += {three: 3, four: 4}

@@ -122,7 +122,7 @@ class BranchStatement extends Statement {
     analyze(context) {
         this.conditions.forEach(function(condition) {
             condition.analyze(context);
-            context.assertIsTypeBoolean(condition);
+            context.assertConditionIsBoolean(condition);
         });
         this.thenBlocks.forEach(block => block.analyze(context.createChildContextForBlock()));
         if (this.elseBlock !== null) {
@@ -411,6 +411,7 @@ class AssignmentStatement extends Statement {
                     pushUndefinedAndType(expectedPairs, undefined);
                 }
             }
+
             context.assertBinaryOperandIsOneOfTypePairs(
                 this.assignOp,
                 expectedPairs,
@@ -517,8 +518,11 @@ class BinaryExpression extends Expression {
                 [TYPE.FLOAT, TYPE.INTEGER],
                 [TYPE.FLOAT, TYPE.FLOAT],
                 [TYPE.STRING, TYPE.STRING],
-                [TYPE.LIST, TYPE.LIST],
-                [TYPE.DICTIONARY, TYPE.DICTIONARY],
+                [TYPE.STRING, TYPE.INTEGER],
+                [TYPE.INTEGER, TYPE.STRING],
+                [TYPE.STRING, TYPE.FLOAT],
+                [TYPE.FLOAT, TYPE.STRING],
+                [TYPE.LIST, TYPE.LIST]
             ];
 
             if(context.inFunctionDelaration) {
@@ -526,7 +530,6 @@ class BinaryExpression extends Expression {
                 pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
                 pushUndefinedAndType(expectedPairs, TYPE.STRING);
                 pushUndefinedAndType(expectedPairs, TYPE.LIST);
-                pushUndefinedAndType(expectedPairs, TYPE.DICTIONARY);
                 pushUndefinedAndType(expectedPairs, undefined);
             }
         } else if (["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1) {

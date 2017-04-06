@@ -8,8 +8,8 @@ validPrograms = path.resolve('./test/semantics/programs/valid');
 invalidPrograms = path.resolve('./test/semantics/programs/invalid');
 
 tests = function(validFiles, invalidFiles) {
-  describe('Semantic analysis tests', function() {
-    describe('Test valid example programs', function() {
+  describe('Semantic analysis tests:', function() {
+    describe('Valid example program', function() {
       validFiles.forEach(function(file) {
         it('parser\\programs\\valid\\' + file.name + ' should analyze without any errors',
           function() {
@@ -20,7 +20,7 @@ tests = function(validFiles, invalidFiles) {
       });
     });
 
-    describe('Test invalid example programs', function() {
+    describe('Invalid example program,', function() {
       invalidFiles.forEach(function(file) {
         it('parser\\programs\\invalid\\' + file.name + ' should throw a semantic error',
           function() {
@@ -52,7 +52,7 @@ tests = function(validFiles, invalidFiles) {
   fs.readdirSync(invalidPrograms).forEach(function(fileName) {
     fullFilePath = invalidPrograms + '/' + fileName;
     fileContents = fs.readFileSync(fullFilePath, 'utf-8');
-    // if(fileName == "non-int-array-access.guav") {
+    // if(fileName == "invalid-operation5.guav") {
     invalidFiles.push({
       name: fileName,
       code: fileContents

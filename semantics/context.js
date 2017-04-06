@@ -22,13 +22,13 @@ const semanticErrors = {
         return `UseBeforeDeclaration error: ${id} was used but undeclared`;
     },
     doesntHaveExpectedType(id, expectedType, actualType) {
-        return `${id} was expected to be type ${expectedType} but is type ${actualType}`;
+        return `IncorrectType error: ${id} was expected to be type ${expectedType} but is type ${actualType}`;
     },
     isNotAFunction(id) {
         return `IsNotAFunction error: ${id} is not a function`;
     },
     classWithoutConstructor(id) {
-        return `Class ${id} doesn't have a constructor`
+        return `MissingClassConstructor error: ${id} doesn't have a constructor`;
     },
     isNotAList(id) {
         return `IsNotAList error: ${id} is not a list`;
@@ -49,18 +49,18 @@ const semanticErrors = {
     incompleteMatch() {
         return `IncompleteMatch error: match statement is non-exhaustive`;
     },
-    expressionIsNotTypeBoolean(exp, receivedType) {
-        return `ExpressionIsNotTypeBoolean error: ${exp} is type ${receivedType} but must be type boolean`;
+    conditionIsNotBoolean(exp, receivedType) {
+        return `ConditionIsNotBoolean error: Conditional statement must be boolean, but is ${receivedType}`;
     },
     unusedLocalVariable(id) {
         return `UnusedLocalVariable error: local variable ${id} is declared but never used`;
     },
     notCalledAsFunction(id) {
-        return `notCalledAsFunction error: ${id} was expected to be called as a function`
+        return `notCalledAsFunction error: ${id} was expected to be called as a function`;
     },
     invalidParams(id, functionType, calledType) {
-        return `invalidParams error: ${id} was expected to be called with ${functionType}` +
-               ` but was called with ${calledType}`
+        return `InvalidParams error: ${id} was expected to be called with ${functionType}` +
+               ` but was called with ${calledType}`;
     },
     returnOutsideFunction() {
         return `ReturnOutsideFunction error: found a return statement outside of a function`;
@@ -71,13 +71,13 @@ const semanticErrors = {
 };
 
 function checkElementinArray(element, array) {
-    for (arrayCounter in array) {
+    for (var arrayCounter in array) {
         if(array[arrayCounter].length === element.length) {
             let equal = true;
-            for (elementCounter in element) {
+            for (var elementCounter in element) {
                 if(element[elementCounter] !== array[arrayCounter][elementCounter]) {equal = false;}
-                if(equal) {return true;}
             }
+            if(equal) {return true;}
         }
     }
     return false;
@@ -216,9 +216,9 @@ class Context {
       }
     }
 
-    assertIsClass(id) {
-        if(this.get(id).type !== TYPE.CLASS) {
-            throw new Error(semanticErrors.doesntHaveExpectedType(id, this.get(id).type, 'class'));
+    assertIsType(id, actualType) {
+        if(actualType !== this.get(id).type) {
+            throw new Error(semanticErrors.doesntHaveExpectedType(id, this.get(id).type, actualType));
         }
     }
 
@@ -260,9 +260,10 @@ class Context {
         }
     }
 
-    assertIsTypeBoolean(exp) {
-        if(!exp.type == "boolean") {
-            throw new Error(semanticErrors.expressionIsNotTypeBoolean(exp, exp.type));
+    assertConditionIsBoolean(exp) {
+      console.log(exp.type);
+        if(exp.type !== "BOOLEAN") {
+            throw new Error(semanticErrors.conditionIsNotBoolean(exp, exp.type));
         }
     }
 

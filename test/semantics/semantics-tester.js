@@ -24,7 +24,7 @@ tests = function(validFiles, invalidFiles) {
       invalidFiles.forEach(function(file) {
         it('parser\\programs\\invalid\\' + file.name + ' should throw a semantic error',
           function() {
-            const errorPattern = /error/;
+            const errorPattern = /Error/;
             // console.log(util.inspect(parser(file.code), {depth: null}));
             assert.throws(() => parser(file.code).analyze(), errorPattern);
             //done();

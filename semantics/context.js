@@ -15,48 +15,48 @@ const TYPE = {
 
 const semanticErrors = {
     changedImmutableType(id, expectedType, receivedType) {
-        return `ChangedImmutableType error: cannot to change ${id} `
+        return `ChangedImmutableType Error: Cannot to change ${id} `
             + `from ${expectedType} to ${receivedType}`;
     },
     useBeforeDeclaration(id) {
-        return `UseBeforeDeclaration error: ${id} was used but undeclared`;
+        return `UseBeforeDeclaration Error: ${id} was used but undeclared`;
     },
     doesntHaveExpectedType(id, expectedType, actualType) {
         if(id === undefined) {
-            return `IncorrectType error: Expected ${expectedType}, but found ${actualType}`;
+            return `IncorrectType Error: Expected ${expectedType}, but found ${actualType}`;
         }
-        return `IncorrectType error: ${id} was expected to be ${expectedType} but is ${actualType}`;
+        return `IncorrectType Error: ${id} was expected to be ${expectedType} but is ${actualType}`;
     },
     classWithoutConstructor(id) {
-        return `MissingConstructor error: class ${id} doesnt have a constructor`;
+        return `MissingConstructor Error: Class ${id} doesnt have a constructor`;
     },
     invalidBinaryOperands(leftType, op, rightType) {
-        return `InvalidBinaryOperands error: ${leftType} and ${rightType} cannot be used with ${op}`;
+        return `InvalidBinaryOperands Error: ${leftType} and ${rightType} cannot be used with ${op}`;
     },
     invalidUnaryOperand(type, op) {
-        return `InvalidUnaryOperand error: ${type} cannot be used with ${op}`;
+        return `InvalidUnaryOperand Error: ${type} cannot be used with ${op}`;
     },
     matchMissingCatchAll() {
-        return `MatchMissingCatchAll error: match statement is missing catch all condition`;
+        return `MatchMissingCatchAll Error: Match statement is missing catch all condition`;
     },
-    unusedLocalVariable(id) {
-        return `UnusedLocalVariable error: local variable ${id} is declared but never used`;
+    unusedVariable(id) {
+        return `UnusedVariable Error: Local variable ${id} is declared but never used`;
     },
     notCalledAsFunction(id) {
-        return `notCalledAsFunction error: ${id} was expected to be called as a function`;
+        return `NotCalledAsFunction Error: ${id} was expected to be called as a function`;
     },
     invalidParams(id, functionType, calledType) {
         if(functionType === undefined && calledType === undefined) {
-            return `InvalidParams error: ${id} was called with parameters of incorrect type(s)`;
+            return `InvalidParams Error: ${id} was called with parameters of incorrect type(s)`;
         }
-        return `InvalidParams error: ${id} was expected to be called with ${functionType}` +
+        return `InvalidParams Error: ${id} was expected to be called with ${functionType}` +
                ` but was called with ${calledType}`;
     },
     returnOutsideFunction() {
-        return `ReturnOutsideFunction error: found a return statement outside of a function`;
+        return `ReturnOutsideFunction Error: Found a return statement outside of a function`;
     },
     multipleReturnsInABlock(){
-        return `MultipleReturnsInABlock error: found more than one return statement in a block`;
+        return `MultipleReturnsInABlock Error: Found more than one return statement in a block`;
     }
 };
 
@@ -243,7 +243,7 @@ class Context {
       for (var varName in this.idTable) {
         var variable = this.idTable[varName];
           if (variable.used === false) {
-              throw new Error(semanticErrors.unusedLocalVariable(varName));
+              throw new Error(semanticErrors.unusedVariable(varName));
           }
       }
     }

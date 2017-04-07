@@ -1,3 +1,4 @@
 # Should fail since incompatible operand types (Tuple size is immutable)
 
 x = (1, 2, 3) + (4, 5)
+print(x)

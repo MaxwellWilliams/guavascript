@@ -2,3 +2,4 @@
 
 x = "string"
 x *= 8.131
+print(x)

@@ -85,10 +85,12 @@ class Block {
             var statement = this.body[statementCounter];
             statement.analyze(context);
             if (statement.constructor === ReturnStatement) {
-                if (++this.numberOfReturnStatements > 1) {
+                this.numberOfReturnStatements++;
+                if (this.numberOfReturnStatements <= 1) {
+                    this.returnType = statement.returnType;
+                } else {
                     context.throwMultipleReturnsInABlockError();
                 }
-                this.returnType = statement.type;
             }
         }
         if(!context.inClassDelaration) {
@@ -106,9 +108,13 @@ class Block {
     }
 }
 
+class Statement {
+}
+
 // Use this for both conditional and if/else statement
-class BranchStatement {
+class BranchStatement extends Statement {
     constructor(conditions, thenBlocks, elseBlock) {
+        super();
         this.conditions = conditions;
         this.thenBlocks = thenBlocks;
         this.elseBlock = elseBlock;
@@ -145,13 +151,13 @@ class BranchStatement {
     }
 }
 
-class FunctionDeclarationStatement {
+class FunctionDeclarationStatement extends Statement {
     constructor(id, parameterArray, block) {
+        super();
         this.id = id;
         this.parameterArray = parameterArray;
         this.block = block;
         this.paramType = [];
-        this.type = undefined;
     }
     analyze(context) {
         let blockContext = context.createChildContextForFunctionDeclaration(this);
@@ -169,7 +175,6 @@ class FunctionDeclarationStatement {
         });
 
         this.block.analyze(blockContext);
-        this.type = this.block.returnType;
 
         this.parameterArray.forEach(function(param) {
             var parameter = blockContext.get(param.id);
@@ -182,15 +187,15 @@ class FunctionDeclarationStatement {
 
         if(context.inClassDelaration) {
             let functionProperities = {
-                type: this.type,
+                type: this.block.returnType,
                 paramType: this.paramType
             }
             context.addValueToId(context.currentClassId, functionProperities, this.id)
         } else {
-            context.setFunction(this.id, this.type, this.paramType);
+            context.setFunction(this.id, this.block.returnType, this.paramType);
         }
 
-        // let signature = [];
+        let signature = [];
 
         // But, we still must check that the non-default variables were used.
         // this.parameterArray.forEach(function(parameter) {
@@ -251,8 +256,9 @@ class Parameter {
     }
 }
 
-class ClassDeclarationStatement {
+class ClassDeclarationStatement extends Statement {
     constructor(id, block) {
+        super();
         this.id = id;
         this.block = block;
     }
@@ -270,8 +276,9 @@ class ClassDeclarationStatement {
     }
 }
 
-class MatchStatement {
+class MatchStatement extends Statement {
     constructor(matchExp) {
+        super();
         this.matchExp = matchExp;
     }
     analyze() {
@@ -282,8 +289,9 @@ class MatchStatement {
     }
 }
 
-class WhileStatement {
+class WhileStatement extends Statement {
     constructor(exp, block) {
+        super();
         this.exp = exp;
         this.block = block;
     }
@@ -302,8 +310,9 @@ class WhileStatement {
     }
 }
 
-class ForInStatement {
+class ForInStatement extends Statement {
     constructor(id, iDExp, block) {
+        super();
         this.id = id;
         this.iDExp = iDExp;
         this.block = block;
@@ -319,8 +328,9 @@ class ForInStatement {
     }
 }
 
-class PrintStatement {
+class PrintStatement extends Statement {
     constructor(exp) {
+        super();
         this.exp = exp;
     }
     analyze(context) {
@@ -333,8 +343,9 @@ class PrintStatement {
     }
 }
 
-class AssignmentStatement {
+class AssignmentStatement extends Statement {
     constructor(idExp, assignOp, exp) {
+        super();
         this.idExp = idExp;
         this.idExpBody = idExp.idExpBody;
         this.idPostOp = idExp.idPostOp;
@@ -449,15 +460,16 @@ class AssignmentStatement {
     }
 }
 
-class ReturnStatement {
+class ReturnStatement extends Statement {
     constructor(exp) {
+        super();
         this.exp = exp;
-        this.type = undefined;
+        this.returnType;
     }
     analyze(context) {
         context.assertInFunctionDeclaration();
         this.exp.analyze(context);
-        this.type = this.exp.type;
+        this.returnType = this.exp.type;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Return` +
@@ -466,8 +478,12 @@ class ReturnStatement {
     }
 }
 
-class MatchExpression {
+class Expression {
+}
+
+class MatchExpression extends Expression {
     constructor(idExp, varArray, matchArray, matchFinal) {
+        super();
         this.idExp = idExp;
         this.varArray = varArray;
         this.matchArray = matchArray;
@@ -512,12 +528,13 @@ class Match {
     }
 }
 
-class BinaryExpression {
+class BinaryExpression extends Expression {
     constructor(left, op, right) {
+        super();
         this.left = left;
         this.op = op;
         this.right = right;
-        this.type = undefined;
+        this.type;
     }
     analyze(context) {
 
@@ -540,6 +557,7 @@ class BinaryExpression {
                 [TYPE.FLOAT, TYPE.LIST],
                 [TYPE.STRING, TYPE.STRING],
                 [TYPE.STRING, TYPE.INTEGER],
+                [TYPE.INTEGER, TYPE.STRING],
                 [TYPE.STRING, TYPE.FLOAT],
                 [TYPE.STRING, TYPE.BOOLEAN],
                 [TYPE.STRING, TYPE.LIST],
@@ -580,10 +598,9 @@ class BinaryExpression {
             expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
-                [TYPE.FLOAT, TYPE.FLOAT],
                 [TYPE.FLOAT, TYPE.INTEGER],
-                [TYPE.STRING, TYPE.INTEGER],
-                [TYPE.INTEGER, TYPE.STRING]
+                [TYPE.FLOAT, TYPE.FLOAT],
+                [TYPE.STRING, TYPE.INTEGER]         //?
             ];
 
             if(context.inFunctionDelaration) {
@@ -670,8 +687,9 @@ class BinaryExpression {
     }
 }
 
-class UnaryExpression {
+class UnaryExpression extends Expression {
     constructor(op, operand) {
+        super();
         this.op = op;
         this.operand = operand;
         this.type;
@@ -692,8 +710,9 @@ class UnaryExpression {
     }
 }
 
-class ParenthesisExpression {
+class ParenthesisExpression extends Expression {
     constructor(exp) {
+        super();
         this.exp = exp;
         this.type;
     }
@@ -707,8 +726,9 @@ class ParenthesisExpression {
     }
 }
 
-class Variable {
+class Variable extends Expression {
     constructor(variable) {
+        super();
         this.var = variable;
         this.type = "NULL";
     }
@@ -722,8 +742,9 @@ class Variable {
     }
 }
 
-class IdExpression {
+class IdExpression extends Expression {
     constructor(idExpBody, idPostOp) {
+        super();
         this.idExpBody = idExpBody;
         this.idPostOp = idPostOp;
         this.id;  // baseline identifier. example: x in x.doThis(3)[1].lalala
@@ -731,11 +752,20 @@ class IdExpression {
     }
     analyze(context) {
         this.idExpBody.analyze(context);
+
+        console.log(this.idPostOp);
+
+
         if (this.idPostOp == "++" || this.idPostOp == "--") {
             context.assertUnaryOperandIsOneOfTypes(this.idPostOp, [TYPE.INTEGER], this.idExpBody.type)
         }
+
         this.id = this.idExpBody.id;
         this.type = this.idExpBody.type;
+
+        if(this.idExpBody.type == TYPE.DICTIONARY && this.idPostOp.constructor == Array) {
+            context.getPropertyFromId(this.id, this.idPostOp)
+        }
     }
     toString(indent = 0) {
         return  `${spacer.repeat(indent)}(IdExpression\n` +
@@ -1099,7 +1129,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     ParenExp_pass(variable) {return variable.ast();},
     Var(input) {return input.ast();},
 
-    IdExp(idExpBody, idPostOp) {return new IdExpression(idExpBody.ast(), idPostOp.ast());},
+    IdExp(idExpBody, idPostOp) {return new IdExpression(idExpBody.ast(), idPostOp.sourceString);},
     IdExpBody_recursive(idExpBody, selector) {return new IdExpressionBodyRecursive(idExpBody.ast(), selector.ast());},
     IdExpBody_base(id) {return new IdExpressionBodyBase(id.sourceString);},
     periodId(period, id) {return new PeriodId(id.sourceString);},

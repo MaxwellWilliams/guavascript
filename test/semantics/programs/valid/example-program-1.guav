@@ -1,0 +1,9 @@
+# example program 1
+
+name = "guav"
+age = 21
+female = true
+
+print(name)
+print(age)
+print(female)

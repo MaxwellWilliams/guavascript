@@ -28,7 +28,7 @@ const semanticErrors = {
         return `IsNotAFunction error: ${id} is not a function`;
     },
     classWithoutConstructor(id) {
-        return `MissingClassConstructor error: ${id} doesn't have a constructor`;
+        return `MissingClassConstructor error: ${id} doesnt have a constructor`;
     },
     isNotAList(id) {
         return `IsNotAList error: ${id} is not a list`;
@@ -151,7 +151,7 @@ class Context {
 
             if(type === undefined) {this.idTable[id].possibleTypes = [];}
 
-            if( type === TYPE.CLASS) {this.idTable[id].properities = { constructors: [] };};
+            if(type === TYPE.CLASS) {this.idTable[id].properities = { constructors: [] };};
             if(type === TYPE.DICTIONARY) {this.idTable[id].properities = {};};
             if(type === TYPE.LIST || type === TYPE.TUPLE) {this.idTable[id].properities = [];};
         }
@@ -187,7 +187,27 @@ class Context {
         } else {
           throw new Error(`${id} has type ${variable.type} and therfore cannot have properities`);
         }
+    }
 
+    getPropertyFromId(id, key) {
+        let variable = this.get(id)
+        if(variable.type == TYPE.CLASS || variable.type == TYPE.DICTIONARY) {
+            //console.log(variable);
+            //console.log(variable.properities);
+            if(key in variable.properities) {
+                return variable.properities[key]
+            } else {
+                throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));
+            }
+        } else if(variable.type == TYPE.LIST) {
+            if(key in variable.properities[key]) {
+                return variable.properities[key]
+            } else {
+                throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));
+            }
+        } else {
+            throw new Error(`${id} has no propterties`);
+        }
     }
 
     get(id, silent = false, onlyThisContext = false) {

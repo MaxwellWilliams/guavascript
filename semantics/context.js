@@ -59,6 +59,9 @@ const semanticErrors = {
         return `notCalledAsFunction error: ${id} was expected to be called as a function`;
     },
     invalidParams(id, functionType, calledType) {
+        if(functionType === undefined && calledType === undefined) {
+            return `InvalidParams error: ${id} was called with parameters of incorrect type(s)`;
+        }
         return `InvalidParams error: ${id} was expected to be called with ${functionType}` +
                ` but was called with ${calledType}`;
     },
@@ -123,28 +126,31 @@ class Context {
             if((this.idTable[id].isFunction === isFunction) &&
                (this.idTable[id].paramType === paramType) &&
                (this.idTable[id].type === type)) {
-                this.idTable[id].type = type;
                 this.idTable[id].used = true;
             } else if(type === "NULL") {
-              this.idTable[id].type = type;
-              this.idTable[id].used = true;
-              this.idTable[id].isFunction = false;
-              this.idTable[id].paramType = undefined;
+                this.idTable[id].type = type;
+                this.idTable[id].used = true;
+                this.idTable[id].isFunction = isFunction;
+                this.idTable[id].paramType = paramType;
             } else if(this.idTable[id].type == undefined) {
                 //Updating recently declared variable with type (AssignmentStatement)
                 this.idTable[id].type = type;
+                this.idTable[id].possibleTypes = undefined;
             } else {
                 throw new Error(semanticErrors.changedImmutableType(id, this.idTable[id].type, type));
             }
         } else {
             // Case 3- Either creating a new variable or shadowing an old one:
             this.idTable[id] = {};
+            this.idTable[id].used = false;
             this.idTable[id].type = type;
+            this.idTable[id].possibleTypes = undefined;
             this.idTable[id].isFunction = isFunction;
             this.idTable[id].paramType = paramType;
-            this.idTable[id].used = false;
-
             this.idTable[id].properities = undefined;
+
+            if(type === undefined) {this.idTable[id].possibleTypes = [];}
+
             if( type === TYPE.CLASS) {this.idTable[id].properities = { constructors: [] };};
             if(type === TYPE.DICTIONARY) {this.idTable[id].properities = {};};
             if(type === TYPE.LIST || type === TYPE.TUPLE) {this.idTable[id].properities = [];};
@@ -207,6 +213,30 @@ class Context {
         }
     }
 
+    managePossibleTypes(id, newPossibleTypes) {
+        var possibleTypes = this.idTable[id].possibleTypes;
+        var existingTypes = (possibleTypes.length !== 0);
+
+        if(existingTypes) {
+            this.idTable[id].possibleTypes = [];
+        }
+
+        for(var newTypeCounter in newPossibleTypes) {
+            var newPossibleType = newPossibleTypes[newTypeCounter];
+            if(!existingTypes && this.idTable[id].possibleTypes.indexOf(newPossibleType) === -1) {
+                this.idTable[id].possibleTypes.push(newPossibleType);
+            } else if(existingTypes && possibleTypes.indexOf(newPossibleType) !== -1 && this.idTable[id].possibleTypes.indexOf(newPossibleType) === -1) {
+                this.idTable[id].possibleTypes.push(newPossibleType);
+            }
+        }
+    }
+
+    assertPossibleType(id, type) {
+        if(!type in this.idTable[id].possibleTypes) {
+            throw new Error('${id} cannot have type ${type}');
+        }
+    }
+
     assertAllLocalVarsUsed() {
       for (var varName in this.idTable) {
         var variable = this.idTable[varName];
@@ -243,12 +273,19 @@ class Context {
     }
 
     assertFunctionCalledWithValidParams(id, functionType, calledType) {
+        console.log(functionType);
+        console.log(calledType);
+
         if(functionType.length !== calledType.length) {
           throw new Error(semanticErrors.invalidParams(id, functionType, calledType));
         }
-        for(var typeIndex in functionType) {
-            if(((functionType[typeIndex] !== calledType[typeIndex]) && (functionType[typeIndex] !== undefined)) ||
-               (calledType[typeIndex] == undefined)) {
+        for(var typeCounter in functionType) {
+            if(Array.isArray(functionType[typeCounter]) && (calledType[typeCounter] !== undefined)) {
+                if(functionType[typeCounter].indexOf(calledType[typeCounter]) === -1) {
+                    throw new Error(semanticErrors.invalidParams(id));
+                }
+            } else if(((functionType[typeCounter] !== calledType[typeCounter]) && (functionType[typeCounter] !== undefined)) ||
+               (calledType[typeCounter] === undefined)) {
                  throw new Error(semanticErrors.invalidParams(id, functionType, calledType));
                }
         }

@@ -3,7 +3,7 @@
 # Let arr be some integer array of at least length 2 and x and y be integers
 f(arr, x, y) {
     x /= y
-    ret x / arr[1] + y
+    ret arr[1] + y
 }
 
 print(f([3, 4, 89], 4, 7))

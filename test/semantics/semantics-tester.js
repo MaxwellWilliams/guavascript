@@ -41,7 +41,7 @@ tests = function(validFiles, invalidFiles) {
   fs.readdirSync(validPrograms).forEach(function(fileName) {
       fullProgramPath = validPrograms + '/' + fileName;
       programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-      // if(fileName == "bool-func-if-condition.guav") {
+      // if(fileName == "func-args-match-params.guav") {
       validFiles.push({
         name: fileName,
         code: programFileContents
@@ -52,7 +52,7 @@ tests = function(validFiles, invalidFiles) {
   fs.readdirSync(invalidPrograms).forEach(function(fileName) {
     fullFilePath = invalidPrograms + '/' + fileName;
     fileContents = fs.readFileSync(fullFilePath, 'utf-8');
-    // if(fileName == "invalid-operation5.guav") {
+    // if(fileName == "func-args-mismatch-params.guav") {
     invalidFiles.push({
       name: fileName,
       code: fileContents

@@ -162,16 +162,23 @@ class FunctionDeclarationStatement {
         this.parameterArray.forEach(function(parameter) {
             if (parameter.defaultValue !== null) {
                 parameter.defaultValue.analyze(context);
-                self.paramType.push(parameter.defaultValue.type);
                 blockContext.setVariable(parameter.id, parameter.defaultValue.type);
             } else {
-                self.paramType.push(undefined);
                 blockContext.setVariable(parameter.id, undefined);
             }
         });
 
         this.block.analyze(blockContext);
         this.type = this.block.returnType;
+
+        this.parameterArray.forEach(function(param) {
+            var parameter = blockContext.get(param.id);
+            if(parameter.type === undefined) {
+                self.paramType.push(parameter.possibleTypes);
+            } else {
+                self.paramType.push(parameter.type);
+            }
+        });
 
         if(context.inClassDelaration) {
             let functionProperities = {
@@ -348,13 +355,13 @@ class AssignmentStatement {
             this.idExpBody.analyze(context);
             idType = this.idExpBody.type;
         }
-        let expectedPairs;
+        let expectedTypePairs;
 
         if (this.assignOp == "=") {
             context.setVariable(this.idExpBody.id, this.exp.type);
         } else {
             if (this.assignOp == "+=") {
-                expectedPairs = [
+                expectedTypePairs = [
                     [TYPE.INTEGER, TYPE.INTEGER],
                     [TYPE.INTEGER, TYPE.FLOAT],
                     [TYPE.FLOAT, TYPE.INTEGER],
@@ -364,14 +371,14 @@ class AssignmentStatement {
                 ];
 
                 if(context.inFunctionDelaration) {
-                    pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
-                    pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
-                    pushUndefinedAndType(expectedPairs, TYPE.STRING);
-                    pushUndefinedAndType(expectedPairs, TYPE.LIST);
-                    pushUndefinedAndType(expectedPairs, undefined);
+                    pushUndefinedAndType(expectedTypePairs, TYPE.INTEGER);
+                    pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
+                    pushUndefinedAndType(expectedTypePairs, TYPE.STRING);
+                    pushUndefinedAndType(expectedTypePairs, TYPE.LIST);
+                    pushUndefinedAndType(expectedTypePairs, undefined);
                 }
             } else if (this.assignOp == "*=") {
-                expectedPairs = [
+                expectedTypePairs = [
                     [TYPE.INTEGER, TYPE.INTEGER],
                     [TYPE.INTEGER, TYPE.FLOAT],
                     [TYPE.FLOAT, TYPE.INTEGER],
@@ -381,13 +388,13 @@ class AssignmentStatement {
                 ];
 
                 if(context.inFunctionDelaration) {
-                    pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
-                    pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
-                    pushUndefinedAndType(expectedPairs, TYPE.STRING);
-                    pushUndefinedAndType(expectedPairs, undefined);
+                    pushUndefinedAndType(expectedTypePairs, TYPE.INTEGER);
+                    pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
+                    pushUndefinedAndType(expectedTypePairs, TYPE.STRING);
+                    pushUndefinedAndType(expectedTypePairs, undefined);
                 }
             } else if (["-=", "/="].indexOf(this.assignOp) > -1) {
-                expectedPairs = [
+                expectedTypePairs = [
                     [TYPE.INTEGER, TYPE.INTEGER],
                     [TYPE.INTEGER, TYPE.FLOAT],
                     [TYPE.FLOAT, TYPE.INTEGER],
@@ -395,17 +402,43 @@ class AssignmentStatement {
                 ];
 
                 if(context.inFunctionDelaration) {
-                    pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
-                    pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
-                    pushUndefinedAndType(expectedPairs, undefined);
+                    pushUndefinedAndType(expectedTypePairs, TYPE.INTEGER);
+                    pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
+                    pushUndefinedAndType(expectedTypePairs, undefined);
                 }
             }
 
             context.assertBinaryOperandIsOneOfTypePairs(
                 this.assignOp,
-                expectedPairs,
+                expectedTypePairs,
                 [idType, this.exp.type]
             );
+
+            if(context.inFunctionDelaration && this.idExpBody.id && this.idExpBody.type === undefined) {
+                var possibleTypes = [];
+
+                for(var typePairCounter in expectedTypePairs) {
+                    var possibleType = expectedTypePairs[typePairCounter][0];
+
+                    if(((possibleTypes.indexOf(possibleType) === -1)) && (possibleType !== undefined)) {
+                        possibleTypes.push(possibleType);
+                      }
+                }
+                context.managePossibleTypes(this.idExpBody.id, possibleTypes)
+            }
+            if(context.inFunctionDelaration && this.exp.idExpBody &&
+               this.exp.idExpBody.id && this.exp.idExpBody.type === undefined) {
+                var possibleTypes = [];
+
+                for(var typePairCounter in expectedTypePairs) {
+                    var possibleType = expectedTypePairs[typePairCounter][1];
+
+                    if(((possibleTypes.indexOf(possibleType) === -1)) && (possibleType !== undefined)) {
+                        possibleTypes.push(possibleType);
+                      }
+                }
+                context.managePossibleTypes(this.exp.idExpBody.id, possibleTypes)
+            }
         }
     }
     toString(indent = 0) {
@@ -490,38 +523,48 @@ class BinaryExpression {
 
         this.left.analyze(context);
         this.right.analyze(context);
-        let expectedPairs;
+        let expectedTypePairs;
 
         if (this.op == "||" || this.op == "&&") {
             this.type = TYPE.BOOLEAN;
-            expectedPairs = expectedPairs.push([TYPE.BOOLEAN, TYPE.BOOLEAN]);
+            expectedTypePairs = expectedTypePairs.push([TYPE.BOOLEAN, TYPE.BOOLEAN]);
         } else if (this.op == "+") {
-            expectedPairs = [
+            expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
-                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.INTEGER, TYPE.STRING],
+                [TYPE.INTEGER, TYPE.LIST],
                 [TYPE.FLOAT, TYPE.FLOAT],
+                [TYPE.FLOAT, TYPE.INTEGER],
+                [TYPE.FLOAT, TYPE.STRING],
+                [TYPE.FLOAT, TYPE.LIST],
                 [TYPE.STRING, TYPE.STRING],
                 [TYPE.STRING, TYPE.INTEGER],
                 [TYPE.STRING, TYPE.FLOAT],
                 [TYPE.STRING, TYPE.BOOLEAN],
+                [TYPE.STRING, TYPE.LIST],
                 [TYPE.BOOLEAN, TYPE.STRING],
-                [TYPE.LIST, TYPE.LIST]
+                [TYPE.BOOLEAN, TYPE.LIST],
+                [TYPE.LIST, TYPE.LIST],
+                [TYPE.LIST, TYPE.INTEGER],
+                [TYPE.LIST, TYPE.FLOAT],
+                [TYPE.LIST, TYPE.STRING],
+                [TYPE.LIST, TYPE.BOOLEAN]
             ];
 
             if(context.inFunctionDelaration) {
-                pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
-                pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
-                pushUndefinedAndType(expectedPairs, TYPE.STRING);
-                pushUndefinedAndType(expectedPairs, TYPE.LIST);
-                pushUndefinedAndType(expectedPairs, undefined);
+                pushUndefinedAndType(expectedTypePairs, TYPE.INTEGER);
+                pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
+                pushUndefinedAndType(expectedTypePairs, TYPE.STRING);
+                pushUndefinedAndType(expectedTypePairs, TYPE.LIST);
+                pushUndefinedAndType(expectedTypePairs, undefined);
             }
         } else if(["-", "/", "<=", "<", ">=", ">", "^"].indexOf(this.op) > -1) {
             if(["<=", "<", ">=", ">"].indexOf(this.op) > -1) {
                 this.type = TYPE.BOOLEAN;
             }
 
-            expectedPairs = [
+            expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
                 [TYPE.FLOAT, TYPE.INTEGER],
@@ -529,12 +572,12 @@ class BinaryExpression {
             ];
 
             if(context.inFunctionDelaration) {
-                pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
-                pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
-                pushUndefinedAndType(expectedPairs, undefined);
+                pushUndefinedAndType(expectedTypePairs, TYPE.INTEGER);
+                pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
+                pushUndefinedAndType(expectedTypePairs, undefined);
             }
         } else if (this.op == "*") {
-            expectedPairs = [
+            expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
                 [TYPE.FLOAT, TYPE.FLOAT],
@@ -544,43 +587,79 @@ class BinaryExpression {
             ];
 
             if(context.inFunctionDelaration) {
-                pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
-                pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
-                pushUndefinedAndType(expectedPairs, undefined);
+                pushUndefinedAndType(expectedTypePairs, TYPE.INTEGER);
+                pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
+                pushUndefinedAndType(expectedTypePairs, undefined);
             }
         } else if (this.op == "//" || this.op == "%") {
-            expectedPairs = [
+            if(this.op == "//") {
+                this.type = TYPE.INTEGER;
+            } else if(this.left.type === TYPE.FLOAT || this.right.type === TYPE.FLOAT) {
+                this.type = TYPE.FLOAT;
+            } else {
+                this.type = TYPE.INTEGER;
+            }
+
+            expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
+                [TYPE.INTEGER, TYPE.FLOAT],
                 [TYPE.FLOAT, TYPE.INTEGER],
-                [TYPE.INTEGER, TYPE.FLOAT]
+                [TYPE.FLOAT, TYPE.FLOAT]
             ];
 
             if(context.inFunctionDelaration) {
-                pushUndefinedAndType(expectedPairs, TYPE.INTEGER);
-                pushUndefinedAndType(expectedPairs, TYPE.FLOAT);
-                pushUndefinedAndType(expectedPairs, undefined);
+                pushUndefinedAndType(expectedTypePairs, TYPE.INTEGER);
+                pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
+                pushUndefinedAndType(expectedTypePairs, undefined);
             }
         } else if (this.op == "==" || this.op == "!=") {
             this.type = TYPE.BOOLEAN
 
-            expectedPairs = allTypePairs;
+            expectedTypePairs = allTypePairs;
 
             if(context.inFunctionDelaration) {
-                pushUndefinedAndType(expectedPairs, undefined);
+                pushUndefinedAndType(expectedTypePairs, undefined);
             }
         }
         context.assertBinaryOperandIsOneOfTypePairs(
             this.op,
-            expectedPairs,
+            expectedTypePairs,
             [this.left.type, this.right.type]
         );
 
         if(this.type === undefined) {
             if(this.left.type === TYPE.STRING || this.right.type === TYPE.STRING) {
                 this.type = TYPE.STRING;
+            } else if(this.left.type === TYPE.FLOAT || this.right.type === TYPE.FLOAT) {
+                this.type = TYPE.FLOAT;
             } else {
                 this.type = this.left.type;
             }
+        }
+
+        if(context.inFunctionDelaration && this.left.id && this.left.type === undefined) {
+            var possibleTypes = [];
+
+            for(var typePairCounter in expectedTypePairs) {
+                var possibleType = expectedTypePairs[typePairCounter][0];
+
+                if(((possibleTypes.indexOf(possibleType) === -1)) && (possibleType !== undefined)) {
+                    possibleTypes.push(possibleType);
+                  }
+            }
+            context.managePossibleTypes(this.left.id, possibleTypes)
+        }
+        if(context.inFunctionDelaration && this.right.id && this.right.type === undefined) {
+            var possibleTypes = [];
+
+            for(var typePairCounter in expectedTypePairs) {
+                var possibleType = expectedTypePairs[typePairCounter][1];
+
+                if(((possibleTypes.indexOf(possibleType) === -1)) && (possibleType !== undefined)) {
+                    possibleTypes.push(possibleType);
+                  }
+            }
+            context.managePossibleTypes(this.right.id, possibleTypes)
         }
     }
     toString(indent = 0) {
@@ -678,6 +757,15 @@ class IdExpressionBodyRecursive {
         this.idExpBase.analyze(context);
         this.id = this.idExpBase.id;
         this.type = this.idExpBase.type;
+
+        if(this.appendageOp !== undefined && this.type === undefined) {
+            if(this.appendageOp === '[]') {
+                this.type = TYPE.LIST;
+                context.setVariable(this.id, this.type);
+            } else if(this.appendageOp === '[]') {
+                context.managePossibleTypes(this.id, [TYPE.CLASS, TYPE.DICTIONARY]);
+            }
+        }
 
         if(this.idExpBase.isFunction) {
             context.assertIdCalledAsFunction(this.id, this.appendageOp);

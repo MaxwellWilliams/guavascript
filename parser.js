@@ -108,13 +108,9 @@ class Block {
     }
 }
 
-class Statement {
-}
-
 // Use this for both conditional and if/else statement
-class BranchStatement extends Statement {
+class BranchStatement {
     constructor(conditions, thenBlocks, elseBlock) {
-        super();
         this.conditions = conditions;
         this.thenBlocks = thenBlocks;
         this.elseBlock = elseBlock;
@@ -151,9 +147,8 @@ class BranchStatement extends Statement {
     }
 }
 
-class FunctionDeclarationStatement extends Statement {
+class FunctionDeclarationStatement {
     constructor(id, parameterArray, block) {
-        super();
         this.id = id;
         this.parameterArray = parameterArray;
         this.block = block;
@@ -190,7 +185,7 @@ class FunctionDeclarationStatement extends Statement {
                 type: this.block.returnType,
                 paramType: this.paramType
             }
-            context.addValueToId(context.currentClassId, functionProperities, this.id)
+            context.addProperityToId(context.currentClassId, functionProperities, this.id)
         } else {
             context.setFunction(this.id, this.block.returnType, this.paramType);
         }
@@ -199,7 +194,7 @@ class FunctionDeclarationStatement extends Statement {
 
         // But, we still must check that the non-default variables were used.
         // this.parameterArray.forEach(function(parameter) {
-        //     if (parameter.defaultValue == null) {
+        //     if (parameter.defaultValue === null) {
 
         //         let entry = self.block.context.get(
         //             parameter.id,
@@ -242,9 +237,13 @@ class Parameter {
     constructor(id, defaultValue) {
         this.id = id;
         this.defaultValue = defaultValue;
+        this.type = undefined;
     }
-    analyze() {
-        // TODO: I'm not sure there is anything semantic-wise to check here...
+    analyze(context) {
+        if(this.defaultValue) {
+            this.defaultValue.analyze(context);
+            this.type = this.defaultValue.type;
+        }
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(id ${this.id}`;
@@ -256,9 +255,8 @@ class Parameter {
     }
 }
 
-class ClassDeclarationStatement extends Statement {
+class ClassDeclarationStatement {
     constructor(id, block) {
-        super();
         this.id = id;
         this.block = block;
     }
@@ -276,9 +274,8 @@ class ClassDeclarationStatement extends Statement {
     }
 }
 
-class MatchStatement extends Statement {
+class MatchStatement {
     constructor(matchExp) {
-        super();
         this.matchExp = matchExp;
     }
     analyze() {
@@ -289,9 +286,8 @@ class MatchStatement extends Statement {
     }
 }
 
-class WhileStatement extends Statement {
+class WhileStatement {
     constructor(exp, block) {
-        super();
         this.exp = exp;
         this.block = block;
     }
@@ -310,9 +306,8 @@ class WhileStatement extends Statement {
     }
 }
 
-class ForInStatement extends Statement {
+class ForInStatement {
     constructor(id, iDExp, block) {
-        super();
         this.id = id;
         this.iDExp = iDExp;
         this.block = block;
@@ -328,9 +323,8 @@ class ForInStatement extends Statement {
     }
 }
 
-class PrintStatement extends Statement {
+class PrintStatement {
     constructor(exp) {
-        super();
         this.exp = exp;
     }
     analyze(context) {
@@ -343,9 +337,8 @@ class PrintStatement extends Statement {
     }
 }
 
-class AssignmentStatement extends Statement {
+class AssignmentStatement {
     constructor(idExp, assignOp, exp) {
-        super();
         this.idExp = idExp;
         this.idExpBody = idExp.idExpBody;
         this.idPostOp = idExp.idPostOp;
@@ -355,23 +348,37 @@ class AssignmentStatement extends Statement {
     analyze(context) {
         let idType = undefined;
         this.exp.analyze(context);
+        this.id = this.idExpBody.id;
+        this.type = this.exp.type;
 
         // If variable is being declared temporarily make type null
         if(context.inClassDelaration && (this.idExpBody.idExpBase.id === 'this')) {
-            context.addValueToId(context.currentClassId, this.exp, this.idExpBody.idAppendage.id)
+            context.addProperityToId(context.currentClassId, this.exp, this.idExpBody.idAppendage.id)
             return;
         }
 
-        if(context.get(this.idExpBody.id, true, true) !== undefined) {
+        if(context.get(this.id, true, true) !== undefined) {
             this.idExpBody.analyze(context);
             idType = this.idExpBody.type;
         }
         let expectedTypePairs;
 
-        if (this.assignOp == "=") {
-            context.setVariable(this.idExpBody.id, this.exp.type);
+        if (this.assignOp === "=") {
+            context.setVariable(this.id, this.type);
+
+            if(this.type === TYPE.DICTIONARY) {
+                for(var properityCounter in this.exp.properities) {
+                    var properity = this.exp.properities[properityCounter];
+                    context.addProperityToId(this.id, { type: properity.type }, properity.id);
+                }
+            } else if(this.type === TYPE.LIST) {
+              for(var properityCounter in this.exp.valueTypes) {
+                  var properity = this.exp.valueTypes[properityCounter];
+                  context.addProperityToId(this.id, { type: properity.type });
+              }
+            }
         } else {
-            if (this.assignOp == "+=") {
+            if (this.assignOp === "+=") {
                 expectedTypePairs = [
                     [TYPE.INTEGER, TYPE.INTEGER],
                     [TYPE.INTEGER, TYPE.FLOAT],
@@ -388,7 +395,7 @@ class AssignmentStatement extends Statement {
                     pushUndefinedAndType(expectedTypePairs, TYPE.LIST);
                     pushUndefinedAndType(expectedTypePairs, undefined);
                 }
-            } else if (this.assignOp == "*=") {
+            } else if (this.assignOp === "*=") {
                 expectedTypePairs = [
                     [TYPE.INTEGER, TYPE.INTEGER],
                     [TYPE.INTEGER, TYPE.FLOAT],
@@ -422,10 +429,10 @@ class AssignmentStatement extends Statement {
             context.assertBinaryOperandIsOneOfTypePairs(
                 this.assignOp,
                 expectedTypePairs,
-                [idType, this.exp.type]
+                [idType, this.type]
             );
 
-            if(context.inFunctionDelaration && this.idExpBody.id && this.idExpBody.type === undefined) {
+            if(context.inFunctionDelaration && this.id && this.idExpBody.type === undefined) {
                 var possibleTypes = [];
 
                 for(var typePairCounter in expectedTypePairs) {
@@ -435,7 +442,7 @@ class AssignmentStatement extends Statement {
                         possibleTypes.push(possibleType);
                       }
                 }
-                context.managePossibleTypes(this.idExpBody.id, possibleTypes)
+                context.managePossibleTypes(this.id, possibleTypes);
             }
             if(context.inFunctionDelaration && this.exp.idExpBody &&
                this.exp.idExpBody.id && this.exp.idExpBody.type === undefined) {
@@ -448,7 +455,7 @@ class AssignmentStatement extends Statement {
                         possibleTypes.push(possibleType);
                       }
                 }
-                context.managePossibleTypes(this.exp.idExpBody.id, possibleTypes)
+                context.managePossibleTypes(this.exp.idExpBody.id, possibleTypes);
             }
         }
     }
@@ -460,9 +467,8 @@ class AssignmentStatement extends Statement {
     }
 }
 
-class ReturnStatement extends Statement {
+class ReturnStatement {
     constructor(exp) {
-        super();
         this.exp = exp;
         this.returnType;
     }
@@ -478,12 +484,8 @@ class ReturnStatement extends Statement {
     }
 }
 
-class Expression {
-}
-
-class MatchExpression extends Expression {
+class MatchExpression {
     constructor(idExp, varArray, matchArray, matchFinal) {
-        super();
         this.idExp = idExp;
         this.varArray = varArray;
         this.matchArray = matchArray;
@@ -496,7 +498,7 @@ class MatchExpression extends Expression {
         var string = `${spacer.repeat(indent)}(Match Expression` +
                      `\n${this.idExp.toString(++indent)}` +
                      `\n${spacer.repeat(indent++)}(Matches`;
-        if (this.varArray.length != 0 && this.varArray.length == this.matchArray.length) {
+        if (this.varArray.length != 0 && this.varArray.length === this.matchArray.length) {
             for (var varIndex in this.varArray) {
                 string += `\n${spacer.repeat(indent)}(Match` +
                           `\n${this.varArray[varIndex].toString(++indent)} ->` +
@@ -520,7 +522,7 @@ class Match {
     constructor(matchee) {
         this.matchee = matchee;
     }
-    analyze() {
+    analyze(context) {
         // TODO
     }
     toString(indent = 0) {
@@ -528,24 +530,22 @@ class Match {
     }
 }
 
-class BinaryExpression extends Expression {
+class BinaryExpression {
     constructor(left, op, right) {
-        super();
         this.left = left;
         this.op = op;
         this.right = right;
         this.type;
     }
     analyze(context) {
-
         this.left.analyze(context);
         this.right.analyze(context);
         let expectedTypePairs;
 
-        if (this.op == "||" || this.op == "&&") {
+        if (this.op === "||" || this.op === "&&") {
             this.type = TYPE.BOOLEAN;
             expectedTypePairs = expectedTypePairs.push([TYPE.BOOLEAN, TYPE.BOOLEAN]);
-        } else if (this.op == "+") {
+        } else if (this.op === "+") {
             expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
@@ -594,7 +594,7 @@ class BinaryExpression extends Expression {
                 pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
                 pushUndefinedAndType(expectedTypePairs, undefined);
             }
-        } else if (this.op == "*") {
+        } else if (this.op === "*") {
             expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
@@ -608,8 +608,8 @@ class BinaryExpression extends Expression {
                 pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
                 pushUndefinedAndType(expectedTypePairs, undefined);
             }
-        } else if (this.op == "//" || this.op == "%") {
-            if(this.op == "//") {
+        } else if (this.op === "//" || this.op === "%") {
+            if(this.op === "//") {
                 this.type = TYPE.INTEGER;
             } else if(this.left.type === TYPE.FLOAT || this.right.type === TYPE.FLOAT) {
                 this.type = TYPE.FLOAT;
@@ -629,7 +629,7 @@ class BinaryExpression extends Expression {
                 pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
                 pushUndefinedAndType(expectedTypePairs, undefined);
             }
-        } else if (this.op == "==" || this.op == "!=") {
+        } else if (this.op === "==" || this.op === "!=") {
             this.type = TYPE.BOOLEAN
 
             expectedTypePairs = allTypePairs;
@@ -687,20 +687,19 @@ class BinaryExpression extends Expression {
     }
 }
 
-class UnaryExpression extends Expression {
+class UnaryExpression {
     constructor(op, operand) {
-        super();
         this.op = op;
         this.operand = operand;
         this.type;
     }
     analyze(context) {
         this.operand.analyze(context);
-        if (this.op == "--" || this.op == "++") {
+        if (this.op === "--" || this.op === "++") {
             context.assertUnaryOperandIsOneOfTypes(this.op, [TYPE.INTEGER], this.operand.type);
-        } else if (this.op == "-") {
+        } else if (this.op === "-") {
             context.assertUnaryOperandIsOneOfTypes(this.op, [TYPE.INTEGER, TYPE.FLOAT], this.operand.type);
-        } else if (this.op == "!") {
+        } else if (this.op === "!") {
             context.assertUnaryOperandIsOneOfTypes(this.op, [TYPE.BOOLEAN], this.operand.type);
         }
         this.type = this.operand.type;
@@ -710,9 +709,8 @@ class UnaryExpression extends Expression {
     }
 }
 
-class ParenthesisExpression extends Expression {
+class ParenthesisExpression {
     constructor(exp) {
-        super();
         this.exp = exp;
         this.type;
     }
@@ -726,9 +724,8 @@ class ParenthesisExpression extends Expression {
     }
 }
 
-class Variable extends Expression {
+class Variable {
     constructor(variable) {
-        super();
         this.var = variable;
         this.type = "NULL";
     }
@@ -742,9 +739,8 @@ class Variable extends Expression {
     }
 }
 
-class IdExpression extends Expression {
+class IdExpression {
     constructor(idExpBody, idPostOp) {
-        super();
         this.idExpBody = idExpBody;
         this.idPostOp = idPostOp;
         this.id;  // baseline identifier. example: x in x.doThis(3)[1].lalala
@@ -753,18 +749,15 @@ class IdExpression extends Expression {
     analyze(context) {
         this.idExpBody.analyze(context);
 
-        console.log(this.idPostOp);
-
-
-        if (this.idPostOp == "++" || this.idPostOp == "--") {
+        if (this.idPostOp === "++" || this.idPostOp === "--") {
             context.assertUnaryOperandIsOneOfTypes(this.idPostOp, [TYPE.INTEGER], this.idExpBody.type)
         }
 
         this.id = this.idExpBody.id;
         this.type = this.idExpBody.type;
 
-        if(this.idExpBody.type == TYPE.DICTIONARY && this.idPostOp.constructor == Array) {
-            context.getPropertyFromId(this.id, this.idPostOp)
+        if(this.idExpBody && this.idExpBody.appendageOp === '[]') {
+            context.getPropertyFromId(this.id, this.idExpBody.idAppendage.id);
         }
     }
     toString(indent = 0) {
@@ -779,12 +772,13 @@ class IdExpressionBodyRecursive {
     constructor(idExpBase, idAppendage) {
         this.idExpBase = idExpBase;
         this.idAppendage = idAppendage;
-        this.appendageOp = idAppendage == undefined ? undefined : idAppendage.op;
+        this.appendageOp = idAppendage === undefined ? undefined : idAppendage.op;
         this.id;
         this.type;
     }
     analyze(context) {
         this.idExpBase.analyze(context);
+        this.idAppendage.analyze(context);
         this.id = this.idExpBase.id;
         this.type = this.idExpBase.type;
 
@@ -792,7 +786,7 @@ class IdExpressionBodyRecursive {
             if(this.appendageOp === '[]') {
                 this.type = TYPE.LIST;
                 context.setVariable(this.id, this.type);
-            } else if(this.appendageOp === '[]') {
+            } else if(this.appendageOp === '{}') {
                 context.managePossibleTypes(this.id, [TYPE.CLASS, TYPE.DICTIONARY]);
             }
         }
@@ -833,7 +827,7 @@ class PeriodId {
         this.id = id;
         this.op = "."
     }
-    analyze() {
+    analyze(context) {
         // TODO
     }
     toString(indent = 0) {
@@ -866,10 +860,11 @@ class Arguments {
 class IdSelector {
     constructor(variable) {
         this.variable = variable;
-        this.op = "[]"
+        this.op = '[]';
+        this.id = undefined;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.id = this.variable.value;
     }
     toString(indent = 0) {
         return `${this.variable.toString(indent)}`;
@@ -877,17 +872,19 @@ class IdSelector {
 }
 
 class List {
-    constructor(varList) {
-        this.varList = varList;
+    constructor(values) {
+        this.values = values;
         this.type = TYPE.LIST;
+        this.valueTypes = undefined;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.values.analyze(context);
+        this.valueTypes = this.values.type;
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(List`;
-        if (this.varList.length > 0) {
-            string += `\n${this.varList.toString(++indent)}` +
+        if (this.values.length > 0) {
+            string += `\n${this.values.toString(++indent)}` +
                       `\n${spacer.repeat(--indent)})`;
         } else {
             string += `)`;
@@ -897,33 +894,37 @@ class List {
 }
 
 class Tuple {
-    constructor(elems) {
-        this.elems = elems;
-        this.type = TYPE.TUPLE
+    constructor(elements) {
+        this.elements = elements;
+        this.type = TYPE.TUPLE;
+        this.elementsType = undefined;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.elements.analyze(context);
+        this.elementsType = this.elements.type;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Tuple` +
-               `\n${this.elems.toString(++indent)}` +
+               `\n${this.elements.toString(++indent)}` +
                `\n${spacer.repeat(--indent)})`;
     }
 }
 
 class Dictionary {
-    constructor(idValuePairs) {
-        this.idValuePairs = idValuePairs;
+    constructor(properities) {
+        this.properities = properities;
         this.type = TYPE.DICTIONARY
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        for(var properityCounter in this.properities) {
+            this.properities[properityCounter].analyze(context);
+        }
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent++)}(Dictionary`
-        if (this.idValuePairs.length !== 0) {
-            for (var pairIndex in this.idValuePairs) {
-                string += `\n${this.idValuePairs[pairIndex].toString(indent)}`;
+        if (this.properities.length !== 0) {
+            for (var pairIndex in this.properities) {
+                string += `\n${this.properities[pairIndex].toString(indent)}`;
             }
             string += `\n${spacer.repeat(--indent)})`;
         } else {
@@ -938,8 +939,8 @@ class IdValuePair {
         this.id = id;
         this.variable = variable;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        this.type = this.variable.type;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id} : ${this.variable.toString()})`;
@@ -975,15 +976,13 @@ class VarList {
 }
 
 class IntLit {
-    constructor(digits) {
-        this.digits = digits;
+    constructor(value) {
+        this.value = value;
         this.type = TYPE.INTEGER;
     }
-    analyze() {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.digits})`;
+        return `${spacer.repeat(indent)}(${this.value})`;
     }
 }
 
@@ -992,9 +991,7 @@ class FloatLit {
         this.value = value;
         this.type = TYPE.FLOAT;
     }
-    analyze() {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.value})`;
     }
@@ -1005,34 +1002,29 @@ class StringLit {
         this.value = value.substring(1, value.length - 1);
         this.type = TYPE.STRING;
     }
-    analyze() {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.value})`;
     }
 }
 
 class BoolLit {
-    constructor(boolVal) {
-        this.boolVal = boolVal;
+    constructor(value) {
+        this.value = value;
         this.type = TYPE.BOOLEAN;
     }
-    analyze() {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
-        return `${spacer.repeat(indent)}(${this.boolVal})`;
+        return `${spacer.repeat(indent)}(${this.value})`;
     }
 }
 
 class NullLit {
     constructor() {
         this.type = TYPE.NULL
+        this.value = null;
     }
-    analyze() {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(null)`;
     }
@@ -1042,9 +1034,7 @@ class IdVariable {
     constructor(value) {
         this.value = value;
     }
-    analyze() {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(\n${this.value})`;
     }
@@ -1157,7 +1147,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     nullLit(nul) {return new NullLit()},
     keyword(word) {return word;},
     id_variable(firstChar, rest) {return new IdVariable(this.sourceString);},
-    id_constant(constId) {return sourceString.ast()},
+    id_constant(constId) {return constId},
     idrest(character) {return character},
     constId(underscores, words) {return new ConstId(words)},          //TODO: fix constID
     classId(upper, idrests) {return new ClassId(idrests.ast())}

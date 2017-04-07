@@ -127,15 +127,23 @@ class Context {
                (this.idTable[id].paramType === paramType) &&
                (this.idTable[id].type === type)) {
                 this.idTable[id].used = true;
-            } else if(type === "NULL") {
+            } else if(type === TYPE.NULL) {
                 this.idTable[id].type = type;
                 this.idTable[id].used = true;
                 this.idTable[id].isFunction = isFunction;
                 this.idTable[id].paramType = paramType;
+
+                if(type === TYPE.CLASS) {this.idTable[id].properities = { constructors: [] };};
+                if(type === TYPE.DICTIONARY) {this.idTable[id].properities = {};};
+                if(type === TYPE.LIST || type === TYPE.TUPLE) {this.idTable[id].properities = [];};
             } else if(this.idTable[id].type == undefined) {
                 //Updating recently declared variable with type (AssignmentStatement)
                 this.idTable[id].type = type;
                 this.idTable[id].possibleTypes = undefined;
+
+                if(type === TYPE.CLASS) {this.idTable[id].properities = { constructors: [] };};
+                if(type === TYPE.DICTIONARY) {this.idTable[id].properities = {};};
+                if(type === TYPE.LIST || type === TYPE.TUPLE) {this.idTable[id].properities = [];};
             } else {
                 throw new Error(semanticErrors.changedImmutableType(id, this.idTable[id].type, type));
             }
@@ -165,7 +173,7 @@ class Context {
         this.setId(id, type, true, paramType);
     }
 
-    addValueToId(id, value, key = undefined) {
+    addProperityToId(id, value, key = undefined) {
         let variable = this.get(id);
         if(variable.type === TYPE.CLASS) {
             if(key === undefined) {
@@ -176,7 +184,7 @@ class Context {
                 variable.properities[key] = value;
             }
         } else if(variable.type === TYPE.DICTIONARY) {
-            if(key = undefined) {
+            if(key === undefined) {
               throw new Error(`${id} is a dictionary and expects key value pairs`);
             }
             variable.properities[key] = value;
@@ -190,18 +198,16 @@ class Context {
     }
 
     getPropertyFromId(id, key) {
-        let variable = this.get(id)
+        var variable = this.get(id);
         if(variable.type == TYPE.CLASS || variable.type == TYPE.DICTIONARY) {
-            //console.log(variable);
-            //console.log(variable.properities);
             if(key in variable.properities) {
-                return variable.properities[key]
+                return variable.properities[key];
             } else {
                 throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));
             }
         } else if(variable.type == TYPE.LIST) {
-            if(key in variable.properities[key]) {
-                return variable.properities[key]
+            if(key <= (variable.properities.length + 1)) {
+                return variable.properities.indexOf(key);
             } else {
                 throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));
             }
@@ -293,9 +299,6 @@ class Context {
     }
 
     assertFunctionCalledWithValidParams(id, functionType, calledType) {
-        console.log(functionType);
-        console.log(calledType);
-
         if(functionType.length !== calledType.length) {
           throw new Error(semanticErrors.invalidParams(id, functionType, calledType));
         }

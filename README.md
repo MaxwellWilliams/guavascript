@@ -130,3 +130,16 @@ class Ball {                                 class Ball {
 bouncyBall = Ball(0.2)                       let bouncyBall = new Ball(0.2, 1.0);
 bouncyBall.is_round()                        bouncyBall.is_round();
 ```
+
+## Semantic Errors
+* Calling a variable outside the scope where it is declared
+* Class constructor arguments mismatching parameters
+* Classes not defined with "constructor" keyword
+* For in used for anything besides arrays, tuples, or dictionaries
+* Function/class call arguments don't match function/class declaration parameters
+* Variables not matched with same type
+* Match statments without catch all (except for boolean, in which true and false must be present)
+* Declared variables not being used
+* Invalid operations. For example, {"one":"two"} + {"three":"four"}, {"te":"st"}[0], false/false, 2 * true, "test" * 2, ["one"] + {"t":"wo"}, [1] + 2, {1} + 2, (1, 2) + (3, 4), ["x"]++, ["x"]["y"], 2 > true, etc
+* If statment conditions returning non-boolean type
+* Reassigning variable to the wrong type. For example 1 -> true, "x" -> 3, etc

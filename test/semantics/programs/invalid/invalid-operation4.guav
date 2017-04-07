@@ -1,3 +1,4 @@
 # Should fail since incompatible operand types
 
 x = "string" * 8.131
+print(x)

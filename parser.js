@@ -172,7 +172,7 @@ class FunctionDeclarationStatement {
         this.block.analyze(blockContext);
 
         this.parameterArray.forEach(function(param) {
-            var parameter = blockContext.get(param.id);
+            var parameter = blockContext.getId(param.id);
             if(parameter.type === undefined) {
                 self.paramType.push(parameter.possibleTypes);
             } else {
@@ -196,7 +196,7 @@ class FunctionDeclarationStatement {
         // this.parameterArray.forEach(function(parameter) {
         //     if (parameter.defaultValue === null) {
 
-        //         let entry = self.block.context.get(
+        //         let entry = self.block.context.getId(
         //             parameter.id,
         //             true,  // silent = true
         //             true  // onlyThisContext = true
@@ -206,7 +206,7 @@ class FunctionDeclarationStatement {
         //         }
         //     }
         //     // At the same time, build the parameters signature
-        //     signature.push(context.get(parameter.id).type);
+        //     signature.push(context.getId(parameter.id).type);
         // });
 
         // If you can't find a parameter in the block, throw unusedLocalVariable
@@ -357,7 +357,7 @@ class AssignmentStatement {
             return;
         }
 
-        if(context.get(this.id, true, true) !== undefined) {
+        if(context.getId(this.id, true, true) !== undefined) {
             this.idExpBody.analyze(context);
             idType = this.idExpBody.type;
         }
@@ -371,7 +371,7 @@ class AssignmentStatement {
                     var properity = this.exp.properities[properityCounter];
                     context.addProperityToId(this.id, { type: properity.type }, properity.id);
                 }
-            } else if(this.type === TYPE.LIST) {
+            } else if(this.type === TYPE.LIST || this.type === TYPE.TUPLE) {
               for(var properityCounter in this.exp.valueTypes) {
                   var properity = this.exp.valueTypes[properityCounter];
                   context.addProperityToId(this.id, { type: properity.type });
@@ -491,7 +491,7 @@ class MatchExpression {
         this.matchArray = matchArray;
         this.matchFinal = matchFinal;
     }
-    analyze() {
+    analyze(context) {
         // TODO
     }
     toString(indent = 0) {
@@ -812,7 +812,7 @@ class IdExpressionBodyBase {
         this.paramType = undefined;
     }
     analyze(context) {                               // Dont Analyze on initial variable declarations
-        let variable = context.get(this.id);
+        let variable = context.getId(this.id);
         this.type = variable.type;
         this.isFunction = variable.isFunction;
         this.paramType = variable.paramType ? variable.paramType : undefined;
@@ -894,18 +894,18 @@ class List {
 }
 
 class Tuple {
-    constructor(elements) {
-        this.elements = elements;
+    constructor(values) {
+        this.values = values;
         this.type = TYPE.TUPLE;
-        this.elementsType = undefined;
+        this.valueTypes = undefined;
     }
     analyze(context) {
-        this.elements.analyze(context);
-        this.elementsType = this.elements.type;
+        this.values.analyze(context);
+        this.valueTypes = this.values.type;
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(Tuple` +
-               `\n${this.elements.toString(++indent)}` +
+               `\n${this.values.toString(++indent)}` +
                `\n${spacer.repeat(--indent)})`;
     }
 }
@@ -1147,7 +1147,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     nullLit(nul) {return new NullLit()},
     keyword(word) {return word;},
     id_variable(firstChar, rest) {return new IdVariable(this.sourceString);},
-    id_constant(constId) {return constId},
+    id_constant(constId) {return constId.ast()},
     idrest(character) {return character},
     constId(underscores, words) {return new ConstId(words)},          //TODO: fix constID
     classId(upper, idrests) {return new ClassId(idrests.ast())}
@@ -1161,7 +1161,3 @@ module.exports = (program) => {
     console.log(match.message);
   }
 }
-
-global.FunctionDeclarationStatement = FunctionDeclarationStatement;
-global.Parameter = Parameter;
-global.TYPE = TYPE;

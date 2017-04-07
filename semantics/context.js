@@ -173,50 +173,7 @@ class Context {
         this.setId(id, type, true, paramType);
     }
 
-    addProperityToId(id, value, key = undefined) {
-        let variable = this.get(id);
-        if(variable.type === TYPE.CLASS) {
-            if(key === undefined) {
-                throw new Error(`${id} is a dictionary and expects key value pairs`);
-            } else if(key === 'constructor') {
-                variable.properities['constructors'].push(value);
-            } else {
-                variable.properities[key] = value;
-            }
-        } else if(variable.type === TYPE.DICTIONARY) {
-            if(key === undefined) {
-              throw new Error(`${id} is a dictionary and expects key value pairs`);
-            }
-            variable.properities[key] = value;
-        } else if(variable.type === TYPE.LIST) {
-            variable.properities.push(value);
-        } else if(variable.type === TYPE.TUPLE) {
-            variable.properities.push(value);
-        } else {
-          throw new Error(`${id} has type ${variable.type} and therfore cannot have properities`);
-        }
-    }
-
-    getPropertyFromId(id, key) {
-        var variable = this.get(id);
-        if(variable.type == TYPE.CLASS || variable.type == TYPE.DICTIONARY) {
-            if(key in variable.properities) {
-                return variable.properities[key];
-            } else {
-                throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));
-            }
-        } else if(variable.type == TYPE.LIST) {
-            if(key <= (variable.properities.length + 1)) {
-                return variable.properities.indexOf(key);
-            } else {
-                throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));
-            }
-        } else {
-            throw new Error(`${id} has no propterties`);
-        }
-    }
-
-    get(id, silent = false, onlyThisContext = false) {
+    getId(id, silent = false, onlyThisContext = false) {
         if(id in this.idTable) {
             this.idTable[id].used = true;
             return this.idTable[id];
@@ -234,8 +191,51 @@ class Context {
                   throw new Error(semanticErrors.useBeforeDeclaration(id));
               }
             } else {
-                return this.parent.get(id, silent, onlyThisContext);
+                return this.parent.getId(id, silent, onlyThisContext);
             }
+        }
+    }
+
+    addProperityToId(id, value, key = undefined) {
+        let variable = this.getId(id);
+        if(variable.type === TYPE.CLASS) {
+            if(typeof key !== 'string') {
+                throw new Error(`invalidKey Error: ${id} is a class and expects key to be type string`);
+            } else if(key === 'constructor') {
+                variable.properities['constructors'].push(value);
+            } else {
+                variable.properities[key] = value;
+            }
+        } else if(variable.type === TYPE.DICTIONARY) {
+            if(typeof key !== 'string') {
+                throw new Error(`invalidKey Error: ${id} is a dictionary and expects key to be type string`);
+            }
+            variable.properities[key] = value;
+        } else if(variable.type === TYPE.LIST) {
+            variable.properities.push(value);
+        } else if(variable.type === TYPE.TUPLE) {
+            variable.properities.push(value);
+        } else {
+          throw new Error(`${id} has type ${variable.type} and therfore cannot have properities`);
+        }
+    }
+
+    getPropertyFromId(id, key) {
+        var variable = this.getId(id);
+        if(variable.type == TYPE.CLASS || variable.type == TYPE.DICTIONARY) {
+            if(key in variable.properities) {
+                return variable.properities[key];
+            } else {
+                throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));
+            }
+        } else if(variable.type == TYPE.LIST) {
+            if(key <= (variable.properities.length + 1)) {
+                return variable.properities.indexOf(key);
+            } else {
+                throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));
+            }
+        } else {
+            throw new Error(`${id} has no propterties`);
         }
     }
 
@@ -273,14 +273,14 @@ class Context {
     }
 
     assertIsType(id, actualType) {
-        if(actualType !== this.get(id).type) {
-            throw new Error(semanticErrors.doesntHaveExpectedType(id, this.get(id).type, actualType));
+        if(actualType !== this.getId(id).type) {
+            throw new Error(semanticErrors.doesntHaveExpectedType(id, this.getId(id).type, actualType));
         }
     }
 
     assertClassHasConstructor(id) {
         this.assertIsType(id, TYPE.CLASS);
-        let classConstructors = this.get(id).properities['constructors'];
+        let classConstructors = this.getId(id).properities['constructors'];
         if(classConstructors.length < 1) {
             throw new Error(semanticErrors.classWithoutConstructor(id));
         }

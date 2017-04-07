@@ -733,7 +733,7 @@ class Variable {
 class IdExpression {
     constructor(idExpBody, idPostOp) {
         this.idExpBody = idExpBody;
-        this.idPostOp = idPostOp;
+        this.idPostOp = idPostOp !== undefined ? idPostOp[0] : undefined;
         this.id;  // baseline identifier. example: x in x.doThis(3)[1].lalala
         this.type;
     }
@@ -741,7 +741,7 @@ class IdExpression {
         this.idExpBody.analyze(context);
 
         if (this.idPostOp === "++" || this.idPostOp === "--") {
-            context.assertUnaryOperandIsOneOfTypes(this.idPostOp, [TYPE.INTEGER], this.idExpBody.type)
+            context.assertUnaryOperandIsOneOfTypes(this.idPostOp, [TYPE.INTEGER, TYPE.FLOAT], this.idExpBody.type)
         }
 
         this.id = this.idExpBody.id;
@@ -754,7 +754,7 @@ class IdExpression {
     toString(indent = 0) {
         return  `${spacer.repeat(indent)}(IdExpression\n` +
                 `${this.idExpBody.toString(++indent)}` +
-                `${(this.idPostOp.length === 0) ? "" : `\n${spacer.repeat(++indent)}${this.idPostOp}`}` +
+                `${(this.idPostOp === undefined) ? "" : `\n${spacer.repeat(++indent)}${this.idPostOp}`}` +
                 `\n${spacer.repeat(--indent)})`;
     }
 }
@@ -1104,13 +1104,13 @@ semantics = grammar.createSemantics().addOperation('ast', {
     ParenExp_pass(variable) {return variable.ast();},
     Var(input) {return input.ast();},
 
-    IdExp(idExpBody, idPostOp) {return new IdExpression(idExpBody.ast(), idPostOp.sourceString);},
+    IdExp(idExpBody, idPostOp) {return new IdExpression(idExpBody.ast(), idPostOp.ast());},
     IdExpBody_recursive(idExpBody, selector) {return new IdExpressionBodyRecursive(idExpBody.ast(), selector.ast());},
     IdExpBody_base(id) {return new IdExpressionBodyBase(id.sourceString);},
     periodId(period, id) {return new PeriodId(id.sourceString);},
     Arguments(lParen, args, rParen) {return new Arguments(args.ast());},
     IdSelector(lBracket, variable, rBracket) {return new IdSelector(variable.ast());},
-    idPostOp(op) {return op},
+    idPostOp(op) {return op.sourceString},
     List(lBracket, list, rBracket) {return new List(list.ast());},
     Tuple(lParen, tuple, rParen) {return new Tuple(tuple.ast());},
     Dictionary(lBrace, IdValuePair, commas, IdValuePairs, rBrace) {

@@ -1,4 +1,0 @@
-# should fail since we can't do ++ on dictionaries
-
-c = []
-print(c++)

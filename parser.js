@@ -89,7 +89,7 @@ class Block {
                 if (this.numberOfReturnStatements <= 1) {
                     this.returnType = statement.returnType;
                 } else {
-                    context.throwMultipleReturnsInABlockError();
+                    context.assertMultipleReturnsInABlock();
                 }
             }
         }
@@ -108,7 +108,6 @@ class Block {
     }
 }
 
-// Use this for both conditional and if/else statement
 class BranchStatement {
     constructor(conditions, thenBlocks, elseBlock) {
         this.conditions = conditions;
@@ -118,7 +117,7 @@ class BranchStatement {
     analyze(context) {
         this.conditions.forEach(function(condition) {
             condition.analyze(context);
-            context.assertConditionIsBoolean(condition);
+            context.assertTypesAreEqual(condition.type, TYPE.BOOLEAN);
         });
         this.thenBlocks.forEach(block => block.analyze(context.createChildContextForBlock()));
         if (this.elseBlock !== null) {
@@ -155,7 +154,7 @@ class FunctionDeclarationStatement {
         this.paramType = [];
     }
     analyze(context) {
-        let blockContext = context.createChildContextForFunctionDeclaration(this);
+        let blockContext = context.createChildContextForFunctionDeclaration();
         let self = this;
 
         // If there is a default value, instantiate the variable in the block.
@@ -189,29 +188,6 @@ class FunctionDeclarationStatement {
         } else {
             context.setFunction(this.id, this.block.returnType, this.paramType);
         }
-
-        let signature = [];
-
-        // But, we still must check that the non-default variables were used.
-        // this.parameterArray.forEach(function(parameter) {
-        //     if (parameter.defaultValue === null) {
-
-        //         let entry = self.block.context.getId(
-        //             parameter.id,
-        //             true,  // silent = true
-        //             true  // onlyThisContext = true
-        //         );
-        //         if (!entry) {
-        //             context.declareUnusedLocalVariable(parameter.id);
-        //         }
-        //     }
-        //     // At the same time, build the parameters signature
-        //     signature.push(context.getId(parameter.id).type);
-        // });
-
-        // If you can't find a parameter in the block, throw unusedLocalVariable
-        // context.setVariable(this.id, {type: TYPE.FUNCTION, returnType: block.returnType, parameters: signature});
-
     }
 
     toString(indent = 0) {
@@ -274,27 +250,15 @@ class ClassDeclarationStatement {
     }
 }
 
-class MatchStatement {
-    constructor(matchExp) {
-        this.matchExp = matchExp;
-    }
-    analyze(context) {
-        // TODO
-    }
-    toString(indent = 0) {
-        return `${this.matchExp.toString(indent)}`;
-    }
-}
-
 class WhileStatement {
     constructor(condition, block) {
         this.condition = condition;
         this.block = block;
     }
     analyze(context) {
-        var blockContext = context.createChildContextForLoop();
+        var blockContext = context.createChildContextForBlock();
         this.condition.analyze(context);
-        context.assertConditionIsBoolean(this.condition);
+        context.assertTypesAreEqual(this.condition.type, TYPE.BOOLEAN);
         this.block.analyze(blockContext);
     }
     toString(indent = 0) {
@@ -316,7 +280,7 @@ class ForInStatement {
         this.block = block;
     }
     analyze(context) {
-        var blockContext = context.createChildContextForLoop();
+        var blockContext = context.createChildContextForBlock();
         blockContext.setId(this.id, undefined)
         this.iteratableObj.analyze(context);
         context.assertIsIteratable(this.iteratableObj.id);
@@ -492,31 +456,54 @@ class ReturnStatement {
 }
 
 class MatchExpression {
-    constructor(idExp, varArray, matchArray, matchFinal) {
+    constructor(idExp, matchConditions, matchBlocks, catchAllMatch) {
         this.idExp = idExp;
-        this.varArray = varArray;
-        this.matchArray = matchArray;
-        this.matchFinal = matchFinal;
+        this.matchConditions = matchConditions;
+        this.matchBlocks = matchBlocks;
+        this.catchAllMatch = catchAllMatch;
+        this.type = undefined;
     }
     analyze(context) {
-        // TODO
+        this.idExp.analyze(context);
+        this.type = this.idExp.type;
+
+        for(var varCounter in this.matchConditions) {
+            var variable = this.matchConditions[varCounter];
+            variable.analyze(context);
+            context.assertTypesAreEqual(this.type, variable.type);
+        }
+
+        if(this.type !== TYPE.BOOLEAN) {
+            context.assertMatchHasCatchAll(this.catchAllMatch);
+        } else {
+            var contiansTrueMatch = false;
+            var contiansFalseMatch = false;
+            for(var varCounter in this.matchConditions) {
+                var variable = this.matchConditions[varCounter];
+                if(variable.value === 'true') {contiansTrueMatch = true;}
+                if(variable.value === 'false') {contiansFalseMatch = true;}
+            }
+            if(!(contiansTrueMatch && contiansFalseMatch)) {
+                context.assertMatchHasCatchAll(this.catchAllMatch);
+            }
+        }
     }
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(Match Expression` +
                      `\n${this.idExp.toString(++indent)}` +
                      `\n${spacer.repeat(indent++)}(Matches`;
-        if (this.varArray.length != 0 && this.varArray.length === this.matchArray.length) {
-            for (var varIndex in this.varArray) {
+        if (this.matchConditions.length != 0 && this.matchConditions.length === this.matchBlocks.length) {
+            for (var varIndex in this.matchConditions) {
                 string += `\n${spacer.repeat(indent)}(Match` +
-                          `\n${this.varArray[varIndex].toString(++indent)} ->` +
-                          `\n${this.matchArray[varIndex].toString(indent)}` +
+                          `\n${this.matchConditions[varIndex].toString(++indent)} ->` +
+                          `\n${this.matchBlocks[varIndex].toString(indent)}` +
                           `\n${spacer.repeat(--indent)})`
             }
         }
-        if (this.matchFinal.length > 0) {
+        if (this.catchAllMatch.length > 0) {
           string += `\n${spacer.repeat(indent)}(Match` +
                     `\n${spacer.repeat(++indent)}_ ->` +
-                    `\n${spacer.repeat(indent)}${this.matchFinal.toString(indent)}` +
+                    `\n${spacer.repeat(indent)}${this.catchAllMatch.toString(indent)}` +
                     `\n${spacer.repeat(--indent)})`;
         }
         string += `\n${spacer.repeat(--indent)})` +
@@ -529,9 +516,7 @@ class Match {
     constructor(matchee) {
         this.matchee = matchee;
     }
-    analyze(context) {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
         return `${this.matchee.toString(indent)}`;
     }
@@ -605,9 +590,10 @@ class BinaryExpression {
             expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
+                [TYPE.INTEGER, TYPE.STRING],
                 [TYPE.FLOAT, TYPE.INTEGER],
                 [TYPE.FLOAT, TYPE.FLOAT],
-                [TYPE.STRING, TYPE.INTEGER]         //?
+                [TYPE.STRING, TYPE.INTEGER]
             ];
 
             if(context.inFunctionDelaration) {
@@ -726,7 +712,6 @@ class ParenthesisExpression {
         this.type = this.exp.type;
     }
     toString(indent = 0) {
-        // Don't increase indent, as the semantic meaning of parenthesis are already captured in the tree
         return `${this.exp.toString(indent)}`;
     }
 }
@@ -741,7 +726,6 @@ class Variable {
         this.type = this.var.type;
     }
     toString(indent = 0) {
-        // Don't increase indent, we already know literals and other data types are variables
         return `${this.var.toString(indent)}`;
     }
 }
@@ -1087,7 +1071,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
       return new FunctionDeclarationStatement(id.sourceString, joinParams(parameter1, parameterArray), block.ast());},
     Statement_classDecl(clas, id, lCurly, block, rCurly) {
       return new ClassDeclarationStatement(id.sourceString, block.ast());},
-    Statement_match(matchExp) {return new MatchStatement(matchExp.ast());},
+    Statement_match(matchExp) {return matchExp.ast();},
     Statement_ifElse(i, ifExp, lCurly1, ifBlock, rCurly1, elif, exps, lCurly2, blocks, rCurly2, els, lCurly3, elseBlock, rCurly3) {
       return new BranchStatement(joinParams(ifExp, exps), joinParams(ifBlock, blocks), unpack(elseBlock));},
     Statement_while(whil, exp, lCurly, block, rCurly) {return new WhileStatement(exp.ast(), block.ast());},

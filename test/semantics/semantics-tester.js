@@ -41,7 +41,7 @@ tests = function(validFiles, invalidFiles) {
   fs.readdirSync(validPrograms).forEach(function(fileName) {
       fullProgramPath = validPrograms + '/' + fileName;
       fileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-      // if(fileName == "while1.guav") {
+      // if(fileName == "exhaustive-match-using-else.guav") {
       validFiles.push({
         name: fileName,
         code: fileContents

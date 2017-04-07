@@ -15,26 +15,20 @@ const TYPE = {
 
 const semanticErrors = {
     changedImmutableType(id, expectedType, receivedType) {
-        return `ChangedImmutableType error: tried to change ${id} `
-            + `from type ${expectedType} to ${receivedType}`;
+        return `ChangedImmutableType error: cannot to change ${id} `
+            + `from ${expectedType} to ${receivedType}`;
     },
     useBeforeDeclaration(id) {
         return `UseBeforeDeclaration error: ${id} was used but undeclared`;
     },
     doesntHaveExpectedType(id, expectedType, actualType) {
-        return `IncorrectType error: ${id} was expected to be type ${expectedType} but is type ${actualType}`;
-    },
-    isNotAFunction(id) {
-        return `IsNotAFunction error: ${id} is not a function`;
+        if(id === undefined) {
+            return `IncorrectType error: Expected ${expectedType}, but found ${actualType}`;
+        }
+        return `IncorrectType error: ${id} was expected to be ${expectedType} but is ${actualType}`;
     },
     classWithoutConstructor(id) {
-        return `MissingClassConstructor error: ${id} doesnt have a constructor`;
-    },
-    isNotAList(id) {
-        return `IsNotAList error: ${id} is not a list`;
-    },
-    isNotADictionary(id) {
-        return `IsNotADictionary error: ${id} is not a dictionary`;
+        return `MissingConstructor error: class ${id} doesnt have a constructor`;
     },
     invalidBinaryOperands(leftType, op, rightType) {
         return `InvalidBinaryOperands error: ${leftType} and ${rightType} cannot be used with ${op}`;
@@ -42,15 +36,8 @@ const semanticErrors = {
     invalidUnaryOperand(type, op) {
         return `InvalidUnaryOperand error: ${type} cannot be used with ${op}`;
     },
-    parameterArgumentMismatch(id, parameterTypeList, argumentTypeList) {
-        return `ParameterArgumentMismatch error: ${id} has signature ${parameterTypeList} `
-            + `but was called with signature ${argumentTypeList}`;
-    },
-    incompleteMatch() {
-        return `IncompleteMatch error: match statement is non-exhaustive`;
-    },
-    conditionIsNotBoolean(exp, receivedType) {
-        return `ConditionIsNotBoolean error: Conditional statement must be boolean, but is ${receivedType}`;
+    matchMissingCatchAll() {
+        return `MatchMissingCatchAll error: match statement is missing catch all condition`;
     },
     unusedLocalVariable(id) {
         return `UnusedLocalVariable error: local variable ${id} is declared but never used`;
@@ -87,36 +74,25 @@ function checkElementinArray(element, array) {
 };
 
 class Context {
-    constructor(parent = null, currentFunction = null, isInLoop, inFunctionDelaration = false, inClassDelaration = false, currentClassId = null) {
+    constructor(parent = null, inFunctionDelaration = false, inClassDelaration = false, currentClassId = undefined) {
         this.parent = parent;
-        this.currentFunction = currentFunction;
-        this.isInLoop = isInLoop;
         this.inFunctionDelaration = inFunctionDelaration;
         this.inClassDelaration = inClassDelaration;
         this.currentClassId = currentClassId;
 
-        // Need Object.create(null) so things like toString are not in this.idTable
         this.idTable = {};
     }
 
     createChildContextForBlock() {
-        return new Context(this, this.currentFunction, this.inLoop, this.inFunctionDelaration, this.inClassDelaration, this.currentClassId);
+        return new Context(this, this.inFunctionDelaration, this.inClassDelaration, this.currentClassId);
     }
 
-    createChildContextForLoop() {
-        return new Context(this, this.currentFunction, true, this.inFunctionDelaration, this.inClassDelaration, this.currentClassId);
-    }
-
-    createChildContextForFunction(currentFunction) {
-        return new Context(this, currentFunction, this.inLoop, this.inFunctionDelaration, this.inClassDelaration, this.currentClassId);
-    }
-
-    createChildContextForFunctionDeclaration(currentFunction) {
-        return new Context(this, this.currentFunction, this.inLoop, true, this.inClassDelaration, this.currentClassId);
+    createChildContextForFunctionDeclaration() {
+        return new Context(this, true, this.inClassDelaration, this.currentClassId);
     }
 
     createChildContextForClassDeclaration(currentClassId) {
-        return new Context(this, this.currentFunction, this.inLoop,  this.inFunctionDelaration, true, currentClassId);
+        return new Context(this, this.inFunctionDelaration, true, currentClassId);
     }
 
     setId(id, type, isFunction = false, paramType = undefined) {
@@ -267,14 +243,20 @@ class Context {
       for (var varName in this.idTable) {
         var variable = this.idTable[varName];
           if (variable.used === false) {
-              this.declareUnusedLocalVariable(varName);
+              throw new Error(semanticErrors.unusedLocalVariable(varName));
           }
       }
     }
 
-    assertIsType(id, actualType) {
+    assertIdIsType(id, actualType) {
         if(actualType !== this.getId(id).type) {
             throw new Error(semanticErrors.doesntHaveExpectedType(id, this.getId(id).type, actualType));
+        }
+    }
+
+    assertTypesAreEqual(expectedType, actualType) {
+        if(expectedType !== actualType) {
+            throw new Error(semanticErrors.doesntHaveExpectedType(undefined, expectedType, actualType));
         }
     }
 
@@ -287,7 +269,7 @@ class Context {
     }
 
     assertClassHasConstructor(id) {
-        this.assertIsType(id, TYPE.CLASS);
+        this.assertIdIsType(id, TYPE.CLASS);
         let classConstructors = this.getId(id).properities['constructors'];
         if(classConstructors.length < 1) {
             throw new Error(semanticErrors.classWithoutConstructor(id));
@@ -322,18 +304,6 @@ class Context {
         }
     }
 
-    assertIsFunction(value) {  // eslint-disable-line class-methods-use-this
-        if(value.constructor !== astClasses.FunctionDeclarationStatement) {
-            throw new Error(semanticErrors.isNotAFunction(value.id));
-        }
-    }
-
-    assertConditionIsBoolean(exp) {
-        if(exp.type !== "BOOLEAN") {
-            throw new Error(semanticErrors.conditionIsNotBoolean(exp, exp.type));
-        }
-    }
-
     assertUnaryOperandIsOneOfTypes(op, expected, received) {
         if(expected.indexOf(received) === -1) {
             throw new Error(semanticErrors.invalidUnaryOperand(received, op));
@@ -346,17 +316,15 @@ class Context {
         }
     }
 
-    declareUnusedLocalVariable(id) {
-        throw new Error(semanticErrors.unusedLocalVariable(id));
-    }
-
-    throwMultipleReturnsInABlockError() {
+    assertMultipleReturnsInABlock() {
         throw new Error(semanticErrors.multipleReturnsInABlock());
     }
 
-    // Use these when a Program is newly created:
-    // Context.INITIAL = new Context();  // eslint doesn't like the "." after Context ???
-
+    assertMatchHasCatchAll(catchAll) {
+        if(catchAll.length === 0) {
+            throw new Error(semanticErrors.matchMissingCatchAll());
+        }
+    }
 }
 
 module.exports = Context;

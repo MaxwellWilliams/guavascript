@@ -1,0 +1,6 @@
+param = 100
+
+while(param > 0) {
+  print(param)
+  param -= 1
+}

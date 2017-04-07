@@ -136,7 +136,7 @@ class Context {
                 if(type === TYPE.CLASS) {this.idTable[id].properities = { constructors: [] };};
                 if(type === TYPE.DICTIONARY) {this.idTable[id].properities = {};};
                 if(type === TYPE.LIST || type === TYPE.TUPLE) {this.idTable[id].properities = [];};
-            } else if(this.idTable[id].type == undefined) {
+            } else if(this.idTable[id].type === undefined) {
                 //Updating recently declared variable with type (AssignmentStatement)
                 this.idTable[id].type = type;
                 this.idTable[id].possibleTypes = undefined;
@@ -222,13 +222,13 @@ class Context {
 
     getPropertyFromId(id, key) {
         var variable = this.getId(id);
-        if(variable.type == TYPE.CLASS || variable.type == TYPE.DICTIONARY) {
+        if(variable.type === TYPE.CLASS || variable.type === TYPE.DICTIONARY) {
             if(key in variable.properities) {
                 return variable.properities[key];
             } else {
                 throw new Error(semanticErrors.useBeforeDeclaration(id + '.' + key));
             }
-        } else if(variable.type == TYPE.LIST) {
+        } else if(variable.type === TYPE.LIST) {
             if(key <= (variable.properities.length + 1)) {
                 return variable.properities.indexOf(key);
             } else {
@@ -266,7 +266,7 @@ class Context {
     assertAllLocalVarsUsed() {
       for (var varName in this.idTable) {
         var variable = this.idTable[varName];
-          if (variable.used == false) {
+          if (variable.used === false) {
               this.declareUnusedLocalVariable(varName);
           }
       }
@@ -274,6 +274,14 @@ class Context {
 
     assertIsType(id, actualType) {
         if(actualType !== this.getId(id).type) {
+            throw new Error(semanticErrors.doesntHaveExpectedType(id, this.getId(id).type, actualType));
+        }
+    }
+
+    assertIsIteratable(id) {
+        var idType = this.getId(id).type;
+        if(idType !== TYPE.DICTIONARY && idType !== TYPE.LIST && idType !== TYPE.TUPLE) {
+            var actualType = TYPE.DICTIONARY + ' ' + TYPE.LIST + ' ' + TYPE.TUPLE;
             throw new Error(semanticErrors.doesntHaveExpectedType(id, this.getId(id).type, actualType));
         }
     }

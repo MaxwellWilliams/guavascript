@@ -3,8 +3,10 @@
 x = 2
 y = 5
 z = 1
+CONST_VAR = 10
 
 print(x + y + z)
+print(CONST_VAR)
 
 f(n, m) {
     ret n + m

@@ -278,7 +278,7 @@ class MatchStatement {
     constructor(matchExp) {
         this.matchExp = matchExp;
     }
-    analyze() {
+    analyze(context) {
         // TODO
     }
     toString(indent = 0) {
@@ -287,17 +287,20 @@ class MatchStatement {
 }
 
 class WhileStatement {
-    constructor(exp, block) {
-        this.exp = exp;
+    constructor(condition, block) {
+        this.condition = condition;
         this.block = block;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        var blockContext = context.createChildContextForLoop();
+        this.condition.analyze(context);
+        context.assertConditionIsBoolean(this.condition);
+        this.block.analyze(blockContext);
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(While` +
           `\n${spacer.repeat(++indent)}(Condition` +
-               `\n${this.exp.toString(++indent)}` +
+               `\n${this.condition.toString(++indent)}` +
                `\n${spacer.repeat(--indent)})` +
                `\n${spacer.repeat(indent)}(Body` +
                `\n${this.block.toString(++indent)}` +
@@ -307,17 +310,21 @@ class WhileStatement {
 }
 
 class ForInStatement {
-    constructor(id, iDExp, block) {
+    constructor(id, iteratableObj, block) {
         this.id = id;
-        this.iDExp = iDExp;
+        this.iteratableObj = iteratableObj;
         this.block = block;
     }
-    analyze() {
-        // TODO
+    analyze(context) {
+        var blockContext = context.createChildContextForLoop();
+        blockContext.setId(this.id, undefined)
+        this.iteratableObj.analyze(context);
+        context.assertIsIteratable(this.iteratableObj.id);
+        this.block.analyze(blockContext);
     }
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(For id (${this.id}) in` +
-               `\n${this.iDExp.toString(++indent)}` +
+               `\n${this.iteratableObj.toString(++indent)}` +
                `\n${this.block.toString(indent)}` +
                `\n${spacer.repeat(--indent)})`;
     }
@@ -357,7 +364,7 @@ class AssignmentStatement {
             return;
         }
 
-        if(context.getId(this.id, true, true) !== undefined) {
+        if(context.getId(this.id, true) !== undefined) {
             this.idExpBody.analyze(context);
             idType = this.idExpBody.type;
         }
@@ -827,9 +834,7 @@ class PeriodId {
         this.id = id;
         this.op = "."
     }
-    analyze(context) {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
         return `${spacer.repeat(indent)}(${this.id.toString(++indent)})`;
     }
@@ -1045,9 +1050,7 @@ class ConstId {
         this.words = firstWord;
         this.rest = rest;
     }
-    analyze() {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(\n${this.firstWord.toString()}`;
         for (var char in this.rest) {
@@ -1063,9 +1066,7 @@ class ClassId {
         this.className = className;
         this.rest = rest;
     }
-    analyze() {
-        // TODO
-    }
+    analyze(context) {}
     toString(indent = 0) {
         var string = `${spacer.repeat(indent)}(\n${this.className.toString()}`
         for (var char in this.rest) {
@@ -1149,7 +1150,7 @@ semantics = grammar.createSemantics().addOperation('ast', {
     id_variable(firstChar, rest) {return new IdVariable(this.sourceString);},
     id_constant(constId) {return constId.ast()},
     idrest(character) {return character},
-    constId(underscores, words) {return new ConstId(words)},          //TODO: fix constID
+    constId(underscores, words) {return new ConstId(words)},
     classId(upper, idrests) {return new ClassId(idrests.ast())}
 });
 

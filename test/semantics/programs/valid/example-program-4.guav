@@ -5,7 +5,7 @@ add_even_numbers() {
 	result = 0
 	for num in numbers {
 		if num % 2 == 0 {
-			result += i
+			result += 1
 		}
 	}
 	ret result

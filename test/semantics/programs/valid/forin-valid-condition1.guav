@@ -1,0 +1,5 @@
+names = ["max", "evan", "guavascript"]
+
+for name in names {
+  print(name)
+}

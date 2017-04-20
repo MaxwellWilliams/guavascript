@@ -1,0 +1,12 @@
+module.exports = {
+    BOOLEAN: "BOOLEAN",
+    INTEGER: "INTEGER",
+    FLOAT: "FLOAT",
+    STRING: "STRING",
+    LIST: "LIST",
+    DICTIONARY: "DICTIONARY",
+    TUPLE: "TUPLE",
+    FUNCTION: "FUNCTION",
+    CLASS: "CLASS",
+    NULL: "NULL"
+};

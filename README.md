@@ -42,7 +42,7 @@ __Variable Declarations__
 
 ```
 name = "guav"                               let name = “guav”
-age = 21                                    var age = 21
+age = 21                                    let age = 21
 female = true                               let female = true
 ```
 

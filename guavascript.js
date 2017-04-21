@@ -20,6 +20,7 @@ node guavascript.js -s <filename>
 const fs = require('fs');
 const path = require('path');
 const parser = require(path.resolve('./parser.js'));
+require(path.resolve('./generators/javascript-generator.js'));
 
 fs.readFile(argv._[0], 'utf-8', (err, text) => {
     let program = parser(text);
@@ -33,6 +34,7 @@ fs.readFile(argv._[0], 'utf-8', (err, text) => {
         program.analyze();
 
     } else {
+        program.gen();
         console.log(usageString);
     }
 })

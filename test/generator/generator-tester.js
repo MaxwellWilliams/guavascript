@@ -17,7 +17,7 @@ tests = function(validFiles, invalidFiles) {
           function() {
             // console.log(util.inspect(generator(file.code), {depth: null}));
             assert.equal(generator(file.code).toString(), outputs[file.name],
-              'Returned: ' + grammarResult);
+              'Returned: ' + generator(file.code).toString());
         });
       });
     });

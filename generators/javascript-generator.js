@@ -36,9 +36,15 @@ const IdVariable = require('../entities/idVariable.js');
 const ConstId = require('../entities/constId.js');
 const ClassId = require('../entities/classId.js');
 
-Object.assign(Program.prototype, {
+Object.assign(Block.prototype, {
   gen() {
     this.statements.forEach(statement => statement.gen());
+  },
+});
+
+Object.assign(Program.prototype, {
+  gen() {
+    this.block.gen();
   },
 });
 

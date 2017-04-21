@@ -42,6 +42,6 @@ Object.assign(Program.prototype, {
   },
 });
 
-module.exports = (program) => {
-	return program.gen();
+module.exports = (file) => {
+	return file.gen();
 }

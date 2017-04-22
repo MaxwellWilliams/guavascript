@@ -36,11 +36,15 @@ const IdVariable = require('../entities/idVariable.js');
 const ConstId = require('../entities/constId.js');
 const ClassId = require('../entities/classId.js');
 
-Object.assign(Block.prototype, {
-  gen() {
-    this.statements.forEach(statement => statement.gen());
-  },
-});
+function emit(line) {
+  console.log(`${' '.repeat(indentPadding * indentLevel)}${line}`);
+}
+
+function genStatementList(statements) {
+  indentLevel += 1;
+  statements.forEach(statement => statement.gen());
+  indentLevel -= 1;
+}
 
 Object.assign(Program.prototype, {
   gen() {
@@ -48,6 +52,36 @@ Object.assign(Program.prototype, {
   },
 });
 
-module.exports = (file) => {
-	return file.gen();
+Object.assign(Block.prototype, {
+  gen() {
+    this.body.forEach(statement => statement.gen());
+  },
+});
+
+Object.assign(BranchStatement.prototype, {
+  gen() {
+    for (var condition = 0; condition < this.conditions.length; condition++) {
+    	const prefix = condition === 0 ? 'if' : '} else if';
+    	console.log(this.conditions[condition]);
+    	emit(`${prefix} (${this.conditions[condition].gen()}) {`);
+    	genStatementList(this.thenBlocks[condition]);
+    }
+    if (this.elseBlock !== null) {
+    	emit('} else {');
+    	genStatementList(this.elseBlock);
+    }
+    emit('}');
+  },
+});
+
+Object.assign(FunctionDeclarationStatement.prototype, {
+  gen() {
+  	emit(`var ${this.id.gen()} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`);
+  	genStatementList(this.block);
+  	emit('}');
+  },
+});
+
+module.exports = (program) => {
+	return program.gen();
 }

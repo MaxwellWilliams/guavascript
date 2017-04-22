@@ -14,9 +14,9 @@ tests = function(validFiles, invalidFiles) {
   describe('Generator tests', function() {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
-        it('generator\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
+        it('generator\\programs\\valid\\' +file.name + ' should generate correct code',
           function() {
-            // console.log(util.inspect(generator(file.code), {depth: null}));
+            console.log(generator(parser(file.code)).toString());
             assert.equal(generator(parser(file.code)).toString(), outputs[file.name],
               'Returned: ' + generator(parser(file.code)).toString());
         });
@@ -44,12 +44,12 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullOutputPath = validProgramOutputs + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "match1.guav") {
+    if(fileName == "funcDecl3.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
     });
-    // }
+    }
   });
 
   // fs.readdirSync(invalidPrograms).forEach(function(fileName) {

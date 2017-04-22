@@ -130,7 +130,7 @@ Object.assign(MatchExpression.prototype, {
     	emit('} else {');
     	genStatementList(this.catchAllMatch);
     }
-  	emit('})()`)');
+  	emit('})()');
   },
 });
 

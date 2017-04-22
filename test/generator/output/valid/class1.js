@@ -1,6 +1,6 @@
 module.exports.getOutput = function() {
 	return `class Ball {
-	    Ball (radius, weight = 1.0) {
+	    constructor (radius, weight = 1.0) {
 	        this.radius = radius;
 	        this.weight = weight;
 	    }

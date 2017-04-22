@@ -62,7 +62,6 @@ Object.assign(BranchStatement.prototype, {
   gen() {
     for (var condition = 0; condition < this.conditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '} else if';
-    	console.log(this.conditions[condition]);
     	emit(`${prefix} (${this.conditions[condition].gen()}) {`);
     	genStatementList(this.thenBlocks[condition]);
     }
@@ -79,6 +78,59 @@ Object.assign(FunctionDeclarationStatement.prototype, {
   	emit(`var ${this.id.gen()} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`);
   	genStatementList(this.block);
   	emit('}');
+  },
+});
+
+Object.assign(ClassDeclarationStatement.prototype, {
+  gen() {
+    emit(`class ${this.id.gen()} {`);
+   	// Need to rename the constructor 'constructor' instead of this.id
+    genStatementList(this.block);
+    emit('}');
+  },
+});
+
+Object.assign(WhileStatement.prototype, {
+  gen() {
+  	emit(`while ${this.condition.gen()} {`);
+  	genStatementList(this.block);
+  	emit('}');
+  },
+});
+
+// Skipped for-in statement for now
+
+Object.assign(PrintStatement.prototype, {
+  gen() {
+  	emit(`console.log(${this.exp.gen()})`);
+  },
+});
+
+Object.assign(AssignmentStatement.prototype, {
+  gen() {
+  	emit(`let ${this.idExp.gen} ${this.assignOp} ${this.exp.gen()}`);
+  },
+});
+
+Object.assign(ReturnStatement.prototype, {
+  gen() {
+  	emit(`return ${this.exp.gen()}`);
+  },
+});
+
+Object.assign(MatchExpression.prototype, {
+  gen() {
+  	emit('(() => {');
+  	for (var condition = 0; condition < this.matchConditions.length; condition++) {
+    	const prefix = condition === 0 ? 'if' : '} else if';
+    	emit(`${prefix} (${this.matchConditions[condition].gen()}) {`);
+    	genStatementList(this.matchBlocks[condition]);
+    }
+    if (this.catchAllMatch !== null) {
+    	emit('} else {');
+    	genStatementList(this.catchAllMatch);
+    }
+  	emit('})()`)');
   },
 });
 

@@ -36,68 +36,75 @@ const IdVariable = require('../entities/idVariable.js');
 const ConstId = require('../entities/constId.js');
 const ClassId = require('../entities/classId.js');
 
-const indentPadding = 2;
 let indentLevel = 0;
 
-function emit(line) {
-	console.log(`${' '.repeat(indentPadding * indentLevel)}${line}`);
-}
-
 function genStatementList(statements) {
-  indentLevel += 1;
-  statements.forEach(statement => statement.gen());
-  indentLevel -= 1;
+	result = ``;
+	indentLevel += 1;
+	statements.forEach(statement => result += statement.gen());
+	indentLevel -= 1;
+	return result;
 }
 
 Object.assign(Program.prototype, {
   gen() {
-    this.block.gen();
+    return this.block.gen();
   },
 });
 
 Object.assign(Block.prototype, {
   gen() {
-    this.body.forEach(statement => statement.gen());
+  	var result = ``;
+    this.body.forEach(statement => result += statement.gen());
+    return result;
   },
 });
 
 Object.assign(BranchStatement.prototype, {
   gen() {
+  	var result = ``;
     for (var condition = 0; condition < this.conditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '} else if';
-    	emit(`${prefix} (${this.conditions[condition].gen()}) {`);
-    	genStatementList(this.thenBlocks[condition]);
+    	result += `${prefix} (${this.conditions[condition].gen()}) {`;
+    	result += genStatementList(this.thenBlocks[condition]);
     }
     if (this.elseBlock !== null) {
-    	emit('} else {');
-    	genStatementList(this.elseBlock);
+    	result += '} else {';
+    	result += genStatementList(this.elseBlock);
     }
-    emit('}');
+    result += '}';
+    return result;
   },
 });
 
 Object.assign(FunctionDeclarationStatement.prototype, {
   gen() {
-  	emit(`var ${this.id} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`);
-  	genStatementList(this.block);
-  	emit('}');
+  	var result = ``;
+  	result += `var ${this.id} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`;
+  	result += genStatementList(this.block);
+  	result += '}';
+    return result;
   },
 });
 
 Object.assign(ClassDeclarationStatement.prototype, {
   gen() {
-    emit(`class ${this.id} {`);
+  	var result = ``;
+    result += `class ${this.id} {`;
    	// Need to rename the constructor 'constructor' instead of this.id
-    genStatementList(this.block);
-    emit('}');
+   	result += genStatementList(this.block);
+    result += '}';
+    return result;
   },
 });
 
 Object.assign(WhileStatement.prototype, {
   gen() {
-  	emit(`while ${this.condition.gen()} {`);
-  	genStatementList(this.block);
-  	emit('}');
+  	var result = ``;
+  	result += `while ${this.condition.gen()} {`;
+  	result += genStatementList(this.block);
+  	result += '}';
+    return result;
   },
 });
 
@@ -105,71 +112,91 @@ Object.assign(WhileStatement.prototype, {
 
 Object.assign(PrintStatement.prototype, {
   gen() {
-  	emit(`console.log(${this.exp.gen()})`);
+  	return `console.log(${this.exp.gen()})`;
   },
 });
 
 Object.assign(AssignmentStatement.prototype, {
   gen() {
-  	emit(`let ${this.idExp.gen} ${this.assignOp} ${this.exp.gen()}`);
+  	return `let ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
   },
 });
 
 Object.assign(ReturnStatement.prototype, {
   gen() {
-  	emit(`return ${this.exp.gen()}`);
+  	return `return ${this.exp.gen()}`;
   },
 });
 
 Object.assign(MatchExpression.prototype, {
   gen() {
-  	emit('(() => {');
+  	var result = ``;
+  	result += '(() => {';
   	for (var condition = 0; condition < this.matchConditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '} else if';
-    	emit(`${prefix} (${this.matchConditions[condition].gen()}) {`);
-    	genStatementList(this.matchBlocks[condition]);
+    	result += `${prefix} (${this.matchConditions[condition].gen()}) {`;
+    	result += genStatementList(this.matchBlocks[condition]);
     }
     if (this.catchAllMatch !== null) {
-    	emit('} else {');
-    	genStatementList(this.catchAllMatch);
+    	result += '} else {';
+    	result += genStatementList(this.catchAllMatch);
     }
-  	emit('})()');
+  	result += '})()';
+    return result;
   },
 });
 
 Object.assign(Match.prototype, {
   gen() {
-  	emit(`${this.matchee.gen()}`);
+  	return `${this.matchee.gen()}`;
   },
 });
 
 Object.assign(Parameter.prototype, {
   gen() {
-  	(this.defaultValue === null) ? emit(`${this.id}`) : emit(`${this.id} = ${this.defaultValue.gen()}`);
+  	var result = ``;
+  	(this.defaultValue === null) ? result += `${this.id}` : result += `${this.id} = ${this.defaultValue.gen()}`;
+  	return result;
   },
 });
 
 Object.assign(BinaryExpression.prototype, {
   gen() {
-  	emit(`(${this.left.gen()} ${this.op} ${this.right.gen()})`);
+  	return `(${this.left.gen()} ${this.op} ${this.right.gen()})`;
   },
 });
 
 Object.assign(UnaryExpression.prototype, {
   gen() {
-  	emit(`(${this.op} ${this.operand.gen()})`);
+  	return `(${this.op} ${this.operand.gen()})`;
   },
 });
 
 Object.assign(ParenthesisExpression.prototype, {
   gen() {
-  	emit(`(${this.exp.gen()})`);
+  	return `(${this.exp.gen()})`;
   },
 });
 
 Object.assign(IdExpression.prototype, {
   gen() {
-  	(this.idPostOp) ? emit(`${this.idExpBody.gen()}${this.idPostOp}`) : emit(`${this.idExpBody.gen()}`);
+  	var result = ``;
+  	(this.idPostOp) ? result += `${this.idExpBody.gen()}${this.idPostOp}` : result += `${this.idExpBody.gen()}`;
+    return result;
+  },
+});
+
+Object.assign(IdExpressionBodyBase.prototype, {
+  gen() {
+  	var result = ``;
+  	(this.id) ? result += `${this.id}` : result += `this`;
+    return result;
+  },
+});
+
+Object.assign(IdExpressionBodyRecursive.prototype, {
+  gen() {
+  	return `${this.idExpBase}${this.idAppendage}`;
   },
 });
 
@@ -177,99 +204,99 @@ Object.assign(IdExpression.prototype, {
 
 Object.assign(PeriodId.prototype, {
   gen() {
-  	emit(`.${this.id}`);
+  	return`.${this.id}`;
   },
 });
 
 Object.assign(Arguments.prototype, {
   gen() {
-  	emit(`(this.VarList.join(', '))`);
+  	return `(this.VarList.join(', '))`;
   },
 });
 
 Object.assign(IdSelector.prototype, {
   gen() {
-  	emit(`[${this.id}]`);
+  	return `[${this.id}]`;
   },
 });
 
 Object.assign(List.prototype, {
   gen() {
-  	emit(`[this.VarList.join(', ')]`);
+  	return `[this.VarList.join(', ')]`;
   },
 });
 
 Object.assign(Tuple.prototype, {
   gen() {
-  	emit(`(this.VarList.join(', '))`);
+  	return`(this.VarList.join(', '))`;
   },
 });
 
 Object.assign(Dictionary.prototype, {
   gen() {
-  	emit(`{${this.properties.map(p => p.gen()).join(', ')}}`);
+  	return`{${this.properties.map(p => p.gen()).join(', ')}}`;
   },
 });
 
 Object.assign(IdValuePair.prototype, {
   gen() {
-  	emit(`${this.id} : ${this.variable}`);
+  	return `${this.id} : ${this.variable}`;
   },
 });
 
 Object.assign(VarList.prototype, {
   gen() {
   	if (this.length > 0) {
-  		emit(`{${this.variables.map(v => v.gen()).join(', ')}}`);
+  		return `{${this.variables.map(v => v.gen()).join(', ')}}`;
   	}
   },
 });
 
 Object.assign(BoolLit.prototype, {
   gen() {
-  	emit(`${this.value}`);
+  	return `${this.value}`;
   },
 });
 
 Object.assign(IntLit.prototype, {
   gen() {
-  	emit(`${this.value}`);
+  	return `${this.value}`;
   },
 });
 
 Object.assign(FloatLit.prototype, {
   gen() {
-  	emit(`${this.value}`);
+  	return `${this.value}`;
   },
 });
 
 Object.assign(StringLit.prototype, {
   gen() {
-  	emit(`${this.value}`);
+  	return `"${this.value}"`;
   },
 });
 
 Object.assign(NullLit.prototype, {
   gen() {
-  	emit(`${this.value}`);
+  	return `${this.value}`;
   },
 });
 
 Object.assign(IdVariable.prototype, {
   gen() {
-  	emit(`${this.value}`);
+  	return `${this.value}`;
   },
 });
 
 Object.assign(ConstId.prototype, {
   gen() {
-  	emit(`CONST ${this.words}${this.rest}`);
+  	return `CONST ${this.words}${this.rest}`;
   },
 });
 
 Object.assign(ClassId.prototype, {
   gen() {
-  	emit(`CONST ${this.className}${this.rest}`);
+  	return `CONST ${this.className}${this.rest}`;
   },
 });
 

@@ -40,7 +40,7 @@ const indentPadding = 2;
 let indentLevel = 0;
 
 function emit(line) {
-	return `${' '.repeat(indentPadding * indentLevel)}${line}`;
+	console.log(`${' '.repeat(indentPadding * indentLevel)}${line}`);
 }
 
 function genStatementList(statements) {

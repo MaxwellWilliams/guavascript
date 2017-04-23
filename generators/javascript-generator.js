@@ -118,7 +118,12 @@ Object.assign(PrintStatement.prototype, {
 
 Object.assign(AssignmentStatement.prototype, {
   gen() {
-  	return `let ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
+  	var variable = `${this.idExp.gen()}`;
+  	if (variable === variable.toUpperCase()) {
+  		return `const ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
+  	} else {
+  		return `let ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
+  	}
   },
 });
 
@@ -199,8 +204,6 @@ Object.assign(IdExpressionBodyRecursive.prototype, {
   	return `${this.idExpBase}${this.idAppendage}`;
   },
 });
-
-// Skipped IdExpressionBodyRecursive and IdExpressionBodyBase for now.
 
 Object.assign(PeriodId.prototype, {
   gen() {

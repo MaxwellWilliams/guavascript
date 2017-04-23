@@ -112,7 +112,7 @@ Object.assign(WhileStatement.prototype, {
 
 Object.assign(PrintStatement.prototype, {
   gen() {
-  	return `console.log(${this.exp.gen()})`;
+  	return `console.log(${this.exp.gen()});`;
   },
 });
 
@@ -201,7 +201,7 @@ Object.assign(IdExpressionBodyBase.prototype, {
 
 Object.assign(IdExpressionBodyRecursive.prototype, {
   gen() {
-  	return `${this.idExpBase}${this.idAppendage}`;
+  	return `${this.idExpBase.gen()}${this.idAppendage.gen()}`;
   },
 });
 
@@ -231,7 +231,7 @@ Object.assign(List.prototype, {
 
 Object.assign(Tuple.prototype, {
   gen() {
-  	return`(this.VarList.join(', '))`;
+  	return`(${this.values.variables.map(v => v.gen()).join(', ')})`;
   },
 });
 

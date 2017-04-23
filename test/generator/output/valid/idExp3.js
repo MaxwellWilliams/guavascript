@@ -1,3 +1,4 @@
 module.exports.getOutput = function() {
-	return `this.dict[id] = value;`;
+	return `let dict = {};
+	this.dict[id] = 2;`;
 }

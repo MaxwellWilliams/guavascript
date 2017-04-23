@@ -118,6 +118,8 @@ Object.assign(PrintStatement.prototype, {
 
 Object.assign(AssignmentStatement.prototype, {
   gen() {
+  	// if variable has already been declared we must omit const and let
+  	
   	var variable = `${this.idExp.gen()}`;
   	if (variable === variable.toUpperCase()) {
   		return `const ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
@@ -219,7 +221,7 @@ Object.assign(Arguments.prototype, {
 
 Object.assign(IdSelector.prototype, {
   gen() {
-  	return `[${this.id}]`;
+  	return `[${this.variable.gen()}]`;
   },
 });
 

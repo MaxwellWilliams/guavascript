@@ -1,3 +1,4 @@
 module.exports.getOutput = function() {
-	return `let dict = {};`;
+	return `let dict = {};
+	console.log(dict);`;
 };

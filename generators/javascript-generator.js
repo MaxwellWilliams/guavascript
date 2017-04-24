@@ -66,11 +66,11 @@ Object.assign(BranchStatement.prototype, {
     for (var condition = 0; condition < this.conditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '} else if';
     	result += `${prefix} (${this.conditions[condition].gen()}) {`;
-    	result += genStatementList(this.thenBlocks[condition]);
+    	result += this.thenBlocks[condition].gen();
     }
     if (this.elseBlock !== null) {
     	result += '} else {';
-    	result += genStatementList(this.elseBlock);
+    	result += this.elseBlock.gen();
     }
     result += '}';
     return result;
@@ -81,7 +81,7 @@ Object.assign(FunctionDeclarationStatement.prototype, {
   gen() {
   	var result = ``;
   	result += `var ${this.id} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`;
-  	result += genStatementList(this.block);
+  	result += `\n${this.block.gen()}\n`;
   	result += '}';
     return result;
   },
@@ -92,7 +92,7 @@ Object.assign(ClassDeclarationStatement.prototype, {
   	var result = ``;
     result += `class ${this.id} {`;
    	// Need to rename the constructor 'constructor' instead of this.id
-   	result += genStatementList(this.block);
+   	result += `\n${this.block.gen()}\n`;
     result += '}';
     return result;
   },
@@ -102,7 +102,8 @@ Object.assign(WhileStatement.prototype, {
   gen() {
   	var result = ``;
   	result += `while ${this.condition.gen()} {`;
-  	result += genStatementList(this.block);
+  	console.log(this.block.gen());
+  	result += `\n${this.block.gen()}\n`;
   	result += '}';
     return result;
   },
@@ -142,11 +143,11 @@ Object.assign(MatchExpression.prototype, {
   	for (var condition = 0; condition < this.matchConditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '} else if';
     	result += `${prefix} (${this.matchConditions[condition].gen()}) {`;
-    	result += genStatementList(this.matchBlocks[condition]);
+    	result += this.matchBlocks[condition];
     }
     if (this.catchAllMatch !== null) {
     	result += '} else {';
-    	result += genStatementList(this.catchAllMatch);
+    	result += this.catchAllMatch;
     }
   	result += '})()';
     return result;

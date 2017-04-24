@@ -54,9 +54,9 @@ Object.assign(Program.prototype, {
 
 Object.assign(Block.prototype, {
   gen() {
-  	var result = ``;
-    this.body.forEach(statement => result += statement.gen());
-    return result;
+  	var result = [];
+    this.body.forEach(statement => result.push(statement.gen()));
+    return result.join('\n');
   },
 });
 
@@ -119,7 +119,7 @@ Object.assign(PrintStatement.prototype, {
 Object.assign(AssignmentStatement.prototype, {
   gen() {
   	// if variable has already been declared we must omit const and let
-  	
+
   	var variable = `${this.idExp.gen()}`;
   	if (variable === variable.toUpperCase()) {
   		return `const ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;

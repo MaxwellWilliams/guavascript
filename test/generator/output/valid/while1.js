@@ -1,5 +1,7 @@
 module.exports.getOutput = function() {
-	return `while (true) {
-	   return true;
-}`;
+    var string = 
+`while (true) {
+  return true;
+}`
+    return string;
 };

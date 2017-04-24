@@ -11,5 +11,6 @@ module.exports.getOutput = function() {
 		} else {
 			return "nope";
 		}
-	})();`;
+	})();
+console.log(x)`;
 };

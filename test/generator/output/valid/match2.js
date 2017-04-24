@@ -5,5 +5,6 @@ module.exports.getOutput = function() {
 		} else {
 			return "lies"
 		}
-	})();`;
+	})();
+console.log(y)`;
 };

@@ -1,7 +1,7 @@
 module.exports.getOutput = function() {
 	return `if (x == true) {
-	    return true
+	    return true;
 	} else {
-	    return false
+	    return false;
 	}`;
 };

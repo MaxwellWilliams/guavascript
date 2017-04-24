@@ -3,5 +3,6 @@ module.exports.getOutput = function() {
 	if (x == 2) {
 		return "two";
 	}
-});`;
+})()
+console.log(x);`;
 };

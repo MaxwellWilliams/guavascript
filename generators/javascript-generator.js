@@ -1,4 +1,5 @@
 const parser = require('../parser.js');
+const getIndent = require('../semantics/getIndent.js');
 
 const Program = require('../entities/program.js');
 const Block = require('../entities/block.js');
@@ -36,7 +37,7 @@ const IdVariable = require('../entities/idVariable.js');
 const ConstId = require('../entities/constId.js');
 const ClassId = require('../entities/classId.js');
 
-let indentLevel = 0;
+let indent = 0;
 
 function genStatementList(statements) {
 	result = ``;
@@ -64,15 +65,15 @@ Object.assign(BranchStatement.prototype, {
   gen() {
   	var result = ``;
     for (var condition = 0; condition < this.conditions.length; condition++) {
-    	const prefix = condition === 0 ? 'if' : '} else if';
+    	const prefix = condition === 0 ? 'if' : '\n} else if';
     	result += `${prefix} (${this.conditions[condition].gen()}) {`;
-    	result += this.thenBlocks[condition].gen();
+    	result += `\n${getIndent(indent+1)}${this.thenBlocks[condition].gen()}`;
     }
     if (this.elseBlock !== null) {
-    	result += '} else {';
-    	result += this.elseBlock.gen();
+    	result += '\n} else {';
+    	result += `\n${getIndent(indent+1)}${this.elseBlock.gen()}`;
     }
-    result += '}';
+    result += '\n}';
     return result;
   },
 });
@@ -101,9 +102,8 @@ Object.assign(ClassDeclarationStatement.prototype, {
 Object.assign(WhileStatement.prototype, {
   gen() {
   	var result = ``;
-  	result += `while ${this.condition.gen()} {`;
-  	console.log(this.block.gen());
-  	result += `\n${this.block.gen()}\n`;
+  	result += `while (${this.condition.gen()}) {`;
+  	result += `\n${getIndent(indent+1)}${this.block.gen()}\n`;
   	result += '}';
     return result;
   },
@@ -120,7 +120,6 @@ Object.assign(PrintStatement.prototype, {
 Object.assign(AssignmentStatement.prototype, {
   gen() {
   	// if variable has already been declared we must omit const and let
-
   	var variable = `${this.idExp.gen()}`;
   	if (variable === variable.toUpperCase()) {
   		return `const ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
@@ -132,7 +131,7 @@ Object.assign(AssignmentStatement.prototype, {
 
 Object.assign(ReturnStatement.prototype, {
   gen() {
-  	return `return ${this.exp.gen()}`;
+  	return `return ${this.exp.gen()};`;
   },
 });
 
@@ -143,11 +142,12 @@ Object.assign(MatchExpression.prototype, {
   	for (var condition = 0; condition < this.matchConditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '} else if';
     	result += `${prefix} (${this.matchConditions[condition].gen()}) {`;
-    	result += this.matchBlocks[condition];
+    	result += `return ${this.matchBlocks[condition].gen()}`;
     }
-    if (this.catchAllMatch !== null) {
+    console.log(this.catchAllMatch + this.catchAllMatch == []);
+    if (this.catchAllMatch != []) {
     	result += '} else {';
-    	result += this.catchAllMatch;
+    	result += `return ${this.catchAllMatch}`;
     }
   	result += '})()';
     return result;

@@ -37,15 +37,7 @@ const IdVariable = require('../entities/idVariable.js');
 const ConstId = require('../entities/constId.js');
 const ClassId = require('../entities/classId.js');
 
-let indent = 0;
 
-function genStatementList(statements) {
-	result = ``;
-	indentLevel += 1;
-	statements.forEach(statement => result += statement.gen());
-	indentLevel -= 1;
-	return result;
-}
 
 Object.assign(Program.prototype, {
   gen(indent = 0) {
@@ -132,8 +124,6 @@ Object.assign(ForInStatement.prototype, {
   	return result;
   }
 });
-
-// Skipped for-in statement for now
 
 Object.assign(PrintStatement.prototype, {
   gen(indent = 0) {

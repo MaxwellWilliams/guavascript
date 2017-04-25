@@ -33,11 +33,12 @@ fs.readFile(argv._[0], 'utf-8', (err, text) => {
     if (argv.a) {
         console.log(program.toString());
         return;
-    } if (argv.s) {
+    } if (argv.s | argv.js) {
         program.analyze();
-    } else if(argv.js) {
-        const generator = require(`./generators/javascript-generator.js`);
-        let baseCode = generator(program);
-        return baseCode;
+        if(argv.js) {
+            const generator = require(`./generators/javascript-generator.js`);
+            let baseCode = generator(program);
+            console.log(baseCode);
+        }
     }
-})
+});

@@ -1,4 +1,4 @@
 module.exports.getOutput = function() {
-	return `var dict = {};
+  return `var dict = {};
 console.log(dict);`;
 };

@@ -6,5 +6,5 @@ module.exports.getOutput = function() {
 			return "lies"
 		}
 	})();
-console.log(y)`;
+console.log(y);`;
 };

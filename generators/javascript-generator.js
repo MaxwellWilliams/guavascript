@@ -144,19 +144,14 @@ Object.assign(MatchExpression.prototype, {
     	prefix += condition === 0 ? 'if' : '} else if';
     	result += `${prefix} (${this.idExp.gen()} === ${this.matchConditions[condition].gen()}) {`;
     	result += `\n${getIndent(indent+2)}return ${this.matchBlocks[condition].gen()};`;
-      result += condition === this.matchConditions.length - 1 ? `\n${getIndent(indent+1)}}` : ``;
     }
-<<<<<<< HEAD
-    if (this.catchAllMatch > 0) {
+    if (this.catchAllMatch.length > 0) {
     	result += `\n${getIndent(++indent)}} else {`;
-    	result += `\n${getIndent(++indent)}return ${this.catchAllMatch.gen()};`;
+    	result += `\n${getIndent(++indent)}return ${this.catchAllMatch};`;
       result += `\n${getIndent(--indent)}}`;
       indent -= 1;
-=======
-    if (this.catchAllMatch != []) {
-    	result += '} else {';
-    	result += `return ${this.catchAllMatch}`;
->>>>>>> 8c7457815e83c33adf58ba87064985ccdf3c260f
+    } else {
+      result += `\n${getIndent(indent+1)}}`;
     }
   	result += `\n${getIndent(indent)}})()`;
     return result;

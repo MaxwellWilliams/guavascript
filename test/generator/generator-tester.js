@@ -16,7 +16,7 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('generator\\programs\\valid\\' + file.name + ' should generate correct code',
           function() {
-            // console.log(util.inspect(parser(file.code), {depth: null}));
+            console.log(util.inspect(parser(file.code), {depth: null}));
             // console.log(generator(parser(file.code)));
             assert.equal(generator(parser(file.code)), outputs[file.name],
               'Returned: ' + generator(parser(file.code)));
@@ -45,12 +45,12 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullOutputPath = validProgramOutputs + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "arithmetic1.guav") {
+    if(fileName == "class1.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
     });
-    // }
+    }
   });
 
   // fs.readdirSync(invalidPrograms).forEach(function(fileName) {

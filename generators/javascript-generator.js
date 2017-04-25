@@ -50,7 +50,7 @@ function genStatementList(statements) {
 Object.assign(Program.prototype, {
   gen(indent = 0) {
     return this.block.gen(indent);
-  },
+  }
 });
 
 Object.assign(Block.prototype, {
@@ -58,7 +58,7 @@ Object.assign(Block.prototype, {
   	var result = [];
     this.body.forEach(statement => result.push(statement.gen(indent)));
     return result.join(`\n`);
-  },
+  }
 });
 
 Object.assign(BranchStatement.prototype, {
@@ -66,37 +66,37 @@ Object.assign(BranchStatement.prototype, {
   	var result = ``;
     for (var condition = 0; condition < this.conditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '\n} else if';
-    	result += `${prefix} (${this.conditions[condition].gen()}) {`;
-    	result += `\n${getIndent(++indent)}${this.thenBlocks[condition].gen()}`;
+    	result += `${getIndent(indent)}${prefix} (${this.conditions[condition].gen()}) {`;
+    	result += `\n${this.thenBlocks[condition].gen(++indent)}`;
     }
     if (this.elseBlock !== null) {
     	result += `\n${getIndent(--indent)}} else {`;
     	result += `\n${getIndent(++indent)}${this.elseBlock.gen()}`;
     }
-    result += '\n}';
+    result += `\n${getIndent(--indent)}}`;
     return result;
-  },
+  }
 });
 
 Object.assign(FunctionDeclarationStatement.prototype, {
   gen(indent = 0) {
   	var result = ``;
-  	result += `var ${this.id} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`;
-  	result += `\n${getIndent(++indent)}${this.block.gen()}\n`;
-  	result += '}';
+  	result += `${getIndent(indent)}var ${this.id} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`;
+  	result += `\n${this.block.gen(++indent)}`;
+  	result += `\n${getIndent(--indent)}}`;
     return result;
-  },
+  }
 });
 
 Object.assign(ClassDeclarationStatement.prototype, {
   gen(indent = 0) {
   	var result = ``;
-    result += `class ${this.id} {`;
+    result += `${getIndent(indent)}class ${this.id} {`;
    	// Need to rename the constructor 'constructor' instead of this.id
-   	result += `\n${this.block.gen(++indent)}\n`;
-    result += '}';
+   	result += `\n${this.block.gen(++indent)}`;
+    result += `\n${getIndent(--indent)}}`;
     return result;
-  },
+  }
 });
 
 Object.assign(WhileStatement.prototype, {
@@ -106,18 +106,18 @@ Object.assign(WhileStatement.prototype, {
   	result += `\n${getIndent(++indent)}${this.block.gen()}\n`;
   	result += '}';
     return result;
-  },
+  }
 });
 
 Object.assign(ForInStatement.prototype, {
   gen(indent = 0) {
   	var result = ``;
-  	result += `for var ${this.id} in ${this.iteratableObj.gen()} {`;
-  	result += `\n${getIndent(++indent)} var ${this.id}_Iterable = ${this.iteratableObj.gen()}[${this.id}];`;
-  	result += `\n${this.block.gen()}\n`;
-  	result += '}';
+  	result += `${getIndent(indent)}for var ${this.id} in ${this.iteratableObj.gen()} {`;
+  	result += `\n${getIndent(++indent)}var ${this.id}_Iterable = ${this.iteratableObj.gen()}[${this.id}];`;
+  	result += `\n${this.block.gen(indent)}`;
+  	result += `\n${getIndent(--indent)}}`;
   	return result;
-  },
+  }
 });
 
 // Skipped for-in statement for now
@@ -125,7 +125,7 @@ Object.assign(ForInStatement.prototype, {
 Object.assign(PrintStatement.prototype, {
   gen(indent = 0) {
   	return `console.log(${this.exp.gen()});`;
-  },
+  }
 });
 
 Object.assign(AssignmentStatement.prototype, {
@@ -139,13 +139,13 @@ Object.assign(AssignmentStatement.prototype, {
   	} else {
   		return `${getIndent(indent)}var ${variable} ${this.assignOp} ${this.exp.gen()};`;
   	}
-  },
+  }
 });
 
 Object.assign(ReturnStatement.prototype, {
   gen(indent = 0) {
-  	return `return ${this.exp.gen()};`;
-  },
+  	return `${getIndent(indent)}return ${this.exp.gen()};`;
+  }
 });
 
 Object.assign(MatchExpression.prototype, {
@@ -182,7 +182,7 @@ Object.assign(Parameter.prototype, {
   	var result = ``;
   	(this.defaultValue === null) ? result += `${this.id}` : result += `${this.id} = ${this.defaultValue.gen()}`;
   	return result;
-  },
+  }
 });
 
 Object.assign(BinaryExpression.prototype, {
@@ -194,19 +194,19 @@ Object.assign(BinaryExpression.prototype, {
       return `Math.pow(${this.left.gen(0)}, ${this.right.gen(0)})`;
     }
   	return `${this.left.gen(0)} ${operator} ${this.right.gen(0)}`;
-  },
+  }
 });
 
 Object.assign(UnaryExpression.prototype, {
   gen(indent = 0) {
   	return `(${this.op} ${this.operand.gen(0)})`;
-  },
+  }
 });
 
 Object.assign(ParenthesisExpression.prototype, {
   gen(indent = 0) {
   	return `(${this.exp.gen(0)})`;
-  },
+  }
 });
 
 Object.assign(IdExpression.prototype, {
@@ -214,7 +214,7 @@ Object.assign(IdExpression.prototype, {
   	var result = ``;
   	(this.idPostOp) ? result += `${this.idExpBody.gen()}${this.idPostOp}` : result += `${this.idExpBody.gen()}`;
     return result;
-  },
+  }
 });
 
 Object.assign(IdExpressionBodyBase.prototype, {
@@ -222,19 +222,19 @@ Object.assign(IdExpressionBodyBase.prototype, {
   	var result = ``;
   	(this.id) ? result += `${this.id}` : result += `this`;
     return result;
-  },
+  }
 });
 
 Object.assign(IdExpressionBodyRecursive.prototype, {
   gen(indent = 0) {
   	return `${this.idExpBase.gen()}${this.idAppendage.gen()}`;
-  },
+  }
 });
 
 Object.assign(PeriodId.prototype, {
   gen(indent = 0) {
   	return`.${this.id}`;
-  },
+  }
 });
 
 Object.assign(Arguments.prototype, {
@@ -250,7 +250,7 @@ Object.assign(Arguments.prototype, {
 Object.assign(IdSelector.prototype, {
   gen(indent = 0) {
   	return `[${this.variable.gen()}]`;
-  },
+  }
 });
 
 Object.assign(List.prototype, {
@@ -260,13 +260,13 @@ Object.assign(List.prototype, {
   	} else {
   		return `[${this.values.gen()}]`;
   	}
-  },
+  }
 });
 
 Object.assign(Tuple.prototype, {
   gen(indent = 0) {
   	return`(${this.values.variables.map(v => v.gen()).join(', ')})`;
-  },
+  }
 });
 
 Object.assign(Dictionary.prototype, {
@@ -276,13 +276,13 @@ Object.assign(Dictionary.prototype, {
   	} else {
   		return '{}';
   	}
-  },
+  }
 });
 
 Object.assign(IdValuePair.prototype, {
   gen(indent = 0) {
   	return `${this.id} : ${this.variable}`;
-  },
+  }
 });
 
 Object.assign(VarList.prototype, {
@@ -290,55 +290,55 @@ Object.assign(VarList.prototype, {
   	if (this.length > 0) {
   		return `${this.variables.map(v => v.gen()).join(', ')}`;
   	}
-  },
+  }
 });
 
 Object.assign(BoolLit.prototype, {
   gen(indent = 0) {
   	return `${this.value}`;
-  },
+  }
 });
 
 Object.assign(IntLit.prototype, {
   gen(indent = 0) {
   	return `${this.value}`;
-  },
+  }
 });
 
 Object.assign(FloatLit.prototype, {
   gen(indent = 0) {
   	return `${this.value}`;
-  },
+  }
 });
 
 Object.assign(StringLit.prototype, {
   gen(indent = 0) {
   	return `"${this.value}"`;
-  },
+  }
 });
 
 Object.assign(NullLit.prototype, {
   gen(indent = 0) {
   	return `${this.value}`;
-  },
+  }
 });
 
 Object.assign(IdVariable.prototype, {
   gen(indent = 0) {
   	return `${this.value}`;
-  },
+  }
 });
 
 Object.assign(ConstId.prototype, {
   gen(indent = 0) {
   	return `CONST ${this.words}${this.rest}`;
-  },
+  }
 });
 
 Object.assign(ClassId.prototype, {
   gen(indent = 0) {
   	return `CONST ${this.className}${this.rest}`;
-  },
+  }
 });
 
 module.exports = (program) => {

@@ -1,4 +1,8 @@
 module.exports.getOutput = function() {
-  return `(x === 2) ? x -= 1 : x += 1;
+  return `if ((x === 2)) {
+  var x -= 1;
+} else {
+  var x += 1;
+}
 console.log(x);`;
 };

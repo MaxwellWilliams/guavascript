@@ -5,8 +5,8 @@ var count_by_two = (test) => {
   var result = test;
   for var i in numbers {
     var i_Iterable = numbers[i];
-    if (i % 2 === 0) {
-      var result += numbers[i];
+    if (i_Iterable % 2 === 0) {
+      var result += i_Iterable;
     }
   }
   return result;

@@ -124,7 +124,7 @@ Object.assign(AssignmentStatement.prototype, {
   	if (variable === variable.toUpperCase()) {
   		return `const ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
   	} else {
-  		return `let ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
+  		return `var ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
   	}
   },
 });
@@ -144,7 +144,6 @@ Object.assign(MatchExpression.prototype, {
     	result += `${prefix} (${this.matchConditions[condition].gen()}) {`;
     	result += `return ${this.matchBlocks[condition].gen()}`;
     }
-    console.log(this.catchAllMatch + this.catchAllMatch == []);
     if (this.catchAllMatch != []) {
     	result += '} else {';
     	result += `return ${this.catchAllMatch}`;

@@ -28,7 +28,7 @@ module.exports.getOutput = function() {
             }
 
             var checkVariables = (var1) = () => {
-                let answer;
+                var answer;
                 if (var1 != null) {
                     answer = (() {
                         if (var1 == 1) {

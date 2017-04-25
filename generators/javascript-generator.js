@@ -271,17 +271,13 @@ Object.assign(Tuple.prototype, {
 
 Object.assign(Dictionary.prototype, {
   gen(indent = 0) {
-  	if (this.properties) {
-  		return`{${this.properties.map(p => p.gen()).join(', ')}}`;
-  	} else {
-  		return '{}';
-  	}
+  	return `{${this.properities.map(p => p.gen()).join(', ')}}`;
   }
 });
 
 Object.assign(IdValuePair.prototype, {
   gen(indent = 0) {
-  	return `${this.id} : ${this.variable}`;
+  	return `${this.id}:${this.variable.gen()}`;
   }
 });
 

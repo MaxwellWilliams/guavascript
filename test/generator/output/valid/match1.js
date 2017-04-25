@@ -1,5 +1,5 @@
 module.exports.getOutput = function() {
-  var string = 
+  var string =
 `(() => {
   if (x === 2) {
     return "two";
@@ -12,8 +12,7 @@ module.exports.getOutput = function() {
   } else {
     return "nope";
   }
-})();
-console.log(x);`;
+})()`;
 
   return string;
 };

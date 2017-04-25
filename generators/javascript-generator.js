@@ -37,7 +37,21 @@ const IdVariable = require('../entities/idVariable.js');
 const ConstId = require('../entities/constId.js');
 const ClassId = require('../entities/classId.js');
 
-
+// jsName(e) takes any PlainScript object with an id property, such as a
+// Variable, Parameter, or FunctionDeclaration, and produces a JavaScript
+// name by appending a unique indentifying suffix, such as '_1' or '_503'.
+// It uses a cache so it can return the same exact string each time it is
+// called with a particular entity.
+const jsName = (() => {
+  let lastId = 0;
+  const map = new Map();
+  return (v) => {
+    if (!(map.has(v))) {
+      map.set(v, ++lastId); // eslint-disable-line no-plusplus
+    }
+    return `${v.id}_${map.get(v)}`;
+  };
+})();
 
 Object.assign(Program.prototype, {
   gen(indent = 0) {

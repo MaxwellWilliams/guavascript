@@ -48,30 +48,30 @@ function genStatementList(statements) {
 }
 
 Object.assign(Program.prototype, {
-  gen() {
-    return this.block.gen();
+  gen(indent = 0) {
+    return this.block.gen(indent);
   },
 });
 
 Object.assign(Block.prototype, {
-  gen() {
+  gen(indent = 0) {
   	var result = [];
-    this.body.forEach(statement => result.push(statement.gen()));
+    this.body.forEach(statement => result.push(statement.gen(indent)));
     return result.join('\n');
   },
 });
 
 Object.assign(BranchStatement.prototype, {
-  gen() {
+  gen(indent = 0) {
   	var result = ``;
     for (var condition = 0; condition < this.conditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '\n} else if';
     	result += `${prefix} (${this.conditions[condition].gen()}) {`;
-    	result += `\n${getIndent(indent+1)}${this.thenBlocks[condition].gen()}`;
+    	result += `\n${getIndent(indent++)}${this.thenBlocks[condition].gen()}`;
     }
     if (this.elseBlock !== null) {
     	result += '\n} else {';
-    	result += `\n${getIndent(indent+1)}${this.elseBlock.gen()}`;
+    	result += `\n${getIndent(indent++)}${this.elseBlock.gen()}`;
     }
     result += '\n}';
     return result;
@@ -79,7 +79,7 @@ Object.assign(BranchStatement.prototype, {
 });
 
 Object.assign(FunctionDeclarationStatement.prototype, {
-  gen() {
+  gen(indent = 0) {
   	var result = ``;
   	result += `var ${this.id} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`;
   	result += `\n${this.block.gen()}\n`;
@@ -89,7 +89,7 @@ Object.assign(FunctionDeclarationStatement.prototype, {
 });
 
 Object.assign(ClassDeclarationStatement.prototype, {
-  gen() {
+  gen(indent = 0) {
   	var result = ``;
     result += `class ${this.id} {`;
    	// Need to rename the constructor 'constructor' instead of this.id
@@ -100,10 +100,10 @@ Object.assign(ClassDeclarationStatement.prototype, {
 });
 
 Object.assign(WhileStatement.prototype, {
-  gen() {
+  gen(indent = 0) {
   	var result = ``;
   	result += `while (${this.condition.gen()}) {`;
-  	result += `\n${getIndent(indent+1)}${this.block.gen()}\n`;
+  	result += `\n${getIndent(indent++)}${this.block.gen()}\n`;
   	result += '}';
     return result;
   },
@@ -112,13 +112,13 @@ Object.assign(WhileStatement.prototype, {
 // Skipped for-in statement for now
 
 Object.assign(PrintStatement.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `console.log(${this.exp.gen()});`;
   },
 });
 
 Object.assign(AssignmentStatement.prototype, {
-  gen() {
+  gen(indent = 0) {
   	// if variable has already been declared we must omit const and let
   	var variable = `${this.idExp.gen()}`;
   	if (variable === variable.toUpperCase()) {
@@ -130,38 +130,41 @@ Object.assign(AssignmentStatement.prototype, {
 });
 
 Object.assign(ReturnStatement.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `return ${this.exp.gen()};`;
   },
 });
 
 Object.assign(MatchExpression.prototype, {
-  gen() {
+  gen(indent = 0) {
   	var result = ``;
   	result += '(() => {';
   	for (var condition = 0; condition < this.matchConditions.length; condition++) {
-    	const prefix = condition === 0 ? 'if' : '} else if';
-    	result += `${prefix} (${this.matchConditions[condition].gen()}) {`;
-    	result += `return ${this.matchBlocks[condition].gen()}`;
+      var prefix = `\n${getIndent(indent+1)}`;
+    	prefix += condition === 0 ? 'if' : '} else if';
+    	result += `${prefix} (${this.idExp.gen()} === ${this.matchConditions[condition].gen()}) {`;
+    	result += `\n${getIndent(indent+2)}return ${this.matchBlocks[condition].gen()};`;
+      result += condition === this.matchConditions.length - 1 ? `\n${getIndent(indent+1)}}` : ``;
     }
-    console.log(this.catchAllMatch + this.catchAllMatch == []);
-    if (this.catchAllMatch != []) {
-    	result += '} else {';
-    	result += `return ${this.catchAllMatch}`;
+    if (this.catchAllMatch > 0) {
+    	result += `\n${getIndent(++indent)}} else {`;
+    	result += `\n${getIndent(++indent)}return ${this.catchAllMatch.gen()};`;
+      result += `\n${getIndent(--indent)}}`;
+      indent -= 1;
     }
-  	result += '})()';
+  	result += `\n${getIndent(indent)}})()`;
     return result;
-  },
+  }
 });
 
 Object.assign(Match.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `${this.matchee.gen()}`;
   },
 });
 
 Object.assign(Parameter.prototype, {
-  gen() {
+  gen(indent = 0) {
   	var result = ``;
   	(this.defaultValue === null) ? result += `${this.id}` : result += `${this.id} = ${this.defaultValue.gen()}`;
   	return result;
@@ -169,25 +172,25 @@ Object.assign(Parameter.prototype, {
 });
 
 Object.assign(BinaryExpression.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `(${this.left.gen()} ${this.op} ${this.right.gen()})`;
   },
 });
 
 Object.assign(UnaryExpression.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `(${this.op} ${this.operand.gen()})`;
   },
 });
 
 Object.assign(ParenthesisExpression.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `(${this.exp.gen()})`;
   },
 });
 
 Object.assign(IdExpression.prototype, {
-  gen() {
+  gen(indent = 0) {
   	var result = ``;
   	(this.idPostOp) ? result += `${this.idExpBody.gen()}${this.idPostOp}` : result += `${this.idExpBody.gen()}`;
     return result;
@@ -195,7 +198,7 @@ Object.assign(IdExpression.prototype, {
 });
 
 Object.assign(IdExpressionBodyBase.prototype, {
-  gen() {
+  gen(indent = 0) {
   	var result = ``;
   	(this.id) ? result += `${this.id}` : result += `this`;
     return result;
@@ -203,55 +206,55 @@ Object.assign(IdExpressionBodyBase.prototype, {
 });
 
 Object.assign(IdExpressionBodyRecursive.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `${this.idExpBase.gen()}${this.idAppendage.gen()}`;
   },
 });
 
 Object.assign(PeriodId.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return`.${this.id}`;
   },
 });
 
 Object.assign(Arguments.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `(this.VarList.join(', '))`;
   },
 });
 
 Object.assign(IdSelector.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `[${this.variable.gen()}]`;
   },
 });
 
 Object.assign(List.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `[this.VarList.join(', ')]`;
   },
 });
 
 Object.assign(Tuple.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return`(${this.values.variables.map(v => v.gen()).join(', ')})`;
   },
 });
 
 Object.assign(Dictionary.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return`{${this.properties.map(p => p.gen()).join(', ')}}`;
   },
 });
 
 Object.assign(IdValuePair.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `${this.id} : ${this.variable}`;
   },
 });
 
 Object.assign(VarList.prototype, {
-  gen() {
+  gen(indent = 0) {
   	if (this.length > 0) {
   		return `{${this.variables.map(v => v.gen()).join(', ')}}`;
   	}
@@ -259,49 +262,49 @@ Object.assign(VarList.prototype, {
 });
 
 Object.assign(BoolLit.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `${this.value}`;
   },
 });
 
 Object.assign(IntLit.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `${this.value}`;
   },
 });
 
 Object.assign(FloatLit.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `${this.value}`;
   },
 });
 
 Object.assign(StringLit.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `"${this.value}"`;
   },
 });
 
 Object.assign(NullLit.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `${this.value}`;
   },
 });
 
 Object.assign(IdVariable.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `${this.value}`;
   },
 });
 
 Object.assign(ConstId.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `CONST ${this.words}${this.rest}`;
   },
 });
 
 Object.assign(ClassId.prototype, {
-  gen() {
+  gen(indent = 0) {
   	return `CONST ${this.className}${this.rest}`;
   },
 });

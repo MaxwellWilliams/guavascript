@@ -82,7 +82,7 @@ Object.assign(FunctionDeclarationStatement.prototype, {
   gen(indent = 0) {
   	var result = ``;
   	result += `var ${this.id} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`;
-  	result += `\n${this.block.gen()}\n`;
+  	result += `\n${getIndent(++indent)}${this.block.gen()}\n`;
   	result += '}';
     return result;
   },

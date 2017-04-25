@@ -237,7 +237,7 @@ Object.assign(PeriodId.prototype, {
 
 Object.assign(Arguments.prototype, {
   gen(indent = 0) {
-  	return `(this.VarList.join(', '))`;
+  	return `${this.values.gen()}`;
   },
 });
 
@@ -249,7 +249,7 @@ Object.assign(IdSelector.prototype, {
 
 Object.assign(List.prototype, {
   gen(indent = 0) {
-  	return `[this.VarList.join(', ')]`;
+  	return `[${this.values.gen()}]`;
   },
 });
 
@@ -278,7 +278,7 @@ Object.assign(IdValuePair.prototype, {
 Object.assign(VarList.prototype, {
   gen(indent = 0) {
   	if (this.length > 0) {
-  		return `{${this.variables.map(v => v.gen()).join(', ')}}`;
+  		return `${this.variables.map(v => v.gen()).join(', ')}`;
   	}
   },
 });

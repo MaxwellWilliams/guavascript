@@ -1,2 +1,2 @@
 dict = {}
-dict[id] = 2
+dict["id"] = 2

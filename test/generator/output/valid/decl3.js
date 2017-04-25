@@ -1,4 +1,4 @@
 module.exports.getOutput = function() {
-  return `var female = true;
-console.log(female);`;
+  return `var female_1 = true;
+console.log(female_1);`;
 };

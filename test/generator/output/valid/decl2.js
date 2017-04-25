@@ -1,4 +1,4 @@
 module.exports.getOutput = function() {
-  return `var age = 21;
-console.log(age);`;
+  return `var age_1 = 21;
+console.log(age_1);`;
 };

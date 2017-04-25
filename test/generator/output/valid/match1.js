@@ -1,13 +1,13 @@
 module.exports.getOutput = function() {
   var string =
 `(() => {
-  if (x === 2) {
+  if (x_1 === 2) {
     return "two";
-  } else if (x === 3) {
+  } else if (x_1 === 3) {
     return "three";
-  } else if (x === 4) {
+  } else if (x_1 === 4) {
     return "four";
-  } else if (x === 5) {
+  } else if (x_1 === 5) {
     return "five";
   } else {
     return "nope";

@@ -1,55 +1,55 @@
 module.exports.getOutput = function() {
-  return `class Test {
-  constructor(param1 = 1, param2 = "2", param3 = false, param4 = 0) {
-    this.param1 = param1;
-    this.param2 = param2;
-    this.param3 = param3;
-    this.PARAM4 = param4;
+  return `class Test_1 {
+  constructor(param1_1 = 1, param2_2 = "2", param3_3 = false, param4_4 = 0) {
+    this.param1 = param1_1;
+    this.param2 = param2_2;
+    this.param3 = param3_3;
+    this.PARAM4 = param4_4;
   }
-  getParam1() {
+  getParam1_5() {
     return this.param1;
   }
-  setParam1(newParam) {
-    this.param1 = newParam;
+  setParam1_6(newParam_7) {
+    this.param1 = newParam_7;
   }
-  checkIfEqual(paramX, paramY) {
-    return paramX === paramY;
+  checkIfEqual_8(paramX_9, paramY_10) {
+    return paramX_9 === paramY_10;
   }
-  class Sub {
-    constructor(x, y, z) {
-      this.x = x;
-      this.y = y;
-      this.z = z;
+  class Sub_11 {
+    constructor(x_1, y_2, z_3) {
+      this.x = x_1;
+      this.y = y_2;
+      this.z = z_3;
     }
-    checkVariables(var1) {
-      var answer = "";
-      if ((var1 != null)) {
-        answer = (() => {
-          if (var1 === 1) {
+    checkVariables_4(var1_5) {
+      var answer_6 = "";
+      if ((var1_5 != null)) {
+        answer_6 = (() => {
+          if (var1_5 === 1) {
             return "one";
-          } else if (var1 === 2) {
+          } else if (var1_5 === 2) {
             return "two";
           } else {
             return "not one or two";
           }
         })();
       }
-      return answer;
+      return answer_6;
     }
   }
-  class Collections {
-    constructor(dict, list, tup) {
-      this.dict = dict;
-      this.list = list;
-      this.tup = tup;
+  class Collections_12 {
+    constructor(dict_1, list_2, tup_3) {
+      this.dict = dict_1;
+      this.list = list_2;
+      this.tup = tup_3;
     }
-    addToDict(id, value) {
-      this.dict[id] = value;
+    addToDict_4(id_5, value_6) {
+      this.dict[id_5] = value_6;
     }
-    getDict(id) {
-      return this.dict[id];
+    getDict_7(id_5) {
+      return this.dict[id_5];
     }
-    getTuple() {
+    getTuple_8() {
       return this.tup;
     }
   }

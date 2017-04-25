@@ -1,8 +1,9 @@
 module.exports.getOutput = function() {
-  return `if (x === 2) {
-  var x -= 1;
+  return `var x_1 = 2;
+if (x_1 === 2) {
+  var x_1 -= 1;
 } else {
-  var x += 1;
+  var x_1 += 1;
 }
-console.log(x);`;
+console.log(x_1);`;
 };

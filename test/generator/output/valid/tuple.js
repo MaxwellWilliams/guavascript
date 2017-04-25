@@ -1,7 +1,7 @@
 module.exports.getOutput = function() {
 	var string =
-`var tuple = ("hi", 3, true);
-console.log(tuple);`;
+`var tuple_1 = ("hi", 3, true);
+console.log(tuple_1);`;
 
 	return string;
 };

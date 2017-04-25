@@ -1,10 +1,10 @@
 module.exports.getOutput = function() {
-	return `var y = (() => {
-  if (x === true) {
+	return `var y_1 = (() => {
+  if (x_2 === true) {
     return "truth";
   } else {
     return "lies";
   }
 })();
-console.log(y);`;
+console.log(y_1);`;
 };

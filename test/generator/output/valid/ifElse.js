@@ -1,5 +1,5 @@
 module.exports.getOutput = function() {
-  return `if ((x === true)) {
+  return `if ((x_1 === true)) {
   return true;
 } else {
   return false;

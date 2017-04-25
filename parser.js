@@ -1,6 +1,6 @@
 const fs = require('fs');
 const ohm = require('ohm-js');
-const grammarContents = fs.readFileSync('guavascript.ohm');
+const grammarContents = fs.readFileSync('./guavascript.ohm');
 const grammar = ohm.grammar(grammarContents);
 
 const Program = require('./entities/program.js');

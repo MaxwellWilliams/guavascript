@@ -103,7 +103,7 @@ Object.assign(WhileStatement.prototype, {
   gen(indent = 0) {
   	var result = ``;
   	result += `while (${this.condition.gen()}) {`;
-  	result += `\n${getIndent(indent++)}${this.block.gen()}\n`;
+  	result += `\n${getIndent(++indent)}${this.block.gen()}\n`;
   	result += '}';
     return result;
   },
@@ -147,7 +147,7 @@ Object.assign(MatchExpression.prototype, {
     }
     if (this.catchAllMatch.length > 0) {
     	result += `\n${getIndent(++indent)}} else {`;
-    	result += `\n${getIndent(++indent)}return ${this.catchAllMatch};`;
+    	result += `\n${getIndent(++indent)}return ${this.catchAllMatch[0].gen()};`;
       result += `\n${getIndent(--indent)}}`;
       indent -= 1;
     } else {
@@ -161,7 +161,7 @@ Object.assign(MatchExpression.prototype, {
 Object.assign(Match.prototype, {
   gen(indent = 0) {
   	return `${this.matchee.gen()}`;
-  },
+  }
 });
 
 Object.assign(Parameter.prototype, {

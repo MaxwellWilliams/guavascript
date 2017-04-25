@@ -1,6 +1,6 @@
 module.exports.getOutput = function() {
-  var string =
-`(() => {
+  return `var x_1 = 4;
+(() => {
   if (x_1 === 2) {
     return "two";
   } else if (x_1 === 3) {
@@ -13,6 +13,4 @@ module.exports.getOutput = function() {
     return "nope";
   }
 })()`;
-
-  return string;
 };

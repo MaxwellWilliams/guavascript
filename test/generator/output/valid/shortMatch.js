@@ -3,6 +3,8 @@ module.exports.getOutput = function() {
 (() => {
   if (x_1 === 2) {
     return "two";
+  } else {
+    return "";
   }
 })()
 console.log(x_1);`;

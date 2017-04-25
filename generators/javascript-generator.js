@@ -66,7 +66,7 @@ Object.assign(Block.prototype, {
 
     this.body.forEach(statement => {
       if(statement.constructor === FunctionDeclarationStatement) {
-        result.push(statement.gen(indent, names, classId));
+        result.push(statement.gen(indent, names, true));
       } else {
         result.push(statement.gen(indent, names));
       }
@@ -81,10 +81,10 @@ Object.assign(BranchStatement.prototype, {
     for (var condition = 0; condition < this.conditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '\n} else if';
     	result += `${getIndent(indent)}${prefix} (${this.conditions[condition].gen(0, names)}) {`;
-    	result += `\n${this.thenBlocks[condition].gen(++indent, names)}`;
+    	result += `\n${getIndent(indent+1)}${this.thenBlocks[condition].gen(0, names)}`;
     }
     if (this.elseBlock !== null) {
-    	result += `\n${getIndent(--indent)}} else {`;
+    	result += `\n${getIndent(indent)}} else {`;
     	result += `\n${getIndent(++indent)}${this.elseBlock.gen(0, names)}`;
     }
     result += `\n${getIndent(--indent)}}`;
@@ -93,14 +93,14 @@ Object.assign(BranchStatement.prototype, {
 });
 
 Object.assign(FunctionDeclarationStatement.prototype, {
-  gen(indent = 0, names = undefined, classId = undefined) {
+  gen(indent = 0, names = undefined, inClass = false) {
   	var result = ``;
     var newNames;
 
-    if(this.id === classId) {
+    if(this.id === 'constructor') {
       newNames = names;
       result += `${getIndent(indent)}constructor(${this.parameterArray.map(p => p.gen(0, newNames)).join(', ')}) {`;
-    } else if(classId != undefined) {
+    } else if(inClass) {
       names(this.id);
       newNames = names;
       result += `${getIndent(indent)}${newNames(this.id)}(${this.parameterArray.map(p => p.gen(0, newNames)).join(', ')}) {`;
@@ -163,7 +163,7 @@ Object.assign(AssignmentStatement.prototype, {
   	} else if(this.idExp.gen(0, names).indexOf('.') > -1 || this.idExp.gen(0, names).indexOf('[') > -1) {
   		return `${this.idExp.gen(indent, names)} ${this.assignOp} ${this.exp.gen(0, names)};`;
   	} else if(this.exp.constructor === MatchExpression) {
-      return `${this.idExp.gen(indent, names)} ${this.assignOp} ${this.exp.gen(indent, names)};`;
+      return `${getIndent(indent)}var ${variable} ${this.assignOp} ${this.exp.gen(indent, names)};`;
     } else {
   		return `${getIndent(indent)}var ${variable} ${this.assignOp} ${this.exp.gen(0, names)};`;
   	}

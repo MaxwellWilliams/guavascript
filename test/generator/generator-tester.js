@@ -18,6 +18,7 @@ tests = function(validFiles, invalidFiles) {
           function() {
             // console.log(util.inspect(parser(file.code), {depth: null}));
             // console.log(generator(parser(file.code)));
+            parser(file.code).analyze();
             assert.equal(generator(parser(file.code)), outputs[file.name],
               'Returned: ' + generator(parser(file.code)));
         });
@@ -28,9 +29,7 @@ tests = function(validFiles, invalidFiles) {
     //   invalidFiles.forEach(function(file) {
     //     it('generator\\programs\\invalid\\' + file.name + ' should be rejected by the grammar',
     //       function() {
-    //         grammarResult = grammar.match(file.code);
-    //         assert.equal(grammarResult.succeeded(), false,
-    //           'Returned: ' + grammarResult);
+    //         assert.throws(() => parser(file.code).analyze(), errorPattern);
     //     });
     //   });
     // });

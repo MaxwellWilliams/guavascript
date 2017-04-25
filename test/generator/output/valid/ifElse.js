@@ -1,7 +1,8 @@
 module.exports.getOutput = function() {
-  return `if ((x_1 === true)) {
-  return true;
+  return `var x_1 = false;
+if ((x_1 === true)) {
+  console.log("true");
 } else {
-  return false;
+  console.log("false");
 }`;
 };

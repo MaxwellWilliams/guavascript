@@ -67,11 +67,11 @@ Object.assign(BranchStatement.prototype, {
     for (var condition = 0; condition < this.conditions.length; condition++) {
     	const prefix = condition === 0 ? 'if' : '\n} else if';
     	result += `${prefix} (${this.conditions[condition].gen()}) {`;
-    	result += `\n${getIndent(indent++)}${this.thenBlocks[condition].gen()}`;
+    	result += `\n${getIndent(++indent)}${this.thenBlocks[condition].gen()}`;
     }
     if (this.elseBlock !== null) {
-    	result += '\n} else {';
-    	result += `\n${getIndent(indent++)}${this.elseBlock.gen()}`;
+    	result += `\n${getIndent(--indent)}} else {`;
+    	result += `\n${getIndent(++indent)}${this.elseBlock.gen()}`;
     }
     result += '\n}';
     return result;
@@ -174,7 +174,11 @@ Object.assign(Parameter.prototype, {
 
 Object.assign(BinaryExpression.prototype, {
   gen(indent = 0) {
-  	return `(${this.left.gen()} ${this.op} ${this.right.gen()})`;
+    var operator = this.op;
+    if(operator === `==`) {
+      operator = '==='
+    }
+  	return `(${this.left.gen()} ${operator} ${this.right.gen()})`;
   },
 });
 

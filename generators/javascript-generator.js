@@ -134,7 +134,7 @@ Object.assign(AssignmentStatement.prototype, {
   	var variable = `${this.idExp.gen()}`;
   	if (variable === variable.toUpperCase()) {
   		return `const ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
-  	} else if (this.idExp.gen().indexOf('.') > -1) {
+  	} else if (this.idExp.gen().indexOf('.') > -1 || this.idExp.gen().indexOf('[') > -1) {
   		return `${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
   	} else {
   		return `var ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
@@ -261,7 +261,11 @@ Object.assign(Tuple.prototype, {
 
 Object.assign(Dictionary.prototype, {
   gen(indent = 0) {
-  	return`{${this.properties.map(p => p.gen()).join(', ')}}`;
+  	if (this.properties) {
+  		return`{${this.properties.map(p => p.gen()).join(', ')}}`;
+  	} else {
+  		return '{}';
+  	}
   },
 });
 

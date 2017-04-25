@@ -54,9 +54,15 @@ Object.assign(Program.prototype, {
 });
 
 Object.assign(Block.prototype, {
-  gen(indent = 0) {
+  gen(indent = 0, classId = undefined) {
   	var result = [];
-    this.body.forEach(statement => result.push(statement.gen(indent)));
+    this.body.forEach(statement => {
+      if(statement.constructor === FunctionDeclarationStatement) {
+        result.push(statement.gen(indent, classId));
+      } else {
+        result.push(statement.gen(indent));
+      }
+    });
     return result.join(`\n`);
   }
 });
@@ -79,9 +85,16 @@ Object.assign(BranchStatement.prototype, {
 });
 
 Object.assign(FunctionDeclarationStatement.prototype, {
-  gen(indent = 0) {
+  gen(indent = 0, classId = undefined) {
   	var result = ``;
-  	result += `${getIndent(indent)}var ${this.id} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`;
+
+    if(this.id === classId) {
+      result += `${getIndent(indent)}constructor(${this.parameterArray.map(p => p.gen()).join(', ')}) {`;
+    } else if(classId != undefined) {
+      result += `${getIndent(indent)}${this.id}(${this.parameterArray.map(p => p.gen()).join(', ')}) {`;
+    } else {
+	    result += `${getIndent(indent)}var ${this.id} = (${this.parameterArray.map(p => p.gen()).join(', ')}) => {`;
+    }
   	result += `\n${this.block.gen(++indent)}`;
   	result += `\n${getIndent(--indent)}}`;
     return result;
@@ -93,7 +106,7 @@ Object.assign(ClassDeclarationStatement.prototype, {
   	var result = ``;
     result += `${getIndent(indent)}class ${this.id} {`;
    	// Need to rename the constructor 'constructor' instead of this.id
-   	result += `\n${this.block.gen(++indent)}`;
+   	result += `\n${this.block.gen(++indent, this.id)}`;
     result += `\n${getIndent(--indent)}}`;
     return result;
   }
@@ -135,7 +148,7 @@ Object.assign(AssignmentStatement.prototype, {
   	if (variable === variable.toUpperCase()) {
   		return `${getIndent(indent)}const ${variable} ${this.assignOp} ${this.exp.gen()};`;
   	} else if (this.idExp.gen().indexOf('.') > -1 || this.idExp.gen().indexOf('[') > -1) {
-  		return `${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
+  		return `${this.idExp.gen(indent)} ${this.assignOp} ${this.exp.gen()};`;
   	} else {
   		return `${getIndent(indent)}var ${variable} ${this.assignOp} ${this.exp.gen()};`;
   	}
@@ -211,8 +224,11 @@ Object.assign(ParenthesisExpression.prototype, {
 
 Object.assign(IdExpression.prototype, {
   gen(indent = 0) {
-  	var result = ``;
-  	(this.idPostOp) ? result += `${this.idExpBody.gen()}${this.idPostOp}` : result += `${this.idExpBody.gen()}`;
+  	var result = `${this.idExpBody.gen(indent)}`;
+
+    if(this.idPostOp) {
+  	   result += `${this.idPostOp}`;
+    }
     return result;
   }
 });
@@ -227,7 +243,7 @@ Object.assign(IdExpressionBodyBase.prototype, {
 
 Object.assign(IdExpressionBodyRecursive.prototype, {
   gen(indent = 0) {
-  	return `${this.idExpBase.gen()}${this.idAppendage.gen()}`;
+  	return `${getIndent(indent)}${this.idExpBase.gen()}${this.idAppendage.gen()}`;
   }
 });
 

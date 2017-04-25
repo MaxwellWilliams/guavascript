@@ -12,24 +12,20 @@ module.exports.getAst = function() {
           )
         )
         (Body
-          (Block
-            (-=
-              (IdExpression
-                (x)
-              )
-              (1)
-            )
-          )
-        )
-      )
-      (Else
-        (Block
-          (+=
+          (-=
             (IdExpression
               (x)
             )
             (1)
           )
+        )
+      )
+      (Else
+        (+=
+          (IdExpression
+            (x)
+          )
+          (1)
         )
       )
     )

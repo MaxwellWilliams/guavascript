@@ -1,7 +1,7 @@
 Guavascript {
     Program     = Block
     Block       = Statement+
-    Statement   = Exp "?" Block ":" Block                               -- conditional
+    Statement   = Exp "?" Statement ":" Statement                       -- conditional
                 | id "(" (Param ("," Param)*)? ")"
                   "{" Block "}"                                         -- funcDecl
                 | "class" classId "{" Block "}"                         -- classDecl

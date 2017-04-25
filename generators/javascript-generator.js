@@ -84,6 +84,7 @@ Object.assign(BranchStatement.prototype, {
     if (this.elseBlock !== null) {
     	result += `\n${getIndent(--indent)}} else {`;
     	result += `\n${getIndent(++indent)}${this.elseBlock.gen()}`;
+    	console.log(this.elseBlock.gen());
     }
     result += `\n${getIndent(--indent)}}`;
     return result;

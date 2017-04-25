@@ -15,7 +15,7 @@
 //       validFiles.forEach(function(file) {
 //         it('parser\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
 //           function() {
-//             // console.log(util.inspect(parser(file.code), {depth: null}));
+//             // console.log(util.inspect(parser(file.code).toString(), {depth: null}));
 //             assert.equal(parser(file.code).toString(), asts[file.name],
 //               'Returned: ' + grammarResult);
 //         });

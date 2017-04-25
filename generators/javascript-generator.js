@@ -145,11 +145,13 @@ Object.assign(AssignmentStatement.prototype, {
   gen(indent = 0) {
   	// if variable has already been declared we must omit const and let
   	var variable = `${this.idExp.gen()}`;
-  	if (variable === variable.toUpperCase()) {
+  	if(variable === variable.toUpperCase()) {
   		return `${getIndent(indent)}const ${variable} ${this.assignOp} ${this.exp.gen()};`;
-  	} else if (this.idExp.gen().indexOf('.') > -1 || this.idExp.gen().indexOf('[') > -1) {
+  	} else if(this.idExp.gen().indexOf('.') > -1 || this.idExp.gen().indexOf('[') > -1) {
   		return `${this.idExp.gen(indent)} ${this.assignOp} ${this.exp.gen()};`;
-  	} else {
+  	} else if(this.exp.constructor === MatchExpression) {
+      return `${this.idExp.gen(indent)} ${this.assignOp} ${this.exp.gen(indent)};`;
+    } else {
   		return `${getIndent(indent)}var ${variable} ${this.assignOp} ${this.exp.gen()};`;
   	}
   }
@@ -235,8 +237,8 @@ Object.assign(IdExpression.prototype, {
 
 Object.assign(IdExpressionBodyBase.prototype, {
   gen(indent = 0) {
-  	var result = ``;
-  	(this.id) ? result += `${this.id}` : result += `this`;
+  	var result = `${getIndent(indent)}`;
+  	result += this.id ? `${this.id}` : `this`;
     return result;
   }
 });

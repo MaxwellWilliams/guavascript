@@ -45,7 +45,7 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullOutputPath = validProgramOutputs + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "class1.guav") {
+    // if(fileName == "bigProgram.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents

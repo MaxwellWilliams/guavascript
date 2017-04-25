@@ -109,6 +109,17 @@ Object.assign(WhileStatement.prototype, {
   },
 });
 
+Object.assign(ForInStatement.prototype, {
+  gen(indent = 0) {
+  	var result = ``;
+  	result += `for var ${this.id} in ${this.iteratableObj.gen()} {`;
+  	result += `\n${getIndent(++indent)} var ${this.id}_Iterable = ${this.iteratableObj.gen()}[${this.id}];`;
+  	result += `\n${this.block.gen()}\n`;
+  	result += '}';
+  	return result;
+  },
+});
+
 // Skipped for-in statement for now
 
 Object.assign(PrintStatement.prototype, {
@@ -123,6 +134,8 @@ Object.assign(AssignmentStatement.prototype, {
   	var variable = `${this.idExp.gen()}`;
   	if (variable === variable.toUpperCase()) {
   		return `const ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
+  	} else if (this.idExp.gen().indexOf('.') > -1) {
+  		return `${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
   	} else {
   		return `var ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
   	}

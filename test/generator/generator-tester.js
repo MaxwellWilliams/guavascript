@@ -44,12 +44,12 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullOutputPath = validProgramOutputs + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "idExp3.guav") {
+    if(fileName == "funcDecl2.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
     });
-    // }
+     }
   });
 
   // fs.readdirSync(invalidPrograms).forEach(function(fileName) {

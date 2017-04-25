@@ -1,6 +1,6 @@
 module.exports.getOutput = function() {
-	return `let z = 0;
+	return `var z = 0;
 var computeSomething = (x, y) => {
-   z = x + y;
+   var z = x + y;
 }`;
 };

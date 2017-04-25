@@ -1,5 +1,5 @@
 module.exports.getOutput = function() {
-	return `let y = (() => {
+	return `var y = (() => {
 		if (x == true) {
 			return "truth";
 		} else {

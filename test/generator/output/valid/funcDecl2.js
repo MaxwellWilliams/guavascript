@@ -4,7 +4,7 @@ module.exports.getOutput = function() {
   var count_by_two = () => {
     var result = 0;
     for var i in numbers {
-      if (i % 2 == 0) {
+      if (i % 2 === 0) {
         var result += i;
       }
     }

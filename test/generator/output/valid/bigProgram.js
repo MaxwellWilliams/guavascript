@@ -17,7 +17,7 @@ module.exports.getOutput = function() {
     }
 
     var checkIfEqual = (paramX, paramY) = () => {
-      return paramX == paramY;
+      return paramX === paramY;
     }
 
     class Sub {
@@ -31,7 +31,7 @@ module.exports.getOutput = function() {
         var answer;
         if (var1 != null) {
           answer = (() {
-            if (var1 == 1) {
+            if (var1 === 1) {
               var1 = "one";
             } else if (var1 = 2) {
               var1 = "two";

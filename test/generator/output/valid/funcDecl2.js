@@ -4,8 +4,9 @@ module.exports.getOutput = function() {
   var count_by_two = () => {
     var result = 0;
     for var i in numbers {
+      var i_Iterable = numbers[i];
       if (i % 2 === 0) {
-        var result += i;
+        var result += numbers[i];
       }
     }
     return result;

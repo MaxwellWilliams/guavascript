@@ -109,6 +109,17 @@ Object.assign(WhileStatement.prototype, {
   },
 });
 
+Object.assign(ForInStatement.prototype, {
+  gen(indent = 0) {
+  	var result = ``;
+  	result += `for var ${this.id} in ${this.iteratableObj.gen()} {`;
+  	result += `\n${getIndent(++indent)} var ${this.id}_Iterable = ${this.iteratableObj.gen()}[${this.id}];`;
+  	result += `\n${this.block.gen()}\n`;
+  	result += '}';
+  	return result;
+  },
+});
+
 // Skipped for-in statement for now
 
 Object.assign(PrintStatement.prototype, {
@@ -123,6 +134,8 @@ Object.assign(AssignmentStatement.prototype, {
   	var variable = `${this.idExp.gen()}`;
   	if (variable === variable.toUpperCase()) {
   		return `${getIndent(indent)}const ${variable} ${this.assignOp} ${this.exp.gen()};`;
+  	} else if (this.idExp.gen().indexOf('.') > -1 || this.idExp.gen().indexOf('[') > -1) {
+  		return `${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
   	} else {
   		return `${getIndent(indent)}var ${variable} ${this.assignOp} ${this.exp.gen()};`;
   	}
@@ -250,7 +263,11 @@ Object.assign(Tuple.prototype, {
 
 Object.assign(Dictionary.prototype, {
   gen(indent = 0) {
-  	return`{${this.properties.map(p => p.gen()).join(', ')}}`;
+  	if (this.properties) {
+  		return`{${this.properties.map(p => p.gen()).join(', ')}}`;
+  	} else {
+  		return '{}';
+  	}
   },
 });
 

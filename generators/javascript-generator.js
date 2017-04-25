@@ -57,7 +57,7 @@ Object.assign(Block.prototype, {
   gen(indent = 0) {
   	var result = [];
     this.body.forEach(statement => result.push(statement.gen(indent)));
-    return result.join('\n');
+    return result.join(`\n`);
   },
 });
 
@@ -93,7 +93,7 @@ Object.assign(ClassDeclarationStatement.prototype, {
   	var result = ``;
     result += `class ${this.id} {`;
    	// Need to rename the constructor 'constructor' instead of this.id
-   	result += `\n${this.block.gen()}\n`;
+   	result += `\n${this.block.gen(++indent)}\n`;
     result += '}';
     return result;
   },
@@ -133,11 +133,11 @@ Object.assign(AssignmentStatement.prototype, {
   	// if variable has already been declared we must omit const and let
   	var variable = `${this.idExp.gen()}`;
   	if (variable === variable.toUpperCase()) {
-  		return `const ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
+  		return `${getIndent(indent)}const ${variable} ${this.assignOp} ${this.exp.gen()};`;
   	} else if (this.idExp.gen().indexOf('.') > -1 || this.idExp.gen().indexOf('[') > -1) {
   		return `${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
   	} else {
-  		return `var ${this.idExp.gen()} ${this.assignOp} ${this.exp.gen()};`;
+  		return `${getIndent(indent)}var ${variable} ${this.assignOp} ${this.exp.gen()};`;
   	}
   },
 });
@@ -189,21 +189,23 @@ Object.assign(BinaryExpression.prototype, {
   gen(indent = 0) {
     var operator = this.op;
     if(operator === `==`) {
-      operator = '==='
+      operator = '===';
+    } else if(operator === '^') {
+      return `Math.pow(${this.left.gen(0)}, ${this.right.gen(0)})`;
     }
-  	return `(${this.left.gen()} ${operator} ${this.right.gen()})`;
+  	return `${this.left.gen(0)} ${operator} ${this.right.gen(0)}`;
   },
 });
 
 Object.assign(UnaryExpression.prototype, {
   gen(indent = 0) {
-  	return `(${this.op} ${this.operand.gen()})`;
+  	return `(${this.op} ${this.operand.gen(0)})`;
   },
 });
 
 Object.assign(ParenthesisExpression.prototype, {
   gen(indent = 0) {
-  	return `(${this.exp.gen()})`;
+  	return `(${this.exp.gen(0)})`;
   },
 });
 

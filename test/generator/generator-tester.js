@@ -14,9 +14,10 @@ tests = function(validFiles, invalidFiles) {
   describe('Generator tests', function() {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
-        it('generator\\programs\\valid\\' +file.name + ' should generate correct code',
+        it('generator\\programs\\valid\\' + file.name + ' should generate correct code',
           function() {
-            //console.log(generator(parser(file.code)));
+            // console.log(util.inspect(parser(file.code), {depth: null}));
+            // console.log(generator(parser(file.code)));
             assert.equal(generator(parser(file.code)), outputs[file.name],
               'Returned: ' + generator(parser(file.code)));
         });
@@ -44,7 +45,7 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullOutputPath = validProgramOutputs + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "idExp3.guav") {
+    // if(fileName == "arithmetic1.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
@@ -66,7 +67,6 @@ tests = function(validFiles, invalidFiles) {
 
 outputs = {
     'arithmetic1.guav': require(path.resolve(validProgramOutputs + '/arithmetic1.js')).getOutput(),
-    'arithmetic2.guav': require(path.resolve(validProgramOutputs + '/arithmetic2.js')).getOutput(),
     'class1.guav': require(path.resolve(validProgramOutputs + '/class1.js')).getOutput(),
     'conditional1.guav': require(path.resolve(validProgramOutputs + '/conditional1.js')).getOutput(),
     'constDecl1.guav': require(path.resolve(validProgramOutputs + '/constDecl1.js')).getOutput(),

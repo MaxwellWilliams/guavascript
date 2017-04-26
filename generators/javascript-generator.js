@@ -274,10 +274,10 @@ Object.assign(PeriodId.prototype, {
 
 Object.assign(Arguments.prototype, {
   gen(indent = 0, names) {
-  	if (this.values.gen(0, names) === undefined) {
+  	if (this.varList.gen(0, names) === undefined) {
   		return '()';
   	} else {
-  		return `[${this.values.gen(0, names)}]`;
+  		return `[${this.varList.gen(0, names)}]`;
   	}
   },
 });

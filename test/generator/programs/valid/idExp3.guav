@@ -1,3 +1,0 @@
-dict = {}
-dict["id"] = 2
-print(dict)

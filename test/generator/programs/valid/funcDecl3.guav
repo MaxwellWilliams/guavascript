@@ -1,6 +1,0 @@
-z = 0
-computeSomething (x = 0, y = 0) {
-   ret(x + y)
-}
-
-z = computeSomething(1, 2)

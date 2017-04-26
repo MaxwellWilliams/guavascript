@@ -61,12 +61,14 @@ Object.assign(Program.prototype, {
 });
 
 Object.assign(Block.prototype, {
-  gen(indent = 0, names = undefined, classId = undefined) {
+  gen(indent = 0, names = undefined, inClass = false) {
   	var result = [];
 
     this.body.forEach(statement => {
       if(statement.constructor === FunctionDeclarationStatement) {
-        result.push(statement.gen(indent, names, true));
+        result.push(statement.gen(indent, names, inClass));
+      } else if(statement.constructor === IdExpression) {
+        result.push(statement.gen(indent, names, false));
       } else {
         result.push(statement.gen(indent, names));
       }
@@ -120,7 +122,7 @@ Object.assign(ClassDeclarationStatement.prototype, {
   	var result = ``;
     result += `${getIndent(indent)}class ${names(this.id)} {`;
    	var newNames = jsName();
-   	result += `\n${this.block.gen(++indent, newNames, this.id)}`;
+   	result += `\n${this.block.gen(++indent, newNames, true)}`;
     result += `\n${getIndent(--indent)}}`;
     return result;
   }
@@ -149,7 +151,7 @@ Object.assign(ForInStatement.prototype, {
 
 Object.assign(PrintStatement.prototype, {
   gen(indent = 0, names) {
-  	return `console.log(${this.exp.gen(0, names)});`;
+  	return `${getIndent(indent)}console.log(${this.exp.gen(0, names)});`;
   }
 });
 
@@ -240,20 +242,13 @@ Object.assign(ParenthesisExpression.prototype, {
 });
 
 Object.assign(IdExpression.prototype, {
-  gen(indent = 0, names) {
-  	var result = `${this.idExpBody.gen(indent, names)}`;
-
-    if(this.idPostOp) {
-  	   result += `${this.idPostOp}`;
-    }
-    return result;
+  gen(indent = 0, names, inAssignment = true) {
+  	return `${this.idExpBody.gen(indent, names, inAssignment)}`;
   }
 });
 
 Object.assign(IdExpressionBodyBase.prototype, {
-  gen(indent = 0, names) {
-    // console.log(this.id != 'this' ? `${this.id}` : `this-`);
-
+  gen(indent = 0, names, inAssignment = true) {
   	var result = `${getIndent(indent)}`;
   	result += this.id === `this` ? `this` : `${names(this.id)}`;
     return result;
@@ -261,8 +256,17 @@ Object.assign(IdExpressionBodyBase.prototype, {
 });
 
 Object.assign(IdExpressionBodyRecursive.prototype, {
-  gen(indent = 0, names) {
-  	return `${getIndent(indent)}${this.idExpBase.gen(0, names)}${this.idAppendage.gen(0, names)}`;
+  gen(indent = 0, names, inAssignment = true) {
+  	var result = `${getIndent(indent)}${this.idExpBase.gen(0, names)}`;
+    if(this.appendageOp === '()') {
+      result += `(${this.idAppendage.gen(0, names)})`;
+      result += inAssignment ? '' : ';';
+    } else if(this.appendageOp === '[]') {
+      result += `(${this.idAppendage.gen(0, names)})`;
+    } else {
+      result += `${this.idAppendage.gen(0, names)}`;
+    }
+    return result;
   }
 });
 
@@ -274,10 +278,10 @@ Object.assign(PeriodId.prototype, {
 
 Object.assign(Arguments.prototype, {
   gen(indent = 0, names) {
-  	if (this.values.gen(0, names) === undefined) {
-  		return '()';
+  	if (this.varList === undefined) {
+  		return '';
   	} else {
-  		return `[${this.values.gen(0, names)}]`;
+  		return `${this.varList.gen(0, names)}`;
   	}
   },
 });

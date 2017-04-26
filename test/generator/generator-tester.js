@@ -44,7 +44,7 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullOutputPath = validProgramOutputs + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "bigProgram.guav") {
+    // if(fileName == "funcDecl1.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
@@ -78,16 +78,13 @@ outputs = {
     'dict2.guav': require(path.resolve(validProgramOutputs + '/dict2.js')).getOutput(),
     'funcDecl1.guav': require(path.resolve(validProgramOutputs + '/funcDecl1.js')).getOutput(),
     'funcDecl2.guav': require(path.resolve(validProgramOutputs + '/funcDecl2.js')).getOutput(),
-    'funcDecl3.guav': require(path.resolve(validProgramOutputs + '/funcDecl3.js')).getOutput(),
     'idExp1.guav': require(path.resolve(validProgramOutputs + '/idExp1.js')).getOutput(),
     'idExp2.guav': require(path.resolve(validProgramOutputs + '/idExp2.js')).getOutput(),
-    'idExp3.guav': require(path.resolve(validProgramOutputs + '/idExp3.js')).getOutput(),
     'ifElse.guav': require(path.resolve(validProgramOutputs + '/ifElse.js')).getOutput(),
     'match1.guav': require(path.resolve(validProgramOutputs + '/match1.js')).getOutput(),
     'match2.guav': require(path.resolve(validProgramOutputs + '/match2.js')).getOutput(),
     'print1.guav': require(path.resolve(validProgramOutputs + '/print1.js')).getOutput(),
     'shortMatch.guav': require(path.resolve(validProgramOutputs + '/shortMatch.js')).getOutput(),
     'tuple.guav': require(path.resolve(validProgramOutputs + '/tuple.js')).getOutput(),
-    'while1.guav': require(path.resolve(validProgramOutputs + '/while1.js')).getOutput(),
-    'bigProgram.guav': require(path.resolve(validProgramOutputs + '/bigProgram.js')).getOutput()
+    'while1.guav': require(path.resolve(validProgramOutputs + '/while1.js')).getOutput()
 };

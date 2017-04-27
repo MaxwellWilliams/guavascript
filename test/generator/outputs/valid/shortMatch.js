@@ -1,4 +1,4 @@
-module.exports.getOutput = function() {
+module.exports.getProgram = function() {
 	return `var x_1 = 2;
 (() => {
   if (x_1 === 2) {
@@ -8,4 +8,8 @@ module.exports.getOutput = function() {
   }
 })()
 console.log(x_1);`;
+};
+
+module.exports.getOutput = function() {
+  return '';
 };

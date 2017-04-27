@@ -3,12 +3,13 @@ path = require('path');
 ohm = require('ohm-js');
 assert = require('assert');
 util = require('util');
+exec = require('child_process').exec;
+
 parser = require(path.resolve('./parser.js'));
 generator = require(path.resolve('./generators/javascript-generator.js'));
 validPrograms = path.resolve('./test/generator/programs/valid');
 invalidPrograms = path.resolve('./test/generator/programs/invalid');
-validProgramOutputs = path.resolve('./test/generator/output/valid');
-// invalidProgramOutputs = path.resolve('./test/generator/output/invalid');
+outputs = path.resolve('./test/generator/outputs/valid');
 
 tests = function(validFiles, invalidFiles) {
   describe('Generator tests', function() {
@@ -16,11 +17,20 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('generator\\programs\\valid\\' + file.name + ' should generate correct code',
           function() {
-            // console.log(util.inspect(parser(file.code), {depth: null}));
-            // console.log(generator(parser(file.code)));
             parser(file.code).analyze();
-            assert.equal(generator(parser(file.code)), outputs[file.name],
+            assert.equal(generator(parser(file.code)), programs[file.name].getProgram(),
               'Returned: ' + generator(parser(file.code)));
+        });
+        it('generator\\programs\\valid\\' + file.name + ' should execute correctly',
+          function() {
+            exec(`node guavascript.js --js test/generator/programs/valid/${file.name} | node`,
+              function(error, stdout, stderr) {
+                console.log('stdout: ', stdout);
+                console.log('out: ', programs[file.name].getOutput());
+                assert.equal(error, null);
+                assert.equal(stdout, programs[file.name].getOutput(), 'Returned: ' + stdout);
+                assert.equal(stderr, '', 'Returned: ' + stderr);
+            });
         });
       });
     });
@@ -42,7 +52,7 @@ tests = function(validFiles, invalidFiles) {
 
   fs.readdirSync(validPrograms).forEach(function(fileName) {
     fullProgramPath = validPrograms + '/' + fileName;
-    fullOutputPath = validProgramOutputs + '/' + fileName;
+    fullOutputPath = outputs + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
     // if(fileName == "funcDecl1.guav") {
     validFiles.push({
@@ -64,27 +74,27 @@ tests = function(validFiles, invalidFiles) {
   tests(validFiles, invalidFiles);
 }());
 
-outputs = {
-    'arithmetic1.guav': require(path.resolve(validProgramOutputs + '/arithmetic1.js')).getOutput(),
-    'class1.guav': require(path.resolve(validProgramOutputs + '/class1.js')).getOutput(),
-    'conditional1.guav': require(path.resolve(validProgramOutputs + '/conditional1.js')).getOutput(),
-    'constDecl1.guav': require(path.resolve(validProgramOutputs + '/constDecl1.js')).getOutput(),
-    'constDecl2.guav': require(path.resolve(validProgramOutputs + '/constDecl2.js')).getOutput(),
-    'decl1.guav': require(path.resolve(validProgramOutputs + '/decl1.js')).getOutput(),
-    'decl2.guav': require(path.resolve(validProgramOutputs + '/decl2.js')).getOutput(),
-    'decl3.guav': require(path.resolve(validProgramOutputs + '/decl3.js')).getOutput(),
-    'decl4.guav': require(path.resolve(validProgramOutputs + '/decl4.js')).getOutput(),
-    'dict1.guav': require(path.resolve(validProgramOutputs + '/dict1.js')).getOutput(),
-    'dict2.guav': require(path.resolve(validProgramOutputs + '/dict2.js')).getOutput(),
-    'funcDecl1.guav': require(path.resolve(validProgramOutputs + '/funcDecl1.js')).getOutput(),
-    'funcDecl2.guav': require(path.resolve(validProgramOutputs + '/funcDecl2.js')).getOutput(),
-    'idExp1.guav': require(path.resolve(validProgramOutputs + '/idExp1.js')).getOutput(),
-    'idExp2.guav': require(path.resolve(validProgramOutputs + '/idExp2.js')).getOutput(),
-    'ifElse.guav': require(path.resolve(validProgramOutputs + '/ifElse.js')).getOutput(),
-    'match1.guav': require(path.resolve(validProgramOutputs + '/match1.js')).getOutput(),
-    'match2.guav': require(path.resolve(validProgramOutputs + '/match2.js')).getOutput(),
-    'print1.guav': require(path.resolve(validProgramOutputs + '/print1.js')).getOutput(),
-    'shortMatch.guav': require(path.resolve(validProgramOutputs + '/shortMatch.js')).getOutput(),
-    'tuple.guav': require(path.resolve(validProgramOutputs + '/tuple.js')).getOutput(),
-    'while1.guav': require(path.resolve(validProgramOutputs + '/while1.js')).getOutput()
+programs = {
+    'arithmetic1.guav': require(path.resolve(outputs + '/arithmetic1.js')),
+    'class1.guav': require(path.resolve(outputs + '/class1.js')),
+    'conditional1.guav': require(path.resolve(outputs + '/conditional1.js')),
+    'constDecl1.guav': require(path.resolve(outputs + '/constDecl1.js')),
+    'constDecl2.guav': require(path.resolve(outputs + '/constDecl2.js')),
+    'decl1.guav': require(path.resolve(outputs + '/decl1.js')),
+    'decl2.guav': require(path.resolve(outputs + '/decl2.js')),
+    'decl3.guav': require(path.resolve(outputs + '/decl3.js')),
+    'decl4.guav': require(path.resolve(outputs + '/decl4.js')),
+    'dict1.guav': require(path.resolve(outputs + '/dict1.js')),
+    'dict2.guav': require(path.resolve(outputs + '/dict2.js')),
+    'funcDecl1.guav': require(path.resolve(outputs + '/funcDecl1.js')),
+    'funcDecl2.guav': require(path.resolve(outputs + '/funcDecl2.js')),
+    'idExp1.guav': require(path.resolve(outputs + '/idExp1.js')),
+    'idExp2.guav': require(path.resolve(outputs + '/idExp2.js')),
+    'ifElse.guav': require(path.resolve(outputs + '/ifElse.js')),
+    'match1.guav': require(path.resolve(outputs + '/match1.js')),
+    'match2.guav': require(path.resolve(outputs + '/match2.js')),
+    'print1.guav': require(path.resolve(outputs + '/print1.js')),
+    'shortMatch.guav': require(path.resolve(outputs + '/shortMatch.js')),
+    'tuple.guav': require(path.resolve(outputs + '/tuple.js')),
+    'while1.guav': require(path.resolve(outputs + '/while1.js'))
 };

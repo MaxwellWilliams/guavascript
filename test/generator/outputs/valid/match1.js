@@ -1,4 +1,4 @@
-module.exports.getOutput = function() {
+module.exports.getProgram = function() {
   return `var x_1 = 4;
 (() => {
   if (x_1 === 2) {
@@ -13,4 +13,8 @@ module.exports.getOutput = function() {
     return "nope";
   }
 })()`;
+};
+
+module.exports.getOutput = function() {
+  return '';
 };

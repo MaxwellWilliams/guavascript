@@ -1,4 +1,4 @@
-module.exports.getOutput = function() {
+module.exports.getProgram = function() {
   return `class Ball_1 {
   constructor(radius_1, weight_2 = 1.0) {
     this.radius = radius_1;
@@ -8,4 +8,8 @@ module.exports.getOutput = function() {
     return true;
   }
 }`;
+};
+
+module.exports.getOutput = function() {
+  return '';
 };

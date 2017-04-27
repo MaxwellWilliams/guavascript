@@ -1,4 +1,4 @@
-module.exports.getOutput = function() {
+module.exports.getProgram = function() {
 	return `var x_1 = false;
 var y_2 = (() => {
   if (x_1 === true) {
@@ -8,4 +8,8 @@ var y_2 = (() => {
   }
 })();
 console.log(y_2);`;
+};
+
+module.exports.getOutput = function() {
+  return '';
 };

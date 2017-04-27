@@ -22,7 +22,7 @@ tests = function(validFiles, invalidFiles) {
               'Returned: ' + generator(parser(file.code)));
         });
         it('generator\\programs\\valid\\' + file.name + ' should execute correctly',
-          function() {
+          function(done) {
             exec(`node guavascript.js --js test/generator/programs/valid/${file.name} | node`,
               function(error, stdout, stderr) {
                 console.log('stdout: ', stdout);
@@ -30,6 +30,7 @@ tests = function(validFiles, invalidFiles) {
                 assert.equal(error, null);
                 assert.equal(stdout, programs[file.name].getOutput(), 'Returned: ' + stdout);
                 assert.equal(stderr, '', 'Returned: ' + stderr);
+                done();
             });
         });
       });

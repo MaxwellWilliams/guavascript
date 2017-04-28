@@ -1,4 +1,3 @@
-const parser = require('../parser.js');
 const getIndent = require('../semantics/getIndent.js');
 
 const Program = require('../entities/program.js');

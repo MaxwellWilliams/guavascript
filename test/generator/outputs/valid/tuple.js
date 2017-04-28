@@ -7,5 +7,5 @@ console.log(tuple_1);`;
 };
 
 module.exports.getOutput = function() {
-  return '';
+  return 'hi, 3, true';
 };

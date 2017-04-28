@@ -7,5 +7,5 @@ var z_1 = computeSomething_2(1, 2);`;
 };
 
 module.exports.getOutput = function() {
-  return '';
+  return '3';
 };

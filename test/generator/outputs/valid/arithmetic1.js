@@ -4,5 +4,5 @@ console.log(x_1);`
 };
 
 module.exports.getOutput = function() {
-  return '1';
+  return '31.25';
 };

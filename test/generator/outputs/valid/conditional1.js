@@ -9,5 +9,5 @@ console.log(x_1);`;
 };
 
 module.exports.getOutput = function() {
-  return '';
+  return '1';
 };

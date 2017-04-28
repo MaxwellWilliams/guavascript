@@ -3,5 +3,5 @@ module.exports.getProgram = function() {
 };
 
 module.exports.getOutput = function() {
-  return '';
+  return '1 hello, world! true 3.14';
 };

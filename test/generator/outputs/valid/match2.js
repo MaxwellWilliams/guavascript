@@ -11,5 +11,5 @@ console.log(y_2);`;
 };
 
 module.exports.getOutput = function() {
-  return '';
+  return 'lies';
 };

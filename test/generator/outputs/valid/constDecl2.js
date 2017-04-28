@@ -4,5 +4,5 @@ console.log(PI_1);`;
 };
 
 module.exports.getOutput = function() {
-  return '';
+  return '3.1415926';
 };

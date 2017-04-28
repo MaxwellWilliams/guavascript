@@ -4,5 +4,5 @@ console.log(female_1);`;
 };
 
 module.exports.getOutput = function() {
-  return '';
+  return 'true';
 };

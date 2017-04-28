@@ -5,5 +5,5 @@ console.log(pi_1);`;
 
 
 module.exports.getOutput = function() {
-  return '';
+  return '3.1415926';
 };

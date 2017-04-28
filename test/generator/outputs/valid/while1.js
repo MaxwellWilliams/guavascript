@@ -5,5 +5,5 @@ module.exports.getProgram = function() {
 };
 
 module.exports.getOutput = function() {
-  return '';
+  return 'true';
 };

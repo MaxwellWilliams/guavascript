@@ -1,1 +1,1 @@
-print(1 + "hello, world!" + true + 3.14)
+print(1 + " hello, world! " + true + " " + 3.14)

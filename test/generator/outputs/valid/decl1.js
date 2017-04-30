@@ -4,5 +4,5 @@ console.log(name_1);`;
 };
 
 module.exports.getOutput = function() {
-  return 'guav1231';
+  return `guav1231\n`;
 };

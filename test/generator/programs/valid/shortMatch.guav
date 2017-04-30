@@ -1,6 +1,6 @@
 x = 2
 
-match x with
+x = match x with
   2 -> "two"
 | _ -> ""
 

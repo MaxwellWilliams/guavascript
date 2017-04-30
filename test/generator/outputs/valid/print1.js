@@ -3,5 +3,5 @@ module.exports.getProgram = function() {
 };
 
 module.exports.getOutput = function() {
-  return 'hello, world!';
+  return `hello, world!\n`;
 };

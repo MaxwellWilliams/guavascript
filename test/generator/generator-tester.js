@@ -17,22 +17,21 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('generator\\programs\\valid\\' + file.name + ' should generate correct code',
           function() {
+            // console.log(util.inspect(parser(file.code), {depth: null}));
             parser(file.code).analyze();
             assert.equal(generator(parser(file.code)), programs[file.name].getProgram(),
               'Returned: ' + generator(parser(file.code)));
-        });/*
+        });
         it('generator\\programs\\valid\\' + file.name + ' should execute correctly',
           function(done) {
             exec(`node guavascript.js --js test/generator/programs/valid/${file.name} | node`,
               function(error, stdout, stderr) {
-                console.log('stdout: ', stdout);
-                console.log('out: ', programs[file.name].getOutput());
                 assert.equal(error, null);
                 assert.equal(stdout, programs[file.name].getOutput(), 'Returned: ' + stdout);
                 assert.equal(stderr, '', 'Returned: ' + stderr);
                 done();
             });
-        });*/
+        });
       });
     });
 
@@ -55,7 +54,7 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullOutputPath = outputs + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "funcDecl1.guav") {
+    // if(fileName == "match2.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents

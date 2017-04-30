@@ -4,5 +4,5 @@ console.log(age_1);`;
 };
 
 module.exports.getOutput = function() {
-  return '21';
+  return `21\n`;
 };

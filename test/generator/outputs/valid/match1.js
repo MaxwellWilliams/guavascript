@@ -2,19 +2,19 @@ module.exports.getProgram = function() {
   return `var x_1 = 4;
 (() => {
   if (x_1 === 2) {
-    return "two";
+    console.log("two");
   } else if (x_1 === 3) {
-    return "three";
+    console.log("three");
   } else if (x_1 === 4) {
-    return "four";
+    console.log("four");
   } else if (x_1 === 5) {
-    return "five";
+    console.log("five");
   } else {
-    return "nope";
+    console.log("nope");
   }
 })()`;
 };
 
 module.exports.getOutput = function() {
-  return 'four';
+  return `four\n`;
 };

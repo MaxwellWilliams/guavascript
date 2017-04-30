@@ -4,5 +4,5 @@ console.log(FEET_IN_METER_1);`;
 };
 
 module.exports.getOutput = function() {
-  return '3.28084';
+  return `3.28084\n`;
 };

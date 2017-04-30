@@ -7,5 +7,5 @@ multiply_1(1, 2, 4);`;
 };
 
 module.exports.getOutput = function() {
-  return "4\n2";
+  return `4\n`;
 };

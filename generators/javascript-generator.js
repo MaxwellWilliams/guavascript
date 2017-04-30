@@ -131,7 +131,7 @@ Object.assign(WhileStatement.prototype, {
   gen(indent = 0, names) {
   	var result = ``;
   	result += `while (${this.condition.gen(0, names)}) {`;
-  	result += `\n${getIndent(++indent)}${this.block.gen(0, names)}\n`;
+  	result += `\n${this.block.gen(++indent, names)}\n`;
   	result += '}';
     return result;
   }
@@ -161,7 +161,8 @@ Object.assign(AssignmentStatement.prototype, {
   	var variable = `${this.idExp.gen(0, names)}`;
   	if(variable === variable.toUpperCase()) {
   		return `${getIndent(indent)}const ${variable} ${this.assignOp} ${this.exp.gen(0, names)};`;
-  	} else if(this.idExp.gen(0, names).indexOf('.') > -1 || this.idExp.gen(0, names).indexOf('[') > -1) {
+  	} else if(this.idExp.gen(0, names).indexOf('.') > -1 || this.idExp.gen(0, names).indexOf('[') > -1 ||
+              this.assignOp === '+=' || this.assignOp === '-=' || this.assignOp === '*=' || this.assignOp === '/=') {
   		return `${this.idExp.gen(indent, names)} ${this.assignOp} ${this.exp.gen(0, names)};`;
   	} else if(this.exp.constructor === MatchExpression) {
       return `${getIndent(indent)}var ${variable} ${this.assignOp} ${this.exp.gen(indent, names)};`;
@@ -185,11 +186,11 @@ Object.assign(MatchExpression.prototype, {
       var prefix = `\n${getIndent(indent+1)}`;
     	prefix += condition === 0 ? 'if' : '} else if';
     	result += `${prefix} (${this.idExp.gen(0, names)} === ${this.matchConditions[condition].gen(0, names)}) {`;
-    	result += `\n${getIndent(indent+2)}return ${this.matchBlocks[condition].gen(0, names)};`;
+    	result += `\n${getIndent(indent+2)}${this.matchBlocks[condition].gen(0, names)}`;
     }
     if (this.catchAllMatch.length > 0) {
     	result += `\n${getIndent(++indent)}} else {`;
-    	result += `\n${getIndent(++indent)}return ${this.catchAllMatch[0].gen(0, names)};`;
+    	result += `\n${getIndent(++indent)}${this.catchAllMatch[0].gen(0, names)}`;
       result += `\n${getIndent(--indent)}}`;
       indent -= 1;
     } else {
@@ -202,7 +203,12 @@ Object.assign(MatchExpression.prototype, {
 
 Object.assign(Match.prototype, {
   gen(indent = 0, names) {
-  	return `${this.matchee.gen(0, names)}`;
+    // console.log(this.matchee.constructor);
+    if(this.matchee.constructor === Block) {
+  	  return `${this.matchee.gen(0, names)}`;
+    } else {
+      return `return ${this.matchee.gen(0, names)};`;
+    }
   }
 });
 
@@ -303,7 +309,7 @@ Object.assign(List.prototype, {
 
 Object.assign(Tuple.prototype, {
   gen(indent = 0, names) {
-  	return`(${this.values.variables.map(v => v.gen(0, names)).join(', ')})`;
+  	return`[${this.values.variables.map(v => v.gen(0, names)).join(', ')}]`;
   }
 });
 

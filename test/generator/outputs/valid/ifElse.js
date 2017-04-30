@@ -8,5 +8,5 @@ if ((x_1 === true)) {
 };
 
 module.exports.getOutput = function() {
-  return 'false';
+  return `false\n`;
 };

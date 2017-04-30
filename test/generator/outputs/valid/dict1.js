@@ -5,5 +5,5 @@ console.log(dict_1);`;
 
 
 module.exports.getOutput = function() {
-  return '{x:5, y:"Hello", z:true}';
+  return `{ x: 5, y: 'Hello', z: true }\n`;
 };

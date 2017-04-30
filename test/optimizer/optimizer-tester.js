@@ -14,9 +14,9 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('optimizer\\programs\\valid\\' +file.name + ' should be optimize',
           function() {
-            // console.log(util.inspect(optimizer(file.code).toString(), {depth: null}));
-            /*assert.equal(optimizer(file.code).toString(), optimizations[file.name],
-              'Returned: ' + grammarResult);*/
+            // console.log(util.inspect(parser(file.code).analyze().optimize(), {depth: null}));
+            assert.equal(parser(file.code).analyze().optimize(), optimizations[file.name],
+              'Returned: ' + grammarResult);
         });
       });
     });

@@ -27,17 +27,17 @@ tests = function(validFiles, invalidFiles) {
   validFiles = [];
   invalidFiles = [];
 
-  fs.readdirSync(validPrograms).forEach(function(fileName) {
-    fullProgramPath = validPrograms + '/' + fileName;
-    fullAstPath = validProgramAsts + '/' + fileName;
-    programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "match1.guav") {
-    validFiles.push({
-      name: fileName,
-      code: programFileContents
-    });
-    // }
-  });
+  // fs.readdirSync(validPrograms).forEach(function(fileName) {
+  //   fullProgramPath = validPrograms + '/' + fileName;
+  //   fullAstPath = validProgramAsts + '/' + fileName;
+  //   programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
+  //   // if(fileName == "match1.guav") {
+  //   validFiles.push({
+  //     name: fileName,
+  //     code: programFileContents
+  //   });
+  //   // }
+  // });
 
   tests(validFiles, invalidFiles);
 }());

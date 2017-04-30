@@ -14,6 +14,9 @@ module.exports = class VarList {
             this.type.push(variable.type);
         }
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         var string = `${getIndent(indent++)}(VarList`;
         if (this.variables.length !== 0) {

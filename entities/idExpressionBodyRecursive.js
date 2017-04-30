@@ -30,6 +30,9 @@ module.exports = class IdExpressionBodyRecursive {
             context.assertFunctionCalledWithValidParams(this.id, this.idExpBase.paramType, this.idAppendage.type);
         }
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.appendageOp}` +
                `\n${this.idExpBase.toString(++indent)}` +

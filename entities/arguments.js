@@ -10,6 +10,9 @@ module.exports = class Arguments {
         this.varList.analyze(context);
         this.type = this.varList.type;
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(Arguments`;
         if (this.varList.length > 0) {

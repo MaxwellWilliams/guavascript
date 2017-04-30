@@ -11,6 +11,9 @@ module.exports = class List {
         this.values.analyze(context);
         this.valueTypes = this.values.type;
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(List`;
         if (this.values.length > 0) {

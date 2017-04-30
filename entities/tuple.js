@@ -11,6 +11,9 @@ module.exports = class Tuple {
         this.values.analyze(context);
         this.valueTypes = this.values.type;
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(Tuple` +
                `\n${this.values.toString(++indent)}` +

@@ -7,6 +7,9 @@ module.exports = class IdSelector {
     analyze(context) {
         this.id = this.variable.value;
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${this.variable.toString(indent)}`;
     }

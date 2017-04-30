@@ -8,6 +8,9 @@ module.exports = class Program {
     analyze(context = new Context()) {
         this.block.analyze(context);
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(Program` +
                `\n${this.block.toString(++indent)}` +

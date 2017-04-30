@@ -13,6 +13,9 @@ module.exports = class ForInStatement {
         context.assertIsIteratable(this.iteratableObj.id);
         this.block.analyze(blockContext);
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(For id (${this.id}) in` +
                `\n${this.iteratableObj.toString(++indent)}` +

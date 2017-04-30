@@ -10,6 +10,9 @@ module.exports = class ReturnStatement {
         this.exp.analyze(context);
         this.returnType = this.exp.type;
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(Return` +
                `\n${this.exp.toString(++indent)}` +

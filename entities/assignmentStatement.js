@@ -132,6 +132,9 @@ module.exports = class AssignmentStatement {
             }
         }
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.assignOp}` +
                `\n${this.idExp.toString(++indent)}` +

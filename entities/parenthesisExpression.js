@@ -7,6 +7,9 @@ module.exports = class ParenthesisExpression {
         this.exp.analyze(context);
         this.type = this.exp.type;
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${this.exp.toString(indent)}`;
     }

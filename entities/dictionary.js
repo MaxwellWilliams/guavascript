@@ -11,6 +11,9 @@ module.exports = class Dictionary {
             this.properities[properityCounter].analyze(context);
         }
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         var string = `${getIndent(indent++)}(Dictionary`
         if (this.properities.length !== 0) {

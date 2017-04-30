@@ -6,6 +6,9 @@ module.exports = class ClassId {
         this.rest = rest;
     }
     analyze(context) {}
+    optimize() {
+        
+    }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(\n${this.className.toString()}`
         for (var char in this.rest) {

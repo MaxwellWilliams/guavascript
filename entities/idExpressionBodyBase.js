@@ -12,6 +12,9 @@ module.exports = class IdExpressionBodyBase {
         this.isFunction = variable.isFunction;
         this.paramType = variable.paramType ? variable.paramType : undefined;
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.id})`;
     }

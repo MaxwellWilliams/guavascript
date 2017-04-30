@@ -43,7 +43,9 @@ module.exports = class FunctionDeclarationStatement {
             context.setFunction(this.id, this.block.returnType, this.paramType);
         }
     }
-
+    optimize() {
+        
+    }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(Func` +
                     `\n${getIndent(++indent)}(id ${this.id})` +

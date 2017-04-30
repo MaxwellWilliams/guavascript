@@ -7,6 +7,9 @@ module.exports = class IntLit {
         this.type = TYPE.INTEGER;
     }
     analyze(context) {}
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.value})`;
     }

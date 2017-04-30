@@ -6,6 +6,9 @@ module.exports = class ConstId {
         this.rest = rest;
     }
     analyze(context) {}
+    optimize() {
+        
+    }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(\n${this.firstWord.toString()}`;
         for (var char in this.rest) {

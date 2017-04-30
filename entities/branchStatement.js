@@ -17,6 +17,9 @@ module.exports = class BranchStatement {
             this.elseBlock.analyze(context.createChildContextForBlock());
         }
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         var string = `${getIndent(indent++)}(If`;
         for (var i in this.conditions) {

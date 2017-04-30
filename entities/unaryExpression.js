@@ -18,6 +18,9 @@ module.exports = class UnaryExpression {
         }
         this.type = this.operand.type;
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.op}\n${this.operand.toString(++indent)})`;
     }

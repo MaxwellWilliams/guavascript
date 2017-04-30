@@ -12,6 +12,9 @@ module.exports = class ClassDeclarationStatement {
         this.block.analyze(newContext);
         context.assertClassHasConstructor(this.id);
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(Class` +
                `\n${getIndent(++indent)}(id ${this.id})` +

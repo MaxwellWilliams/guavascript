@@ -7,6 +7,9 @@ module.exports = class BoolLit {
         this.type = TYPE.BOOLEAN;
     }
     analyze(context) {}
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.value})`;
     }

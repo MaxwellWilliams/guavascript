@@ -5,6 +5,9 @@ module.exports = class IdVariable {
         this.value = value;
     }
     analyze(context) {}
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(\n${this.value})`;
     }

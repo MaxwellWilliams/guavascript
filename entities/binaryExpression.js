@@ -171,6 +171,9 @@ module.exports = class BinaryExpression {
             context.managePossibleTypes(this.right.id, possibleTypes)
         }
     }
+    optimize() {
+        
+    }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.op}` +
                `\n${this.left.toString(++indent)}` +

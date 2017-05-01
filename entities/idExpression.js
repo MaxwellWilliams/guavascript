@@ -24,7 +24,7 @@ module.exports = class IdExpression {
         return this;
     }
     optimize() {
-        this.idExpBody.optimize();
+        this.idExpBody = this.idExpBody.optimize();
         return this;
     }
     toString(indent = 0) {

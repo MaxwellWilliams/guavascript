@@ -6,7 +6,7 @@ module.exports = class Match {
         return this;
     }
     optimize() {
-        this.matchee.optimize();
+        this.matchee = this.matchee.optimize();
         return this;
     }
     toString(indent = 0) {

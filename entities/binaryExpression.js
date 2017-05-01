@@ -3,9 +3,9 @@ const getIndent = require('../semantics/getIndent.js');
 
 allTypePairs = [];
 for (let i in TYPE) {
-    if (TYPE.hasOwnProperty(i)) {
+    if(TYPE.hasOwnProperty(i)) {
         for (let j in TYPE) {
-            if (TYPE.hasOwnProperty(j)) {
+            if(TYPE.hasOwnProperty(j)) {
                 allTypePairs.push([i, j]);
             }
         }
@@ -33,10 +33,10 @@ module.exports = class BinaryExpression {
         this.right.analyze(context);
         let expectedTypePairs;
 
-        if (this.op === "||" || this.op === "&&") {
+        if(this.op === "||" || this.op === "&&") {
             this.type = TYPE.BOOLEAN;
             expectedTypePairs = expectedTypePairs.push([TYPE.BOOLEAN, TYPE.BOOLEAN]);
-        } else if (this.op === "+") {
+        } else if(this.op === "+") {
             expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
@@ -85,7 +85,7 @@ module.exports = class BinaryExpression {
                 pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
                 pushUndefinedAndType(expectedTypePairs, undefined);
             }
-        } else if (this.op === "*") {
+        } else if(this.op === "*") {
             expectedTypePairs = [
                 [TYPE.INTEGER, TYPE.INTEGER],
                 [TYPE.INTEGER, TYPE.FLOAT],
@@ -100,7 +100,7 @@ module.exports = class BinaryExpression {
                 pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
                 pushUndefinedAndType(expectedTypePairs, undefined);
             }
-        } else if (this.op === "//" || this.op === "%") {
+        } else if(this.op === "//" || this.op === "%") {
             if(this.op === "//") {
                 this.type = TYPE.INTEGER;
             } else if(this.left.type === TYPE.FLOAT || this.right.type === TYPE.FLOAT) {
@@ -121,7 +121,7 @@ module.exports = class BinaryExpression {
                 pushUndefinedAndType(expectedTypePairs, TYPE.FLOAT);
                 pushUndefinedAndType(expectedTypePairs, undefined);
             }
-        } else if (this.op === "==" || this.op === "!=") {
+        } else if(this.op === "==" || this.op === "!=") {
             this.type = TYPE.BOOLEAN
 
             expectedTypePairs = allTypePairs;
@@ -173,6 +173,17 @@ module.exports = class BinaryExpression {
         return this;
     }
     optimize() {
+        /*if(this.op === "+") {
+
+        } else if(this.op === "-") {
+
+        } else if(this.op === "*") {
+
+        } else if(this.op === "/") {
+            
+        } else if(this.op === "%") {
+            
+        }*/
         this.left.optimize();
         this.right.optimize();
         return this;

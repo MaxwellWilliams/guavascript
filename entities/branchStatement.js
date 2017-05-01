@@ -20,7 +20,7 @@ module.exports = class BranchStatement {
     }
     optimize() {
       for(var c = 0; c < this.conditions.length; c++) {
-        if(this.conditions[c].optimize.value) {
+        if(this.conditions[c].optimize().value) {
           return this.thenBlocks[c].optimize();
         }
       }

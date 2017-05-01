@@ -25,10 +25,18 @@ module.exports = class UnaryExpression {
     optimize() {
       if(this.op = '-' && this.type === TYPE.INTEGER) {
         return new IntLit(-this.operand.value);
+      } else if(this.op = '++' && this.type === TYPE.INTEGER) {
+        return new IntLit(++this.operand.value);
+      } else if(this.op = '--' && this.type === TYPE.INTEGER) {
+        return new IntLit(--this.operand.value);
       } else if(this.op = '-' && this.type === TYPE.FLOAT) {
-        return new FloatLit(-this.operand.value)
+        return new FloatLit(-this.operand.value);
+      } else if(this.op = '++' && this.type === TYPE.FLOAT) {
+        return new FloatLit(++this.operand.value);
+      } else if(this.op = '--' && this.type === TYPE.FLOAT) {
+        return new FloatLit(--this.operand.value);
       } else if(this.op = '!' && this.type === TYPE.BOOLEAN) {
-        return new BoolLit(!this.operand.value)
+        return new BoolLit(!this.operand.value);
       } else {
         this.operand.optimize();
         return this;

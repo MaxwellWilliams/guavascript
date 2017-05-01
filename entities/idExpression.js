@@ -7,16 +7,18 @@ module.exports = class IdExpression {
         this.idPostOp = idPostOp !== undefined ? idPostOp[0] : undefined;
         this.id;  // baseline identifier. example: x in x.doThis(3)[1].lalala
         this.type;
+        this.value;
     }
     analyze(context) {
         this.idExpBody.analyze(context);
 
         if (this.idPostOp === "++" || this.idPostOp === "--") {
-            context.assertUnaryOperandIsOneOfTypes(this.idPostOp, [TYPE.INTEGER, TYPE.FLOAT], this.idExpBody.type)
+            context.assertUnaryOperandIsOneOfTypes(this.idPostOp, [TYPE.INTEGER, TYPE.FLOAT], this.idExpBody.type);
         }
 
         this.id = this.idExpBody.id;
         this.type = this.idExpBody.type;
+        this.value = context.getId(this.id);
 
         if(this.idExpBody && this.idExpBody.appendageOp === '[]') {
             context.getPropertyFromId(this.id, this.idExpBody.idAppendage.id);

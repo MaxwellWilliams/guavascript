@@ -14,9 +14,14 @@ module.exports = class WhileStatement {
         return this;
     }
     optimize() {
-        this.condition = this.condition.optimize();
+      let conditionOptimize = this.condition.optimize();
+      if (!conditionOptimize) {
+        return ``;
+      } else {
+        this.condition = conditionOptimize;
         this.block = this.block.optimize();
         return this;
+      }
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(While` +

@@ -7,7 +7,7 @@ module.exports = class ClassDeclarationStatement {
         this.block = block;
     }
     analyze(context) {
-        context.setVariable(this.id, TYPE.CLASS);
+        context.setVariable(this.id, undefined, TYPE.CLASS);
         let newContext = context.createChildContextForClassDeclaration(this.id);
         this.block.analyze(newContext);
         context.assertClassHasConstructor(this.id);

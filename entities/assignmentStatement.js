@@ -37,18 +37,20 @@ module.exports = class AssignmentStatement {
         let expectedTypePairs;
 
         if (this.assignOp === "=") {
-            context.setVariable(this.id, this.type);
-
             if(this.type === TYPE.DICTIONARY) {
+                context.setVariable(this.id, undefined, this.type);
                 for(var properityCounter in this.exp.properities) {
                     var properity = this.exp.properities[properityCounter];
                     context.addProperityToId(this.id, { type: properity.type }, properity.id);
                 }
             } else if(this.type === TYPE.LIST || this.type === TYPE.TUPLE) {
-              for(var properityCounter in this.exp.valueTypes) {
-                  var properity = this.exp.valueTypes[properityCounter];
-                  context.addProperityToId(this.id, { type: properity.type });
-              }
+                context.setVariable(this.id, undefined, this.type);
+                for(var properityCounter in this.exp.valueTypes) {
+                    var properity = this.exp.valueTypes[properityCounter];
+                    context.addProperityToId(this.id, { type: properity.type });
+                }
+            } else {
+                context.setVariable(this.id, this.exp.value, this.type);
             }
         } else {
             if (this.assignOp === "+=") {

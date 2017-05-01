@@ -1,3 +1,5 @@
+const BinaryExpression = require('./binaryExpression.js');
+
 module.exports = class ParenthesisExpression {
     constructor(exp) {
         this.exp = exp;
@@ -9,6 +11,9 @@ module.exports = class ParenthesisExpression {
         return this;
     }
     optimize() {
+        if(this.exp.constructor === BinaryExpression) {
+            return this.exp.optimize();
+        }
         return this;
     }
     toString(indent = 0) {

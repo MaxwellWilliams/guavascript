@@ -176,6 +176,13 @@ module.exports = class BinaryExpression {
     optimize() {
         this.right = this.right.optimize();
         this.left = this.left.optimize();
+
+        // console.log('--------------------------------');
+        // console.log('right:');
+        // console.log(this.right);
+        // console.log('left:');
+        // console.log(this.left);
+
         if(this.op === "+") {
             if(Number(this.left.value) === 0) {
                 return new IntLit(Number(this.right.value));
@@ -184,13 +191,6 @@ module.exports = class BinaryExpression {
             } else {
               return new IntLit(Number(this.left.value) + Number(this.right.value));
             }
-            // if (this.left.value < 0) {
-            //     return new IntLit(this.);
-            // } else if (this.right.value < 0) {
-            //     this.right.value *= -1;
-            //     this.op = "-"
-            //     return this;
-            // }
         } else if(this.op === "-") {
             if(Number(this.left.value) === 0) {
                 return new IntLit(-Number(this.right.value));
@@ -225,10 +225,28 @@ module.exports = class BinaryExpression {
             } else {
                 return new IntLit(Number(this.left.value) / Number(this.right.value));
             }
+        } else if(this.op === "//") {
+            return new IntLit(Math.floor(Number(this.left.value) / Number(this.right.value)));
         } else if(this.op === "%") {
             return new IntLit(Number(this.left.value) % Number(this.right.value));
-        } else {
-            return this;
+        } else if(this.op === "^") {
+            return new IntLit(Math.pow(Number(this.left.value), Number(this.right.value)));
+        } else if(this.op === "&&") {
+            return new IntLit(this.left.value || this.right.value);
+        } else if(this.op === "||") {
+            return new IntLit(this.left.value && this.right.value);
+        } else if(this.op === "==") {
+            return new IntLit(Number(this.left.value) == Number(this.right.value));
+        } else if(this.op === "!=") {
+            return new IntLit(Number(this.left.value) != Number(this.right.value));
+        } else if(this.op === ">") {
+            return new IntLit(Number(this.left.value) > Number(this.right.value));
+        } else if(this.op === "<") {
+            return new IntLit(Number(this.left.value) < Number(this.right.value));
+        } else if(this.op === ">=") {
+            return new IntLit(Number(this.left.value) >= Number(this.right.value));
+        } else if(this.op === "<=") {
+            return new IntLit(Number(this.left.value) <= Number(this.right.value));
         }
     }
     toString(indent = 0) {

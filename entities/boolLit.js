@@ -3,7 +3,7 @@ const getIndent = require('../semantics/getIndent.js');
 
 module.exports = class BoolLit {
     constructor(value) {
-        this.value = value;
+        this.value = value === 'true';
         this.type = TYPE.BOOLEAN;
     }
     analyze(context) {

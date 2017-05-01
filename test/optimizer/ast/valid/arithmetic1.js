@@ -5,22 +5,7 @@ module.exports.getAst = function() {
       (IdExpression
         (x)
       )
-      (/
-        (*
-          (+
-            (2)
-            (3)
-          )
-          (^
-            (-
-              (6)
-              (1)
-            )
-            (2)
-          )
-        )
-        (4)
-      )
+      (31.25)
     )
     (Print
       (IdExpression

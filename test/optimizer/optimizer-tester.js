@@ -12,9 +12,9 @@ tests = function(validFiles, invalidFiles) {
   describe('Optimizer tests:', function() {
     describe('Test valid example programs', function() {
       validFiles.forEach(function(file) {
-        it('parser\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
+        it('parser\\programs\\valid\\' +file.name + ' should optimize properly',
           function() {
-            //console.log(util.inspect(parser(file.code), {depth: null}));
+            // console.log(util.inspect(parser(file.code), {depth: null}));
             assert.equal(parser(file.code).analyze().optimize(), optimizedPrograms[file.name].getAst(),
               'Returned: ' + parser(file.code).analyze().optimize());
         });
@@ -31,12 +31,12 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullAstPath = validProgramAsts + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    if(fileName == "conditional1.guav") {
+    // if(fileName == "arithmetic1.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
     });
-    }
+    // }
   });
 
   tests(validFiles, invalidFiles);

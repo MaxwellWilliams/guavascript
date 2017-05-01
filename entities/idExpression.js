@@ -26,7 +26,7 @@ module.exports = class IdExpression {
         return this;
     }
     optimize() {
-        console.log(this.value);
+        // console.log(this.value);
         this.idExpBody = this.idExpBody.optimize();
         return this;
     }

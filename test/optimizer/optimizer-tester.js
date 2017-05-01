@@ -31,12 +31,12 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullAstPath = validProgramAsts + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    //if(fileName == "ifElse2.guav") {
+    // if(fileName == "while1.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
     });
-   //}
+  //  }
   });
 
   tests(validFiles, invalidFiles);

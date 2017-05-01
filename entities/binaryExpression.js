@@ -186,77 +186,77 @@ module.exports = class BinaryExpression {
         // console.log(this.left);
 
         if(this.op === "+") {
-            if(Number(this.left.value) === 0) {
+            if(this.left.value === 0) {
                 if(this.right.constructor === IntLit) {
-                    return new IntLit(Number(this.right.value));
+                    return new IntLit(this.right.value);
                 } else if(this.right.constructor === FloatLit) {
-                    return new FloatLit(Number(this.right.value));
+                    return new FloatLit(this.right.value);
                 }
-            } else if (Number(this.right.value) === 0) {
+            } else if (this.right.value === 0) {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Number(this.left.value));
+                    return new IntLit(this.left.value);
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(this.left.value));
+                    return new FloatLit(this.left.value);
                 }
             } else {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Math.floor(Number(this.left.value) + Number(this.right.value)));
+                    return new IntLit(Math.floor(this.left.value + this.right.value));
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(this.left.value) + Number(this.right.value));
+                    return new FloatLit(this.left.value + this.right.value);
                 }
             }
         } else if(this.op === "-") {
-            if(Number(this.left.value) === 0) {
+            if(this.left.value === 0) {
                 if(this.right.constructor === IntLit) {
-                    return new IntLit(-Number(this.right.value));
+                    return new IntLit(-this.right.value);
                 } else if(this.right.constructor === FloatLit) {
-                    return new FloatLit(-Number(this.right.value));
+                    return new FloatLit(-this.right.value);
                 }
-            } else if (Number(this.right.value) === 0) {
+            } else if (this.right.value === 0) {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Number(this.left.value));
+                    return new IntLit(this.left.value);
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(this.left.value));
+                    return new FloatLit(this.left.value);
                 }
-            } else if (Number(this.left.value) === Number(this.right.value)) {
+            } else if (this.left.value === this.right.value) {
                 if(this.left.constructor === IntLit) {
                     return new IntLit(0);
                 } else if(this.left.constructor === FloatLit) {
                     return new FloatLit(0.0);
                 }
-            } else if (Number(this.right.value) < 0) {
+            } else if (this.right.value < 0) {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Number(this.left.value) + (-Number(this.right.value)));
+                    return new IntLit(this.left.value + (-this.right.value));
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(this.left.value) + (-Number(this.right.value)));
+                    return new FloatLit(this.left.value + (-this.right.value));
                 }
             } else {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Math.floor(Number(this.left.value) - Number(this.right.value)));
+                    return new IntLit(Math.floor(this.left.value - this.right.value));
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(this.left.value) - Number(this.right.value));
+                    return new FloatLit(this.left.value - this.right.value);
                 }
             }
         } else if(this.op === "*") {
-            if(Number(this.left.value) === 1) {
+            if(this.left.value === 1) {
                 if(this.right.constructor === IntLit) {
-                    return new IntLit(Number(this.right.value));
+                    return new IntLit(this.right.value);
                 } else if(this.right.constructor === FloatLit) {
-                    return new FloatLit(Number(this.right.value));
+                    return new FloatLit(this.right.value);
                 }
-            } else if(Number(this.right.value) === 1) {
+            } else if(this.right.value === 1) {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Number(this.left.value));
+                    return new IntLit(this.left.value);
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(this.left.value));
+                    return new FloatLit(this.left.value);
                 }
-            } else if(Number(this.right.value) === -1) {
+            } else if(this.right.value === -1) {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Number(-this.left.value));
+                    return new IntLit(-this.left.value);
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(-this.left.value));
+                    return new FloatLit(-this.left.value);
                 }
-            } else if(Number(this.left.value) === 0 || Number(this.right.value) === 0) {
+            } else if(this.left.value === 0 || this.right.value === 0) {
               if(this.left.constructor === IntLit) {
                   return new IntLit(0);
               } else if(this.left.constructor === FloatLit) {
@@ -264,25 +264,25 @@ module.exports = class BinaryExpression {
               }
             } else {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Math.floor(Number(this.left.value) * Number(this.right.value)));
+                    return new IntLit(Math.floor(this.left.value * this.right.value));
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(this.left.value) * Number(this.right.value));
+                    return new FloatLit(this.left.value * this.right.value);
                 }
             }
         } else if(this.op === "/") {
-            if(Number(this.right.value) === 1) {
+            if(this.right.value === 1) {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Number(this.left.value));
+                    return new IntLit(this.left.value);
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(this.left.value));
+                    return new FloatLit(this.left.value);
                 }
-            } else if(Number(this.right.value) === -1) {
+            } else if(this.right.value === -1) {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Number(-this.left.value));
+                    return new IntLit(-this.left.value);
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(-this.left.value));
+                    return new FloatLit(-this.left.value);
                 }
-            } else if(Number(this.left.value) === 0) {
+            } else if(this.left.value === 0) {
                 if(this.left.constructor === IntLit) {
                     return new IntLit(0);
                 } else if(this.left.constructor === FloatLit) {
@@ -290,33 +290,33 @@ module.exports = class BinaryExpression {
                 }
             } else {
                 if(this.left.constructor === IntLit) {
-                    return new IntLit(Math.floor(Number(this.left.value) / Number(this.right.value)));
+                    return new IntLit(Math.floor(this.left.value / this.right.value));
                 } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(Number(this.left.value) / Number(this.right.value));
+                    return new FloatLit(this.left.value / this.right.value);
                 }
             }
         } else if(this.op === "//") {
-            return new IntLit(Math.floor(Number(this.left.value) / Number(this.right.value)));
+            return new IntLit(Math.floor(this.left.value / this.right.value));
         } else if(this.op === "%") {
-            return new IntLit(Number(this.left.value) % Number(this.right.value));
+            return new IntLit(this.left.value % this.right.value);
         } else if(this.op === "^") {
-            return new IntLit(Math.pow(Number(this.left.value), Number(this.right.value)));
+            return new IntLit(Math.pow(this.left.value, this.right.value));
         } else if(this.op === "&&") {
             return new BoolLit(this.left.value || this.right.value);
         } else if(this.op === "||") {
             return new BoolLit(this.left.value && this.right.value);
         } else if(this.op === "==") {
-            return new BoolLit(Number(this.left.value) === Number(this.right.value));
+            return new BoolLit(this.left.value === this.right.value);
         } else if(this.op === "!=") {
-            return new BoolLit(Number(this.left.value) != Number(this.right.value));
+            return new BoolLit(this.left.value != this.right.value);
         } else if(this.op === ">") {
-            return new BoolLit(Number(this.left.value) > Number(this.right.value));
+            return new BoolLit(this.left.value > this.right.value);
         } else if(this.op === "<") {
-            return new BoolLit(Number(this.left.value) < Number(this.right.value));
+            return new BoolLit(this.left.value < this.right.value);
         } else if(this.op === ">=") {
-            return new BoolLit(Number(this.left.value) >= Number(this.right.value));
+            return new BoolLit(this.left.value >= this.right.value);
         } else if(this.op === "<=") {
-            return new BoolLit(Number(this.left.value) <= Number(this.right.value));
+            return new BoolLit(this.left.value <= this.right.value);
         } else {
             return this;
         }

@@ -3,7 +3,7 @@ const getIndent = require('../semantics/getIndent.js');
 
 module.exports = class FloatLit {
     constructor(value) {
-        this.value = value;
+        this.value = Number(value);
         this.type = TYPE.FLOAT;
     }
     analyze(context) {

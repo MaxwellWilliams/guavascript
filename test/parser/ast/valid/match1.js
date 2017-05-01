@@ -1,6 +1,12 @@
 module.exports.getAst = function() {
     return `(Program
   (Block
+    (=
+      (IdExpression
+        (x)
+      )
+      (4)
+    )
     (Match Expression
       (IdExpression
         (x)
@@ -8,23 +14,43 @@ module.exports.getAst = function() {
       (Matches
         (Match
           (2) ->
-          (two)
+          (Block
+            (Print
+              (two)
+            )
+          )
         )
         (Match
           (3) ->
-          (three)
+          (Block
+            (Print
+              (three)
+            )
+          )
         )
         (Match
           (4) ->
-          (four)
+          (Block
+            (Print
+              (four)
+            )
+          )
         )
         (Match
           (5) ->
-          (five)
+          (Block
+            (Print
+              (five)
+            )
+          )
         )
         (Match
           _ ->
-          (nope)
+          (Block
+            (Print
+              (nope)
+            )
+          )
         )
       )
     )

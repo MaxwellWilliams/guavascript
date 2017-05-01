@@ -13,6 +13,11 @@ module.exports.getAst = function() {
         )
       )
     )
+    (Print
+      (IdExpression
+        (tuple)
+      )
+    )
   )
 )`;
 }

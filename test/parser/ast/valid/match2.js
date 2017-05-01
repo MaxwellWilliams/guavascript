@@ -3,6 +3,12 @@ module.exports.getAst = function() {
   (Block
     (=
       (IdExpression
+        (x)
+      )
+      (false)
+    )
+    (=
+      (IdExpression
         (y)
       )
       (Match Expression
@@ -19,6 +25,11 @@ module.exports.getAst = function() {
             (lies)
           )
         )
+      )
+    )
+    (Print
+      (IdExpression
+        (y)
       )
     )
   )

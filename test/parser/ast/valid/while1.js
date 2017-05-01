@@ -1,14 +1,31 @@
 module.exports.getAst = function() {
     return `(Program
   (Block
+    (=
+      (IdExpression
+        (x)
+      )
+      (3)
+    )
     (While
       (Condition
-        (true)
+        (>
+          (IdExpression
+            (x)
+          )
+          (0)
+        )
       )
       (Body
         (Block
-          (Return
+          (Print
             (true)
+          )
+          (-=
+            (IdExpression
+              (x)
+            )
+            (1)
           )
         )
       )

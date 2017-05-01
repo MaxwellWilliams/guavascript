@@ -44,7 +44,7 @@ tests = function(validFiles, invalidFiles) {
 
 optimizedPrograms = {
     'arithmetic1.guav': require(path.resolve(validProgramAsts + '/arithmetic1.js')),
-    'arithmetic2.guav': require(path.resolve(validProgramAsts + '/arithmetic2.js')),
+    /*'arithmetic2.guav': require(path.resolve(validProgramAsts + '/arithmetic2.js')),
     'arithmetic3.guav': require(path.resolve(validProgramAsts + '/arithmetic3.js')),
     'arithmetic4.guav': require(path.resolve(validProgramAsts + '/arithmetic4.js')),
     'arithmetic5.guav': require(path.resolve(validProgramAsts + '/arithmetic5.js')),
@@ -56,7 +56,7 @@ optimizedPrograms = {
     'arithmetic11.guav': require(path.resolve(validProgramAsts + '/arithmetic11.js')),
     'arithmetic12.guav': require(path.resolve(validProgramAsts + '/arithmetic12.js')),
     'arithmetic13.guav': require(path.resolve(validProgramAsts + '/arithmetic13.js')),
-    'arithmetic14.guav': require(path.resolve(validProgramAsts + '/arithmetic14.js')),
+    'arithmetic14.guav': require(path.resolve(validProgramAsts + '/arithmetic14.js')),*/
     'class1.guav': require(path.resolve(validProgramAsts + '/class1.js')),
     'conditional1.guav': require(path.resolve(validProgramAsts + '/conditional1.js')),
     'constDecl1.guav': require(path.resolve(validProgramAsts + '/constDecl1.js')),

@@ -5,12 +5,14 @@ module.exports = class IdExpressionBodyBase {
         this.id = id;
         this.type = undefined;
         this.paramType = undefined;
+        this.value = undefined;
     }
     analyze(context) {                               // Dont Analyze on initial variable declarations
         let variable = context.getId(this.id);
         this.type = variable.type;
         this.isFunction = variable.isFunction;
         this.paramType = variable.paramType ? variable.paramType : undefined;
+        this.value = variable.value;
         return this;
     }
     optimize() {

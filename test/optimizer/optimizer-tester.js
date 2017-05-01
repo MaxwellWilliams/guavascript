@@ -31,12 +31,12 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullAstPath = validProgramAsts + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "arithmetic1.guav") {
+    //if(fileName == "ifElse.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
     });
-    // }
+   //}
   });
 
   tests(validFiles, invalidFiles);
@@ -71,11 +71,14 @@ optimizedPrograms = {
     'funcDecl2.guav': require(path.resolve(validProgramAsts + '/funcDecl2.js')),
     'idExp1.guav': require(path.resolve(validProgramAsts + '/idExp1.js')),
     'idExp2.guav': require(path.resolve(validProgramAsts + '/idExp2.js')),
-    'ifElse.guav': require(path.resolve(validProgramAsts + '/ifElse.js')),
+    'ifElse1.guav': require(path.resolve(validProgramAsts + '/ifElse1.js')),
+    'ifElse2.guav': require(path.resolve(validProgramAsts + '/ifElse2.js')),
     'match1.guav': require(path.resolve(validProgramAsts + '/match1.js')),
     'match2.guav': require(path.resolve(validProgramAsts + '/match2.js')),
     'print1.guav': require(path.resolve(validProgramAsts + '/print1.js')),
     'shortMatch.guav': require(path.resolve(validProgramAsts + '/shortMatch.js')),
     'tuple.guav': require(path.resolve(validProgramAsts + '/tuple.js')),
-    'while1.guav': require(path.resolve(validProgramAsts + '/while1.js'))
+    'unreachableStatement.guav': require(path.resolve(validProgramAsts + '/unreachableStatement.js')),
+    'while1.guav': require(path.resolve(validProgramAsts + '/while1.js')),
+    'whileFalseCondition.guav': require(path.resolve(validProgramAsts + '/whileFalseCondition.js'))
 };

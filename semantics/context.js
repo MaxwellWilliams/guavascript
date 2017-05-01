@@ -95,7 +95,7 @@ class Context {
         return new Context(this, this.inFunctionDelaration, true, currentClassId);
     }
 
-    setId(id, type, isFunction = false, paramType = undefined) {
+    setId(id, value, type, isFunction = false, paramType = undefined) {
         // Case 1- Updating the value of an existing variable within the current scope:
         if(id in this.idTable) {
             // Make sure the new value has the correct type (static typing):
@@ -104,6 +104,7 @@ class Context {
                (this.idTable[id].type === type)) {
                 this.idTable[id].used = true;
             } else if(type === TYPE.NULL) {
+                this.idTable[id].value = value;
                 this.idTable[id].type = type;
                 this.idTable[id].used = true;
                 this.idTable[id].isFunction = isFunction;
@@ -114,6 +115,7 @@ class Context {
                 if(type === TYPE.LIST || type === TYPE.TUPLE) {this.idTable[id].properities = [];};
             } else if(this.idTable[id].type === undefined) {
                 //Updating recently declared variable with type (AssignmentStatement)
+                this.idTable[id].value = value;
                 this.idTable[id].type = type;
                 this.idTable[id].possibleTypes = undefined;
 
@@ -127,6 +129,7 @@ class Context {
             // Case 3- Either creating a new variable or shadowing an old one:
             this.idTable[id] = {};
             this.idTable[id].used = false;
+            this.idTable[id].value = value;
             this.idTable[id].type = type;
             this.idTable[id].possibleTypes = undefined;
             this.idTable[id].isFunction = isFunction;
@@ -141,12 +144,12 @@ class Context {
         }
     }
 
-    setVariable(id, type) {
-        this.setId(id, type);
+    setVariable(id, value, type) {
+        this.setId(id, value, type);
     }
 
     setFunction(id, type, paramType) {
-        this.setId(id, type, true, paramType);
+        this.setId(id, undefined, type, true, paramType);
     }
 
     getId(id, silent = false, onlyThisContext = false) {

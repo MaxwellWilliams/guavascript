@@ -16,9 +16,9 @@ module.exports = class FunctionDeclarationStatement {
         this.parameterArray.forEach(function(parameter) {
             if (parameter.defaultValue !== null) {
                 parameter.defaultValue.analyze(context);
-                blockContext.setVariable(parameter.id, parameter.defaultValue.type);
+                blockContext.setVariable(parameter.id, parameter.defaultValue.value, parameter.defaultValue.type);
             } else {
-                blockContext.setVariable(parameter.id, undefined);
+                blockContext.setVariable(parameter.id, undefined, undefined);
             }
         });
 

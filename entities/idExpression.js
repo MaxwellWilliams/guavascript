@@ -18,7 +18,7 @@ module.exports = class IdExpression {
 
         this.id = this.idExpBody.id;
         this.type = this.idExpBody.type;
-        this.value = context.getId(this.id).value;
+        this.value = this.idExpBody.value;
 
         if(this.idExpBody && this.idExpBody.appendageOp === '[]') {
             context.getPropertyFromId(this.id, this.idExpBody.idAppendage.id);
@@ -26,7 +26,7 @@ module.exports = class IdExpression {
         return this;
     }
     optimize() {
-        // console.log(this.value);
+        console.log(this.value);
         this.idExpBody = this.idExpBody.optimize();
         return this;
     }

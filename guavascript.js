@@ -1,6 +1,3 @@
-// Largely based off of Toal's Plainscript example...
-// TODO: Add functionality with future homeworks.
-
 const argv = require('yargs')
     .usage('$0 [-a] [-s] [--js] filename')
     .boolean(['a', 's', 'js'])
@@ -25,20 +22,19 @@ node guavascript.js --js <filename> | node
     When using the '--js' option, the output code can be piped to node to be run.`
 
 const fs = require('fs');
-const path = require('path');
 const parser = require('./parser.js');
 
 fs.readFile(argv._[0], 'utf-8', (err, text) => {
-    let program = parser(text);
-    if (argv.a) {
-        console.log(program.toString());
-        return;
-    } if (argv.s | argv.js) {
-        program.analyze();
-        if(argv.js) {
-            const generator = require(`./generators/javascript-generator.js`);
-            let baseCode = generator(program);
-            console.log(baseCode);
-        }
+  const program = parser(text);
+  if (argv.a) {
+    console.log(program.toString());
+    return;
+  } if (argv.s || argv.js) {
+    program.analyze();
+    if (argv.js) {
+      const generator = require('./generators/javascript-generator.js');
+      const baseCode = generator(program);
+      console.log(baseCode);
     }
+  }
 });

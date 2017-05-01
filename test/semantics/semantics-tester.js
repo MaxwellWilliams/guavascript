@@ -1,13 +1,13 @@
-fs = require('fs');
-path = require('path');
-ohm = require('ohm-js');
-assert = require('assert');
-util = require('util');
-parser = require(path.resolve('./parser.js'));
-validPrograms = path.resolve('./test/semantics/programs/valid');
-invalidPrograms = path.resolve('./test/semantics/programs/invalid');
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
+// const util = require('util');
+const parser = require('../../parser.js');
 
-tests = function(validFiles, invalidFiles) {
+const validPrograms = path.resolve('./test/semantics/programs/valid');
+const invalidPrograms = path.resolve('./test/semantics/programs/invalid');
+
+const tests = (validFiles, invalidFiles) => {
   describe('Semantic analysis tests:', function() {
     describe('Valid example program', function() {
       validFiles.forEach(function(file) {
@@ -35,8 +35,8 @@ tests = function(validFiles, invalidFiles) {
 };
 
 (function() {
-  validFiles = [];
-  invalidFiles = [];
+  let validFiles = [];
+  let invalidFiles = [];
 
   fs.readdirSync(validPrograms).forEach(function(fileName) {
       fullProgramPath = validPrograms + '/' + fileName;

@@ -12,9 +12,10 @@ module.exports = class ForInStatement {
         this.iteratableObj.analyze(context);
         context.assertIsIteratable(this.iteratableObj.id);
         this.block.analyze(blockContext);
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(For id (${this.id}) in` +

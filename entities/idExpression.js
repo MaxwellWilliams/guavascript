@@ -21,9 +21,10 @@ module.exports = class IdExpression {
         if(this.idExpBody && this.idExpBody.appendageOp === '[]') {
             context.getPropertyFromId(this.id, this.idExpBody.idAppendage.id);
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return  `${getIndent(indent)}(IdExpression\n` +

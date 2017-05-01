@@ -9,9 +9,10 @@ module.exports = class ReturnStatement {
         context.assertInFunctionDeclaration();
         this.exp.analyze(context);
         this.returnType = this.exp.type;
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(Return` +

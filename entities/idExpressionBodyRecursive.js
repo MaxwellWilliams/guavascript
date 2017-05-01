@@ -29,9 +29,10 @@ module.exports = class IdExpressionBodyRecursive {
             this.idAppendage.analyze(context);
             context.assertFunctionCalledWithValidParams(this.id, this.idExpBase.paramType, this.idAppendage.type);
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.appendageOp}` +

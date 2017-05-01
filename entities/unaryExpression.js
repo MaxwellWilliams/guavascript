@@ -17,9 +17,10 @@ module.exports = class UnaryExpression {
             context.assertUnaryOperandIsOneOfTypes(this.op, [TYPE.BOOLEAN], this.operand.type);
         }
         this.type = this.operand.type;
+        return this;
     }
     optimize() {
-        
+       return this; 
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.op}\n${this.operand.toString(++indent)})`;

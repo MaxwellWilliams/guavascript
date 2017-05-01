@@ -23,9 +23,10 @@ module.exports = class Block {
         if(!context.inClassDelaration) {
             context.assertAllLocalVarsUsed();
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         var string = `${getIndent(indent++)}(Block`;

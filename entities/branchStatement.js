@@ -16,9 +16,10 @@ module.exports = class BranchStatement {
         if (this.elseBlock !== null) {
             this.elseBlock.analyze(context.createChildContextForBlock());
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         var string = `${getIndent(indent++)}(If`;

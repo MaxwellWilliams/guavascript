@@ -5,9 +5,11 @@ module.exports = class PeriodId {
         this.id = id;
         this.op = "."
     }
-    analyze(context) {}
+    analyze(context) {
+        return this;
+    }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.id.toString(++indent)})`;

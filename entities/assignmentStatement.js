@@ -131,9 +131,10 @@ module.exports = class AssignmentStatement {
                 context.managePossibleTypes(this.exp.idExpBody.id, possibleTypes);
             }
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.assignOp}` +

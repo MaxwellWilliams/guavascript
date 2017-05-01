@@ -6,9 +6,11 @@ module.exports = class NullLit {
         this.type = TYPE.NULL
         this.value = null;
     }
-    analyze(context) {}
+    analyze(context) {
+        return this;
+    }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(null)`;

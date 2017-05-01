@@ -33,9 +33,10 @@ module.exports = class MatchExpression {
                 context.assertMatchHasCatchAll(this.catchAllMatch);
             }
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(Match Expression` +

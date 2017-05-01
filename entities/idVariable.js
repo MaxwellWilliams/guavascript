@@ -4,9 +4,11 @@ module.exports = class IdVariable {
     constructor(value) {
         this.value = value;
     }
-    analyze(context) {}
+    analyze(context) {
+        return this;
+    }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(\n${this.value})`;

@@ -2,9 +2,11 @@ module.exports = class Match {
     constructor(matchee) {
         this.matchee = matchee;
     }
-    analyze(context) {}
+    analyze(context) {
+        return this;
+    }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${this.matchee.toString(indent)}`;

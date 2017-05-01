@@ -13,9 +13,10 @@ module.exports = class VarList {
             variable.analyze(context);
             this.type.push(variable.type);
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         var string = `${getIndent(indent++)}(VarList`;

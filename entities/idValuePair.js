@@ -7,9 +7,10 @@ module.exports = class IdValuePair {
     }
     analyze(context) {
         this.type = this.variable.type;
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.id} : ${this.variable.toString()})`;

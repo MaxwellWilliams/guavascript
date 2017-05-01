@@ -6,9 +6,10 @@ module.exports = class PrintStatement {
     }
     analyze(context) {
         this.exp.analyze(context);
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(Print` +

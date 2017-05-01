@@ -5,9 +5,11 @@ module.exports = class ConstId {
         this.words = firstWord;
         this.rest = rest;
     }
-    analyze(context) {}
+    analyze(context) {
+        return this;
+    }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(\n${this.firstWord.toString()}`;

@@ -1,5 +1,7 @@
+x = false
+
 if (x == true) {
-    ret true
+    print("true")
 } else {
-    ret false
+    print("false")
 }

@@ -17,7 +17,7 @@ tests = function(validFiles, invalidFiles) {
           function() {
             // console.log(util.inspect(parser(file.code).toString(), {depth: null}));
             assert.equal(parser(file.code).toString(), asts[file.name],
-              'Returned: ' + grammarResult);
+              'Returned: ' + parser(file.code).toString());
         });
       });
     });

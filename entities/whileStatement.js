@@ -11,9 +11,10 @@ module.exports = class WhileStatement {
         this.condition.analyze(context);
         context.assertTypesAreEqual(this.condition.type, TYPE.BOOLEAN);
         this.block.analyze(blockContext);
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(While` +

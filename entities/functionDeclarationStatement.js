@@ -42,9 +42,10 @@ module.exports = class FunctionDeclarationStatement {
         } else {
             context.setFunction(this.id, this.block.returnType, this.paramType);
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(Func` +

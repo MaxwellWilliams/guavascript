@@ -10,9 +10,10 @@ module.exports = class List {
     analyze(context) {
         this.values.analyze(context);
         this.valueTypes = this.values.type;
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(List`;

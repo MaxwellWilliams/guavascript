@@ -10,9 +10,10 @@ module.exports = class Dictionary {
         for(var properityCounter in this.properities) {
             this.properities[properityCounter].analyze(context);
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         var string = `${getIndent(indent++)}(Dictionary`

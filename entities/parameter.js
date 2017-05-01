@@ -11,9 +11,10 @@ module.exports = class Parameter {
             this.defaultValue.analyze(context);
             this.type = this.defaultValue.type;
         }
+        return this;
     }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         var string = `${getIndent(indent)}(id ${this.id}`;

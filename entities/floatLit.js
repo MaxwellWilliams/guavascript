@@ -6,9 +6,11 @@ module.exports = class FloatLit {
         this.value = value;
         this.type = TYPE.FLOAT;
     }
-    analyze(context) {}
+    analyze(context) {
+        return this;
+    }
     optimize() {
-        
+        return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.value})`;

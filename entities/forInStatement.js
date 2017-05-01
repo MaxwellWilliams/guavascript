@@ -15,7 +15,7 @@ module.exports = class ForInStatement {
         return this;
     }
     optimize() {
-        this.block.optimize();
+        this.block = this.block.optimize();
         return this;
     }
     toString(indent = 0) {

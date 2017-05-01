@@ -36,7 +36,7 @@ module.exports = class MatchExpression {
         return this;
     }
     optimize() {
-        this.idExp.optimize();
+        this.idExp = this.idExp.optimize();
         this.matchConditions.map(m => m.optimize());
         this.matchBlocks.map(m => m.optimize());
         return this;

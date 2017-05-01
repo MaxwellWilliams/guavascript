@@ -1,3 +1,17 @@
 module.exports.getAst = function() {
-    return ``;
+    return `(Program
+  (Block
+    (=
+      (IdExpression
+        (x)
+      )
+      (14)
+    )
+    (Print
+      (IdExpression
+        (x)
+      )
+    )
+  )
+)`;
 };

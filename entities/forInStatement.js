@@ -15,8 +15,12 @@ module.exports = class ForInStatement {
         return this;
     }
     optimize() {
-        this.block = this.block.optimize();
-        return this;
+        if (this.iteratableObj.value === {} || this.iteratableObj.value === []) {
+            return ``;
+        } else {
+            this.block = this.block.optimize();
+            return this;
+        }
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(For id (${this.id}) in` +

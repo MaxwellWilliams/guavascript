@@ -5,7 +5,12 @@ module.exports.getAst = function() {
       (IdExpression
         (name)
       )
-      (guav1231\\\")
+      (guav1231)
+    )
+    (Print
+      (IdExpression
+        (name)
+      )
     )
   )
 )`;

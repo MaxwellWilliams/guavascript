@@ -7,6 +7,11 @@ module.exports.getAst = function() {
       )
       (3.1415926)
     )
+    (Print
+      (IdExpression
+        (pi)
+      )
+    )
   )
 )`;
 }

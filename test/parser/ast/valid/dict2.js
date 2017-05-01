@@ -7,6 +7,11 @@ module.exports.getAst = function() {
       )
       (Dictionary)
     )
+    (Print
+      (IdExpression
+        (dict)
+      )
+    )
   )
 )`;
 }

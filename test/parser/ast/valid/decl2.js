@@ -7,6 +7,11 @@ module.exports.getAst = function() {
       )
       (21)
     )
+    (Print
+      (IdExpression
+        (age)
+      )
+    )
   )
 )`;
 }

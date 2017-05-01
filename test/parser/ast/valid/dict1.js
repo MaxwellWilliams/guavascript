@@ -11,6 +11,11 @@ module.exports.getAst = function() {
         (z : (true))
       )
     )
+    (Print
+      (IdExpression
+        (dict)
+      )
+    )
   )
 )`;
 }

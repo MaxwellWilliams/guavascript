@@ -9,6 +9,11 @@ module.exports.getAst = function() {
         (id z, default (4))
       )
       (Block
+        (Print
+          (IdExpression
+            (z)
+          )
+        )
         (Return
           (*
             (IdExpression
@@ -17,6 +22,18 @@ module.exports.getAst = function() {
             (IdExpression
               (y)
             )
+          )
+        )
+      )
+    )
+    (IdExpression
+      (()
+        (multiply)
+        (Arguments
+          (VarList
+            (1)
+            (2)
+            (4)
           )
         )
       )

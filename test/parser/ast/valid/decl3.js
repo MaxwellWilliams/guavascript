@@ -7,6 +7,11 @@ module.exports.getAst = function() {
       )
       (true)
     )
+    (Print
+      (IdExpression
+        (female)
+      )
+    )
   )
 )`;
 }

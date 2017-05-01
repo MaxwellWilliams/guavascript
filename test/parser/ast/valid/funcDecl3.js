@@ -29,6 +29,17 @@ module.exports.getAst = function() {
         )
       )
     )
+    (IdExpression
+      (()
+        (computeSomething)
+        (Arguments
+          (VarList
+            (1)
+            (2)
+          )
+        )
+      )
+    )
   )
 )`;
 }

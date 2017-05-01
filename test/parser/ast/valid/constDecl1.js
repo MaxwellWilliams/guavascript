@@ -7,6 +7,11 @@ module.exports.getAst = function() {
       )
       (3.28084)
     )
+    (Print
+      (IdExpression
+        (FEET_IN_METER)
+      )
+    )
   )
 )`;
 };

@@ -5,7 +5,7 @@ module.exports.getAst = function() {
       (id Ball)
       (Block
         (Func
-          (id Ball)
+          (id constructor)
           (Parameters
             (id radius)
             (id weight, default (1.0))

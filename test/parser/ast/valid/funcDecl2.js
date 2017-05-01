@@ -3,74 +3,50 @@ module.exports.getAst = function() {
   (Block
     (=
       (IdExpression
-        (numbers)
+        (z)
       )
-      (List
-        (VarList
-          (1)
-          (2)
-          (3)
-          (4)
-          (5)
-          (6)
+      (1)
+    )
+    (Func
+      (id computeSomething)
+      (Parameters
+        (id x, default (0))
+        (id y, default (0))
+      )
+      (Block
+        (Return
+          (+
+            (IdExpression
+              (x)
+            )
+            (IdExpression
+              (y)
+            )
+          )
         )
       )
     )
     (=
       (IdExpression
-        (list)
+        (newValue)
       )
-      (List)
-    )
-    (Func
-      (id count_by_two)
-      (Parameters)
-      (Block
-        (=
-          (IdExpression
-            (result)
-          )
-          (0)
-        )
-        (For id (i) in
-          (IdExpression
-            (numbers)
-          )
-          (Block
-            (If
-              (Case
-                (Condition
-                  (==
-                    (%
-                      (IdExpression
-                        (i)
-                      )
-                      (2)
-                    )
-                    (0)
-                  )
-                )
-                (Body
-                  (Block
-                    (+=
-                      (IdExpression
-                        (result)
-                      )
-                      (IdExpression
-                        (i)
-                      )
-                    )
-                  )
-                )
+      (IdExpression
+        (()
+          (computeSomething)
+          (Arguments
+            (VarList
+              (IdExpression
+                (z)
               )
+              (2)
             )
           )
         )
-        (Return
-          (IdExpression
-            (result)
-          )
-        )
+      )
+    )
+    (Print
+      (IdExpression
+        (newValue)
       )
     )
   )

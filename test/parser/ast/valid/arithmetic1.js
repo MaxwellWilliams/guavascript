@@ -22,6 +22,11 @@ module.exports.getAst = function() {
         (4)
       )
     )
+    (Print
+      (IdExpression
+        (x)
+      )
+    )
   )
 )`;
 };

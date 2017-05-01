@@ -97,8 +97,7 @@ const semantics = grammar.createSemantics().addOperation('ast', {
       idExp.ast(),
       [var1.ast()].concat(varArray.ast()),
       [match1.ast()].concat(matchArray.ast()),
-      matchFinal.ast(),
-    );
+      matchFinal.ast());
   },
   Match(arrow, matchee) { return new Match(matchee.ast()); },
   Param(id, equals, variable) { return new Parameter(id.sourceString, unpack(variable)); },

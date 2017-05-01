@@ -16,7 +16,7 @@ tests = function(validFiles, invalidFiles) {
           function() {
             console.log(util.inspect(parser(file.code), {depth: null}));
             assert.equal(parser(file.code).analyze().optimize(), optimizedPrograms[file.name].getAst(),
-              'Returned: ' + parser(file.code).toString());
+              'Returned: ' + parser(file.code).analyze().optimize());
         });
       });
     });

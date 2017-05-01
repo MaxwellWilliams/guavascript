@@ -141,7 +141,6 @@ module.exports = class AssignmentStatement {
         return this;
     }
     toString(indent = 0) {
-        console.log(this.exp);
         return `${getIndent(indent)}(${this.assignOp}` +
                `\n${this.idExp.toString(++indent)}` +
                `\n${this.exp.toString(indent)}` +

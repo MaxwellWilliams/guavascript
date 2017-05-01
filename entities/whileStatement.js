@@ -15,10 +15,9 @@ module.exports = class WhileStatement {
     }
     optimize() {
       let conditionOptimize = this.condition.optimize();
-      if (!conditionOptimize) {
-        return ``;
+      if (!conditionOptimize.value) {
+        return null;
       } else {
-        this.condition = conditionOptimize;
         this.block = this.block.optimize();
         return this;
       }

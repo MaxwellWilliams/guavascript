@@ -1,3 +1,6 @@
-ret "Hello"
-x = 2
-print(x)
+test () {
+  ret "Hello"
+  print("Unreachable!")
+}
+
+test()

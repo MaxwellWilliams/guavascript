@@ -7,30 +7,9 @@ module.exports.getAst = function() {
       )
       (false)
     )
-    (If
-      (Case
-        (Condition
-          (==
-            (IdExpression
-              (x)
-            )
-            (true)
-          )
-        )
-        (Body
-          (Block
-            (Print
-              (true)
-            )
-          )
-        )
-      )
-      (Else
-        (Block
-          (Print
-            (false)
-          )
-        )
+    (Block
+      (Print
+        (false)
       )
     )
   )

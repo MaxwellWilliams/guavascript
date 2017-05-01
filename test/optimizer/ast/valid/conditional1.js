@@ -7,33 +7,11 @@ module.exports.getAst = function() {
       )
       (2)
     )
-    (If
-      (Case
-        (Condition
-          (==
-            (IdExpression
-              (x)
-            )
-            (2)
-          )
-        )
-        (Body
-          (-=
-            (IdExpression
-              (x)
-            )
-            (1)
-          )
-        )
+    (-=
+      (IdExpression
+        (x)
       )
-      (Else
-        (+=
-          (IdExpression
-            (x)
-          )
-          (1)
-        )
-      )
+      (1)
     )
     (Print
       (IdExpression

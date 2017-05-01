@@ -15,8 +15,8 @@ tests = function(validFiles, invalidFiles) {
         it('parser\\programs\\valid\\' +file.name + ' should optimize properly',
           function() {
             // console.log(util.inspect(parser(file.code), {depth: null}));
-            assert.equal(parser(file.code).analyze().optimize(), optimizedPrograms[file.name].getAst(),
-              'Returned: ' + parser(file.code).analyze().optimize());
+            assert.equal(parser(file.code).analyze().optimize().toString(), optimizedPrograms[file.name].getAst(),
+              'Returned: ' + parser(file.code).analyze().optimize().toString());
         });
       });
     });

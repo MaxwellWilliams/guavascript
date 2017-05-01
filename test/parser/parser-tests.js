@@ -16,7 +16,7 @@ tests = function(validFiles, invalidFiles) {
         it('parser\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
           function() {
             // console.log(util.inspect(parser(file.code), {depth: null}));
-            assert.equal(parser(file.code).toString(), asts[file.name],
+            assert.equal(parser(file.code).toString(), parserPrograms[file.name].getAst(),
               'Returned: ' + parser(file.code).toString());
         });
       });
@@ -63,31 +63,31 @@ tests = function(validFiles, invalidFiles) {
   tests(validFiles, invalidFiles);
 }());
 
-asts = {
-    'arithmetic1.guav': require(path.resolve(validProgramAsts + '/arithmetic1.js')).getAst(),
-    'arithmetic2.guav': require(path.resolve(validProgramAsts + '/arithmetic2.js')).getAst(),
-    'class1.guav': require(path.resolve(validProgramAsts + '/class1.js')).getAst(),
-    'conditional1.guav': require(path.resolve(validProgramAsts + '/conditional1.js')).getAst(),
-    'constDecl1.guav': require(path.resolve(validProgramAsts + '/constDecl1.js')).getAst(),
-    'constDecl2.guav': require(path.resolve(validProgramAsts + '/constDecl2.js')).getAst(),
-    'decl1.guav': require(path.resolve(validProgramAsts + '/decl1.js')).getAst(),
-    'decl2.guav': require(path.resolve(validProgramAsts + '/decl2.js')).getAst(),
-    'decl3.guav': require(path.resolve(validProgramAsts + '/decl3.js')).getAst(),
-    'decl4.guav': require(path.resolve(validProgramAsts + '/decl4.js')).getAst(),
-    'dict1.guav': require(path.resolve(validProgramAsts + '/dict1.js')).getAst(),
-    'dict2.guav': require(path.resolve(validProgramAsts + '/dict2.js')).getAst(),
-    'funcDecl1.guav': require(path.resolve(validProgramAsts + '/funcDecl1.js')).getAst(),
-    'funcDecl2.guav': require(path.resolve(validProgramAsts + '/funcDecl2.js')).getAst(),
-    'funcDecl3.guav': require(path.resolve(validProgramAsts + '/funcDecl3.js')).getAst(),
-    'idExp1.guav': require(path.resolve(validProgramAsts + '/idExp1.js')).getAst(),
-    'idExp2.guav': require(path.resolve(validProgramAsts + '/idExp2.js')).getAst(),
-    'idExp3.guav': require(path.resolve(validProgramAsts + '/idExp3.js')).getAst(),
-    'ifElse.guav': require(path.resolve(validProgramAsts + '/ifElse.js')).getAst(),
-    'match1.guav': require(path.resolve(validProgramAsts + '/match1.js')).getAst(),
-    'match2.guav': require(path.resolve(validProgramAsts + '/match2.js')).getAst(),
-    'print1.guav': require(path.resolve(validProgramAsts + '/print1.js')).getAst(),
-    'shortMatch.guav': require(path.resolve(validProgramAsts + '/shortMatch.js')).getAst(),
-    'tuple.guav': require(path.resolve(validProgramAsts + '/tuple.js')).getAst(),
-    'while1.guav': require(path.resolve(validProgramAsts + '/while1.js')).getAst(),
-    'bigProgram.guav': require(path.resolve(validProgramAsts + '/bigProgram.js')).getAst()
+parserPrograms = {
+    'arithmetic1.guav': require(path.resolve(validProgramAsts + '/arithmetic1.js')),
+    'arithmetic2.guav': require(path.resolve(validProgramAsts + '/arithmetic2.js')),
+    'class1.guav': require(path.resolve(validProgramAsts + '/class1.js')),
+    'conditional1.guav': require(path.resolve(validProgramAsts + '/conditional1.js')),
+    'constDecl1.guav': require(path.resolve(validProgramAsts + '/constDecl1.js')),
+    'constDecl2.guav': require(path.resolve(validProgramAsts + '/constDecl2.js')),
+    'decl1.guav': require(path.resolve(validProgramAsts + '/decl1.js')),
+    'decl2.guav': require(path.resolve(validProgramAsts + '/decl2.js')),
+    'decl3.guav': require(path.resolve(validProgramAsts + '/decl3.js')),
+    'decl4.guav': require(path.resolve(validProgramAsts + '/decl4.js')),
+    'dict1.guav': require(path.resolve(validProgramAsts + '/dict1.js')),
+    'dict2.guav': require(path.resolve(validProgramAsts + '/dict2.js')),
+    'funcDecl1.guav': require(path.resolve(validProgramAsts + '/funcDecl1.js')),
+    'funcDecl2.guav': require(path.resolve(validProgramAsts + '/funcDecl2.js')),
+    'funcDecl3.guav': require(path.resolve(validProgramAsts + '/funcDecl3.js')),
+    'idExp1.guav': require(path.resolve(validProgramAsts + '/idExp1.js')),
+    'idExp2.guav': require(path.resolve(validProgramAsts + '/idExp2.js')),
+    'idExp3.guav': require(path.resolve(validProgramAsts + '/idExp3.js')),
+    'ifElse.guav': require(path.resolve(validProgramAsts + '/ifElse.js')),
+    'match1.guav': require(path.resolve(validProgramAsts + '/match1.js')),
+    'match2.guav': require(path.resolve(validProgramAsts + '/match2.js')),
+    'print1.guav': require(path.resolve(validProgramAsts + '/print1.js')),
+    'shortMatch.guav': require(path.resolve(validProgramAsts + '/shortMatch.js')),
+    'tuple.guav': require(path.resolve(validProgramAsts + '/tuple.js')),
+    'while1.guav': require(path.resolve(validProgramAsts + '/while1.js')),
+    'bigProgram.guav': require(path.resolve(validProgramAsts + '/bigProgram.js'))
 };

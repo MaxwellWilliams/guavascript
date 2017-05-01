@@ -15,7 +15,7 @@ tests = function(validFiles, invalidFiles) {
         it('parser\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
           function() {
             // console.log(util.inspect(parser(file.code), {depth: null}));
-            assert.equal(parser(file.code).analyze().optimize(), programs[file.name].getAst(),
+            assert.equal(parser(file.code).analyze().optimize(), optimizedPrograms[file.name].getAst(),
               'Returned: ' + parser(file.code).toString());
         });
       });
@@ -42,7 +42,7 @@ tests = function(validFiles, invalidFiles) {
   tests(validFiles, invalidFiles);
 }());
 
-programs = {
+optimizedPrograms = {
     'arithmetic1.guav': require(path.resolve(validProgramAsts + '/arithmetic1.js')),
     'arithmetic2.guav': require(path.resolve(validProgramAsts + '/arithmetic2.js')),
     'class1.guav': require(path.resolve(validProgramAsts + '/class1.js')),

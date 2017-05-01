@@ -211,7 +211,6 @@ module.exports = class BinaryExpression {
                 } else if(this.left.constructor === FloatLit) {
                     return new FloatLit(this.left.value + this.right.value);
                 }
-                // need to do something to check if string
             }
         } else if(this.op === "-" && valuesDefined()) {
             if(this.left.value === 0) {

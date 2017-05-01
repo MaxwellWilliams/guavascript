@@ -9,7 +9,7 @@ module.exports = class PrintStatement {
         return this;
     }
     optimize() {
-        this.exp = this.exp.optimize();
+        // do we need to optimize print statement?
         return this;
     }
     toString(indent = 0) {

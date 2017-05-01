@@ -1,8 +1,8 @@
 const TYPE = require('../semantics/types.js');
 const getIndent = require('../semantics/getIndent.js');
-const IntLit = require('./entities/intLit.js');
-const FloatLit = require('./entities/floatLit.js');
-const BoolLit = require('./entities/boolLit.js');
+const IntLit = require('./intLit.js');
+const FloatLit = require('./floatLit.js');
+const BoolLit = require('./boolLit.js');
 
 module.exports = class UnaryExpression {
     constructor(op, operand) {
@@ -30,6 +30,7 @@ module.exports = class UnaryExpression {
       } else if(this.op = '!' && this.type === TYPE.BOOLEAN) {
         return new BoolLit(!this.operand.value)
       } else {
+        this.operand.optimize();
         return this;
       }
     }

@@ -32,6 +32,7 @@ module.exports = class IdExpressionBodyRecursive {
         return this;
     }
     optimize() {
+        this.idExpBase.optimize();
         return this;
     }
     toString(indent = 0) {

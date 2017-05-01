@@ -173,6 +173,8 @@ module.exports = class BinaryExpression {
         return this;
     }
     optimize() {
+        this.left.optimize();
+        this.right.optimize();
         return this;
     }
     toString(indent = 0) {

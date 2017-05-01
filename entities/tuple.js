@@ -13,6 +13,10 @@ module.exports = class Tuple {
         return this;
     }
     optimize() {
+        // why isn't values recognized as an array like list?
+        // this.values.map(v => v.optimize());
+
+        this.values.optimize();
         return this;
     }
     toString(indent = 0) {

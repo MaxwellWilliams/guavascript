@@ -26,6 +26,7 @@ module.exports = class Block {
         return this;
     }
     optimize() {
+        this.body.map(b => b.optimize());
         return this;
     }
     toString(indent = 0) {

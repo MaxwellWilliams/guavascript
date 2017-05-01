@@ -14,6 +14,7 @@ module.exports = class ClassDeclarationStatement {
         return this;
     }
     optimize() {
+        this.block.optimize();
         return this;
     }
     toString(indent = 0) {

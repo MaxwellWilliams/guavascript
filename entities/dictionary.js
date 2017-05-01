@@ -13,6 +13,7 @@ module.exports = class Dictionary {
         return this;
     }
     optimize() {
+        this.properities.map(p => p.optimize());
         return this;
     }
     toString(indent = 0) {

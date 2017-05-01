@@ -12,6 +12,7 @@ module.exports = class ReturnStatement {
         return this;
     }
     optimize() {
+        this.exp.optimize();
         return this;
     }
     toString(indent = 0) {

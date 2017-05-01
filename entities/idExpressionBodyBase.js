@@ -13,11 +13,6 @@ module.exports = class IdExpressionBodyBase {
         this.isFunction = variable.isFunction;
         this.paramType = variable.paramType ? variable.paramType : undefined;
         this.value = variable.value;
-        console.log('---------------');
-        console.log(this.id);
-        console.log(variable);
-        console.log(this.value);
-        console.log('---------------');
         return this;
     }
     optimize() {

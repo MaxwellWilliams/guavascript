@@ -36,7 +36,7 @@ tests = function(validFiles, invalidFiles) {
       name: fileName,
       code: programFileContents
     });
-  //  }
+   // }
   });
 
   tests(validFiles, invalidFiles);

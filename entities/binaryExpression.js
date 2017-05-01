@@ -178,14 +178,21 @@ module.exports = class BinaryExpression {
     optimize() {
         this.right = this.right.optimize();
         this.left = this.left.optimize();
+        var valuesDefined = () => {
+            return typeof this.left.value !== 'undefined' && typeof this.right.value !== 'undefined';
+        }
 
         // console.log('--------------------------------');
         // console.log('right:');
         // console.log(this.right);
         // console.log('left:');
         // console.log(this.left);
+        // console.log(this.left.value);
+        // console.log(this.right.value);
+        // console.log(this.op);
+        // console.log(valuesDefined());
 
-        if(this.op === "+") {
+        if(this.op === "+" && valuesDefined()) {
             if(this.left.value === 0) {
                 if(this.right.constructor === IntLit) {
                     return new IntLit(this.right.value);
@@ -204,8 +211,9 @@ module.exports = class BinaryExpression {
                 } else if(this.left.constructor === FloatLit) {
                     return new FloatLit(this.left.value + this.right.value);
                 }
+                // need to do something to check if string
             }
-        } else if(this.op === "-") {
+        } else if(this.op === "-" && valuesDefined()) {
             if(this.left.value === 0) {
                 if(this.right.constructor === IntLit) {
                     return new IntLit(-this.right.value);
@@ -237,7 +245,7 @@ module.exports = class BinaryExpression {
                     return new FloatLit(this.left.value - this.right.value);
                 }
             }
-        } else if(this.op === "*") {
+        } else if(this.op === "*" && valuesDefined()) {
             if(this.left.value === 1) {
                 if(this.right.constructor === IntLit) {
                     return new IntLit(this.right.value);
@@ -269,7 +277,7 @@ module.exports = class BinaryExpression {
                     return new FloatLit(this.left.value * this.right.value);
                 }
             }
-        } else if(this.op === "/") {
+        } else if(this.op === "/" && valuesDefined()) {
             if(this.right.value === 1) {
                 if(this.left.constructor === IntLit) {
                     return new IntLit(this.left.value);
@@ -289,33 +297,34 @@ module.exports = class BinaryExpression {
                     return new FloatLit(0.0);
                 }
             } else {
-                if(this.left.constructor === IntLit) {
-                    return new IntLit(Math.floor(this.left.value / this.right.value));
-                } else if(this.left.constructor === FloatLit) {
-                    return new FloatLit(this.left.value / this.right.value);
+                var result = this.left.value / this.right.value;
+                if(result % 1 === 0) {
+                    return new IntLit(result);
+                } else {
+                    return new FloatLit(result);
                 }
             }
-        } else if(this.op === "//") {
+        } else if(this.op === "//" && valuesDefined()) {
             return new IntLit(Math.floor(this.left.value / this.right.value));
-        } else if(this.op === "%") {
+        } else if(this.op === "%" && valuesDefined()) {
             return new IntLit(this.left.value % this.right.value);
-        } else if(this.op === "^") {
+        } else if(this.op === "^" && valuesDefined()) {
             return new IntLit(Math.pow(this.left.value, this.right.value));
-        } else if(this.op === "&&") {
+        } else if(this.op === "&&" && valuesDefined()) {
             return new BoolLit(this.left.value || this.right.value);
-        } else if(this.op === "||") {
-            return new BoolLit(this.left.value && this.right.value);
-        } else if(this.op === "==") {
+        } else if(this.op === "||" && valuesDefined()) {
+            return new BoolLit(valuesDefined());
+        } else if(this.op === "==" && valuesDefined()) {
             return new BoolLit(this.left.value === this.right.value);
-        } else if(this.op === "!=") {
+        } else if(this.op === "!=" && valuesDefined()) {
             return new BoolLit(this.left.value != this.right.value);
-        } else if(this.op === ">") {
+        } else if(this.op === ">" && valuesDefined()) {
             return new BoolLit(this.left.value > this.right.value);
-        } else if(this.op === "<") {
+        } else if(this.op === "<" && valuesDefined()) {
             return new BoolLit(this.left.value < this.right.value);
-        } else if(this.op === ">=") {
+        } else if(this.op === ">=" && valuesDefined()) {
             return new BoolLit(this.left.value >= this.right.value);
-        } else if(this.op === "<=") {
+        } else if(this.op === "<=" && valuesDefined()) {
             return new BoolLit(this.left.value <= this.right.value);
         } else {
             return this;

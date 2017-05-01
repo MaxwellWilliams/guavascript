@@ -1,6 +1,6 @@
 z = 1
 computeSomething (x = 0, y = 0) {
-   ret(x + y)
+   ret x + y
 }
 
 newValue = computeSomething(z, 2)

@@ -53,7 +53,7 @@ module.exports = class MatchExpression {
         if (this.catchAllMatch.length > 0) {
           string += `\n${getIndent(indent)}(Match` +
                     `\n${getIndent(++indent)}_ ->` +
-                    `\n${getIndent(indent)}${this.catchAllMatch.toString(indent)}` +
+                    `\n${this.catchAllMatch[0].toString(indent)}` +
                     `\n${getIndent(--indent)})`;
         }
         string += `\n${getIndent(--indent)})` +

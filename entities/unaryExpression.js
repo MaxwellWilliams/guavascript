@@ -1,5 +1,8 @@
 const TYPE = require('../semantics/types.js');
 const getIndent = require('../semantics/getIndent.js');
+const IntLit = require('./entities/intLit.js');
+const FloatLit = require('./entities/floatLit.js');
+const BoolLit = require('./entities/boolLit.js');
 
 module.exports = class UnaryExpression {
     constructor(op, operand) {
@@ -20,7 +23,15 @@ module.exports = class UnaryExpression {
         return this;
     }
     optimize() {
-       return this; 
+      if(this.op = '-' && this.type === TYPE.INTEGER) {
+        return new IntLit(-this.operand.value);
+      } else if(this.op = '-' && this.type === TYPE.FLOAT) {
+        return new FloatLit(-this.operand.value)
+      } else if(this.op = '!' && this.type === TYPE.BOOLEAN) {
+        return new BoolLit(!this.operand.value)
+      } else {
+        return this;
+      }
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.op}\n${this.operand.toString(++indent)})`;

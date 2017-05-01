@@ -14,7 +14,7 @@ tests = function(validFiles, invalidFiles) {
       validFiles.forEach(function(file) {
         it('parser\\programs\\valid\\' +file.name + ' should be accepted by the grammar',
           function() {
-            // console.log(util.inspect(parser(file.code), {depth: null}));
+            console.log(util.inspect(parser(file.code), {depth: null}));
             assert.equal(parser(file.code).analyze().optimize(), optimizedPrograms[file.name].getAst(),
               'Returned: ' + parser(file.code).toString());
         });
@@ -31,12 +31,12 @@ tests = function(validFiles, invalidFiles) {
     fullProgramPath = validPrograms + '/' + fileName;
     fullAstPath = validProgramAsts + '/' + fileName;
     programFileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-    // if(fileName == "match1.guav") {
+    if(fileName == "while1.guav") {
     validFiles.push({
       name: fileName,
       code: programFileContents
     });
-    // }
+    }
   });
 
   tests(validFiles, invalidFiles);

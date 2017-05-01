@@ -3,18 +3,19 @@ module.exports.getAst = function() {
   (Block
     (=
       (IdExpression
-        ([]
-          (.
-            (this)
-            (dict)
-          )
-          (IdExpression
-            (id)
-          )
+        (tuple)
+      )
+      (Tuple
+        (VarList
+          (hi)
+          (3)
+          (true)
         )
       )
+    )
+    (Print
       (IdExpression
-        (value)
+        (tuple)
       )
     )
   )

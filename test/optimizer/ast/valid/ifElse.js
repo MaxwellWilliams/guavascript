@@ -1,6 +1,12 @@
 module.exports.getAst = function() {
     return `(Program
   (Block
+    (=
+      (IdExpression
+        (x)
+      )
+      (false)
+    )
     (If
       (Case
         (Condition
@@ -8,27 +14,25 @@ module.exports.getAst = function() {
             (IdExpression
               (x)
             )
-            (2)
+            (true)
           )
         )
         (Body
-          (-=
-            (IdExpression
-              (x)
+          (Block
+            (Print
+              (true)
             )
-            (1)
           )
         )
       )
       (Else
-        (+=
-          (IdExpression
-            (x)
+        (Block
+          (Print
+            (false)
           )
-          (1)
         )
       )
     )
   )
 )`;
-};
+}

@@ -3,12 +3,13 @@ module.exports.getAst = function() {
   (Block
     (=
       (IdExpression
-        (dict)
+        (pi)
       )
-      (Dictionary
-        (x : (5))
-        (y : (Hello))
-        (z : (true))
+      (3.1415926)
+    )
+    (Print
+      (IdExpression
+        (pi)
       )
     )
   )

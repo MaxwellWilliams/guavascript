@@ -1,2 +1,7 @@
-match x with
-2 -> "two"
+x = 2
+
+x = match x with
+  2 -> "two"
+| _ -> ""
+
+print(x)

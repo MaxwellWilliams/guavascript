@@ -3,9 +3,14 @@ module.exports.getAst = function() {
   (Block
     (=
       (IdExpression
-        (PI)
+        (female)
       )
-      (3.1415926)
+      (true)
+    )
+    (Print
+      (IdExpression
+        (female)
+      )
     )
   )
 )`;

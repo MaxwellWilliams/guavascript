@@ -1,30 +1,39 @@
 module.exports.getAst = function() {
     return `(Program
   (Block
-    (=
-      (IdExpression
-        (z)
-      )
-      (0)
-    )
     (Func
-      (id computeSomething)
+      (id multiply)
       (Parameters
         (id x)
-        (id y)
+        (id y, default (2))
+        (id z, default (4))
       )
       (Block
-        (=
+        (Print
           (IdExpression
             (z)
           )
-          (+
+        )
+        (Return
+          (*
             (IdExpression
               (x)
             )
             (IdExpression
               (y)
             )
+          )
+        )
+      )
+    )
+    (IdExpression
+      (()
+        (multiply)
+        (Arguments
+          (VarList
+            (1)
+            (2)
+            (4)
           )
         )
       )

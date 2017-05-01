@@ -3,9 +3,14 @@ module.exports.getAst = function() {
   (Block
     (=
       (IdExpression
-        (age)
+        (dict)
       )
-      (21)
+      (Dictionary)
+    )
+    (Print
+      (IdExpression
+        (dict)
+      )
     )
   )
 )`;

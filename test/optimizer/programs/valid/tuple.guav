@@ -1,1 +1,2 @@
 tuple = ("hi", 3, true)
+print(tuple)

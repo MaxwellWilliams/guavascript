@@ -3,10 +3,15 @@ module.exports.getAst = function() {
   (Block
     (=
       (IdExpression
-        (female)
+        (FEET_IN_METER)
       )
-      (true)
+      (3.28084)
+    )
+    (Print
+      (IdExpression
+        (FEET_IN_METER)
+      )
     )
   )
 )`;
-}
+};

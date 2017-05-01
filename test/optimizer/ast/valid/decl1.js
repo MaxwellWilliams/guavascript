@@ -3,14 +3,13 @@ module.exports.getAst = function() {
   (Block
     (=
       (IdExpression
-        (tuple)
+        (name)
       )
-      (Tuple
-        (VarList
-          (hi)
-          (3)
-          (true)
-        )
+      (guav1231)
+    )
+    (Print
+      (IdExpression
+        (name)
       )
     )
   )

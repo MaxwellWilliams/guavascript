@@ -1,1 +1,2 @@
-name = "guav1231\""
+name = "guav1231"
+print(name)

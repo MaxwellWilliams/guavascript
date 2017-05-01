@@ -3,9 +3,14 @@ module.exports.getAst = function() {
   (Block
     (=
       (IdExpression
-        (name)
+        (age)
       )
-      (guav1231\\\")
+      (21)
+    )
+    (Print
+      (IdExpression
+        (age)
+      )
     )
   )
 )`;

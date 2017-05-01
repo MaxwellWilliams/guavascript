@@ -37,7 +37,8 @@ module.exports = class Block {
             this.body[s] = statement.optimize();
             s++;
         }
-        this.body.slice(0, s).filter(x => x !== null);
+        this.body.slice(0, s);
+        this.body = this.body.filter(s => s !== null);
         return this;
     }
     toString(indent = 0) {

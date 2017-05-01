@@ -16,7 +16,7 @@ module.exports = class ForInStatement {
     }
     optimize() {
         if (this.iteratableObj.value === {} || this.iteratableObj.value === []) {
-            return ``;
+            return null;
         } else {
             this.block = this.block.optimize();
             return this;

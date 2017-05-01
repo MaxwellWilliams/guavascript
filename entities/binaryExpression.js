@@ -306,7 +306,7 @@ module.exports = class BinaryExpression {
         } else if(this.op === "||") {
             return new BoolLit(this.left.value && this.right.value);
         } else if(this.op === "==") {
-            return new BoolLit(Number(this.left.value) == Number(this.right.value));
+            return new BoolLit(Number(this.left.value) === Number(this.right.value));
         } else if(this.op === "!=") {
             return new BoolLit(Number(this.left.value) != Number(this.right.value));
         } else if(this.op === ">") {

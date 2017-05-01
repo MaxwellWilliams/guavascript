@@ -1,5 +1,6 @@
 const TYPE = require('../semantics/types.js');
 const getIndent = require('../semantics/getIndent.js');
+const IntLit = require('./intLit.js');
 
 allTypePairs = [];
 for (let i in TYPE) {
@@ -173,20 +174,75 @@ module.exports = class BinaryExpression {
         return this;
     }
     optimize() {
-        /*if(this.op === "+") {
-
+        if(this.op === "+") {
+            if(this.left.value === 0) {
+                return new IntLit(this.right.value);
+            }
+            if (this.right.value === 0) {
+                return new IntLit(this.left.value);
+            }
+            if (this.left.value < 0) {
+                this.left, this.right = this.right, this.left;
+                this.right.value *= -1;
+                return this;
+            }
+            if (this.right.value < 0) {
+                this.right.value *= -1;
+                this.op = "-"
+                return this;
+            }
         } else if(this.op === "-") {
-
+            if(this.left.value === 0) {
+                return new IntLit(-this.right.value);
+            }
+            if (this.right.value === 0) {
+                return new IntLit(this.left.value);
+            }
+            if (this.left.value === this.right.value) {
+                return new IntLit(0);
+            }
+            if (this.right.value < 0) {
+                this.right.value *= -1;
+                this.op = "+"
+                return this;
+            }
+            if (this.right.value < 0) {
+                this.right.value === -this.right.value;
+                this.op = "+"
+                return this;
+            }
         } else if(this.op === "*") {
-
+            if(this.left.value === 1) {
+                return new IntLit(this.right.value);
+            }
+            if(this.right.value === 1) {
+                return new IntLit(this.left.value);
+            }
+            if(this.right.value === -1) {
+                return new IntLit(-this.left.value);
+            }
+            if(this.left.value === 0 || this.right.value === 0) {
+                return new IntLit(0);
+            }
         } else if(this.op === "/") {
-            
+            if(this.right.value === 1) {
+                return new IntLit(this.left.value);
+            } 
+            if(this.right.value === -1) {
+                return new IntLit(-this.left.value);
+            } 
+            if(this.left.value === 0) {
+                return new IntLit(0);
+            }
         } else if(this.op === "%") {
-            
-        }*/
-        this.left.optimize();
-        this.right.optimize();
-        return this;
+            this.left.optimize();
+            this.right.optimize();
+            return this;
+        } else {
+            this.left.optimize();
+            this.right.optimize();
+            return this;
+        }
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.op}` +

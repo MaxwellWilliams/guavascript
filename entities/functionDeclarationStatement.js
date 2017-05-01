@@ -45,6 +45,7 @@ module.exports = class FunctionDeclarationStatement {
         return this;
     }
     optimize() {
+        this.block = this.block.optimize();
         return this;
     }
     toString(indent = 0) {

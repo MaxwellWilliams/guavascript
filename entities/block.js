@@ -31,7 +31,6 @@ module.exports = class Block {
         let s = 0;
         while(!hitReturnStatement && s < this.body.length) {
             let statement = this.body[s];
-            console.log(statement.constructor)
             if(statement.constructor === ReturnStatement) {
                 hitReturnStatement = true;
             }

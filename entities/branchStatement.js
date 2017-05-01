@@ -26,7 +26,7 @@ module.exports = class BranchStatement {
           return this.elseBlock.optimize();
         }
       }
-      
+
       this.conditions.map(c => c.optimize());
       this.thenBlocks.map(t => t.optimize());
       this.elseBlock = this.elseBlock.optimize();

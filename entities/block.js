@@ -26,7 +26,18 @@ module.exports = class Block {
         return this;
     }
     optimize() {
-        this.body.map(b => b.optimize());
+        // Removes all statements after return statement
+        let hitReturnStatement = false;
+        let s = 0;
+        while(!hitReturnStatement && s < this.body.length) {
+            let statement = this.body[s];
+            if(statement.constructor === ReturnStatement) {
+                hitReturnStatement = true;
+            }
+            this.body[s] = statement.optimize();
+            s++;
+        }
+        this.body.slice(0, s);
         return this;
     }
     toString(indent = 0) {

@@ -20,7 +20,8 @@ module.exports = class UnaryExpression {
         return this;
     }
     optimize() {
-       return this; 
+        this.operand.optimize();
+       return this;
     }
     toString(indent = 0) {
         return `${getIndent(indent)}(${this.op}\n${this.operand.toString(++indent)})`;

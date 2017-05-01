@@ -10,6 +10,7 @@ module.exports = class IdValuePair {
         return this;
     }
     optimize() {
+        this.variable.optimize();
         return this;
     }
     toString(indent = 0) {

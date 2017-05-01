@@ -10,6 +10,7 @@ module.exports = class Program {
         return this;
     }
     optimize() {
+        this.block.optimize();
         return this;
     }
     toString(indent = 0) {

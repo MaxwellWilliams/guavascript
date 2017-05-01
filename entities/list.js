@@ -13,6 +13,7 @@ module.exports = class List {
         return this;
     }
     optimize() {
+        this.values.map(v => v.optimize());
         return this;
     }
     toString(indent = 0) {

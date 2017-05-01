@@ -9,6 +9,7 @@ module.exports = class PrintStatement {
         return this;
     }
     optimize() {
+        this.exp.optimize();
         return this;
     }
     toString(indent = 0) {

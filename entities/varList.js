@@ -16,6 +16,7 @@ module.exports = class VarList {
         return this;
     }
     optimize() {
+        this.variables.map(v => v.optimize());
         return this;
     }
     toString(indent = 0) {

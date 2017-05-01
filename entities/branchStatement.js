@@ -19,6 +19,9 @@ module.exports = class BranchStatement {
         return this;
     }
     optimize() {
+        this.conditions.map(c => c.optimize());
+        this.thenBlocks.map(t => t.optimize());
+        this.elseBlock.optimize();
         return this;
     }
     toString(indent = 0) {

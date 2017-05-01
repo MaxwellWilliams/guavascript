@@ -14,6 +14,8 @@ module.exports = class WhileStatement {
         return this;
     }
     optimize() {
+        this.condition.optimize();
+        this.block.optimize();
         return this;
     }
     toString(indent = 0) {

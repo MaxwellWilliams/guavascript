@@ -134,6 +134,8 @@ module.exports = class AssignmentStatement {
         return this;
     }
     optimize() {
+        this.idExp.optimize();
+        this.exp.optimize();
         return this;
     }
     toString(indent = 0) {

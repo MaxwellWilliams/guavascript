@@ -19,18 +19,13 @@ module.exports = class BranchStatement {
         return this;
     }
     optimize() {
-      if(this.conditions.length === 1) {
-        if (this.conditions[0].optimize().value) {
-          return this.thenBlocks[0].optimize();
-        } else {
-          return this.elseBlock.optimize();
+      for(var c = 0; c < this.conditions.length; c++) {
+        if(this.conditions[c].optimize.value) {
+          return this.thenBlocks[c].optimize();
         }
       }
 
-      this.conditions.map(c => c.optimize());
-      this.thenBlocks.map(t => t.optimize());
-      this.elseBlock = this.elseBlock.optimize();
-      return this;
+      return this.elseBlock.optimize();
     }
     toString(indent = 0) {
         var string = `${getIndent(indent++)}(If`;

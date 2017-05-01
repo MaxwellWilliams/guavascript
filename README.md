@@ -1,4 +1,4 @@
-![Guavascript Logo](https://raw.githubusercontent.com/AnsonAdams/guavascript/master/images/Guavascript%20logo.png "Guavascript Logo")
+![Guavascript Logo](https://raw.githubusercontent.com/MaxwellWilliams/guavascript/master/images/Guavascript%20logo.png "Guavascript Logo")
 
 ## Introduction
 

@@ -12,13 +12,14 @@
         "no-lonely-if": 0,
         "no-restricted-syntax": 0,
         "no-prototype-builtins": 0,
-        "no-restricted-properities": 0
+        "no-restricted-properties": 0,
+        "guard-for-in": 0,
+        "global-require": 0,
+        "import/no-dynamic-require": 0,
+        "class-methods-use-this": 0
     },
-    "providedServices": {
-        "linter": {
-            "versions": {
-                "2.0.0": "provideLinter"
-            }
-        }
+    "globals": {
+      "describe": true,
+      "it": true
     }
 }

@@ -1,8 +1,4 @@
-module.exports.getProgram = function() {
-  return `var age_1 = 21;
+module.exports.getProgram = () => `var age_1 = 21;
 console.log(age_1);`;
-};
 
-module.exports.getOutput = function() {
-  return `21\n`;
-};
+module.exports.getOutput = () => '21\n';

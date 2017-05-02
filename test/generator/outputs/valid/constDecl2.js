@@ -1,8 +1,4 @@
-module.exports.getProgram = function() {
-  return `const PI_1 = 3.1415926;
+module.exports.getProgram = () => `const PI_1 = 3.1415926;
 console.log(PI_1);`;
-};
 
-module.exports.getOutput = function() {
-  return `3.1415926\n`;
-};
+module.exports.getOutput = () => '3.1415926\n';

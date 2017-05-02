@@ -1,9 +1,7 @@
-module.exports.getAst = function() {
-    return `(Program
+module.exports.getAst = () => `(Program
   (Block
     (Print
       (hello, world!)
     )
   )
 )`;
-}

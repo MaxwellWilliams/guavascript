@@ -1,5 +1,4 @@
-module.exports.getAst = function() {
-    return `(Program
+module.exports.getAst = () => `(Program
   (Block
     (=
       (IdExpression
@@ -9,4 +8,3 @@ module.exports.getAst = function() {
     )
   )
 )`;
-};

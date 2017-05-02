@@ -1,4 +1,4 @@
-module.exports = function(indent) {
-    const spacer = "  ";
-    return spacer.repeat(indent);
+module.exports = (indent) => {
+  const spacer = '  ';
+  return spacer.repeat(indent);
 };

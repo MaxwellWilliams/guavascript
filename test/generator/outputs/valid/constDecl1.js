@@ -1,8 +1,4 @@
-module.exports.getProgram = function() {
-  return `const FEET_IN_METER_1 = 3.28084;
+module.exports.getProgram = () => `const FEET_IN_METER_1 = 3.28084;
 console.log(FEET_IN_METER_1);`;
-};
 
-module.exports.getOutput = function() {
-  return `3.28084\n`;
-};
+module.exports.getOutput = () => '3.28084\n';

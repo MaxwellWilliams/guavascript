@@ -1,5 +1,4 @@
-module.exports.getProgram = function() {
-  return `var x_1 = 4;
+module.exports.getProgram = () => `var x_1 = 4;
 (() => {
   if (x_1 === 2) {
     console.log("two");
@@ -13,8 +12,5 @@ module.exports.getProgram = function() {
     console.log("nope");
   }
 })()`;
-};
 
-module.exports.getOutput = function() {
-  return `four\n`;
-};
+module.exports.getOutput = () => 'four\n';

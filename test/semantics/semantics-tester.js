@@ -8,57 +8,57 @@ const validPrograms = path.resolve('./test/semantics/programs/valid');
 const invalidPrograms = path.resolve('./test/semantics/programs/invalid');
 
 const tests = (validFiles, invalidFiles) => {
-  describe('Semantic analysis tests:', function() {
-    describe('Valid example program', function() {
-      validFiles.forEach(function(file) {
-        it('parser\\programs\\valid\\' + file.name + ' should analyze without any errors',
-          function() {
+  describe('Semantic analysis tests:', () => {
+    describe('Valid example program', () => {
+      validFiles.forEach((file) => {
+        it(`parser\\programs\\valid\\${file.name} should analyze without any errors`,
+          () => {
             // console.log(util.inspect(parser(file.code), {depth: null}));
             parser(file.code).analyze();
-            //done();
-        });
+            // done();
+          });
       });
     });
 
-    describe('Invalid example program,', function() {
-      invalidFiles.forEach(function(file) {
-        it('parser\\programs\\invalid\\' + file.name + ' should throw a semantic error',
-          function() {
+    describe('Invalid example program,', () => {
+      invalidFiles.forEach((file) => {
+        it(`parser\\programs\\invalid\\${file.name} should throw a semantic error`,
+          () => {
             const errorPattern = /Error/;
             // console.log(util.inspect(parser(file.code), {depth: null}));
             assert.throws(() => parser(file.code).analyze(), errorPattern);
-            //done();
-        });
+            // done();
+          });
       });
     });
   });
 };
 
-(function() {
-  let validFiles = [];
-  let invalidFiles = [];
+(() => {
+  const validFiles = [];
+  const invalidFiles = [];
 
-  fs.readdirSync(validPrograms).forEach(function(fileName) {
-      fullProgramPath = validPrograms + '/' + fileName;
-      fileContents = fs.readFileSync(fullProgramPath, 'utf-8');
-      // if(fileName == "exhaustive-match-using-else.guav") {
-      validFiles.push({
-        name: fileName,
-        code: fileContents
-      });
+  fs.readdirSync(validPrograms).forEach((fileName) => {
+    const fullProgramPath = `${validPrograms}/${fileName}`;
+    const fileContents = fs.readFileSync(fullProgramPath, 'utf-8');
+    // if(fileName == "exhaustive-match-using-else.guav") => {
+    validFiles.push({
+      name: fileName,
+      code: fileContents,
+    });
     // }
   });
 
-  fs.readdirSync(invalidPrograms).forEach(function(fileName) {
-    fullFilePath = invalidPrograms + '/' + fileName;
-    fileContents = fs.readFileSync(fullFilePath, 'utf-8');
-    // if(fileName == "invalid-post-op.guav") {
+  fs.readdirSync(invalidPrograms).forEach((fileName) => {
+    const fullFilePath = `${invalidPrograms}/${fileName}`;
+    const fileContents = fs.readFileSync(fullFilePath, 'utf-8');
+    // if(fileName == "invalid-post-op.guav") => {
     invalidFiles.push({
       name: fileName,
-      code: fileContents
+      code: fileContents,
     });
     // }
   });
 
   tests(validFiles, invalidFiles);
-}());
+})();

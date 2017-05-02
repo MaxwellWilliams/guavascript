@@ -4,8 +4,8 @@
   "description": "Max, and Evan's compilers project for CMSI 488.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/**/*.js",
-    "lint": "eslint **/*.js && exit 0",
+    "test": "eslint **/*.js && mocha test/**/*.js",
+    "lint": "eslint **/*.js",
     "start": "node guavascript.js"
   },
   "repository": {

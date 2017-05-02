@@ -1,5 +1,4 @@
-module.exports.getAst = function() {
-    return `(Program
+module.exports.getAst = () => `(Program
   (Block
     (Func
       (id multiply)
@@ -40,4 +39,3 @@ module.exports.getAst = function() {
     )
   )
 )`;
-}

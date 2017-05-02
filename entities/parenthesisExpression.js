@@ -1,22 +1,22 @@
 const BinaryExpression = require('./binaryExpression.js');
 
 module.exports = class ParenthesisExpression {
-    constructor(exp) {
-        this.exp = exp;
-        this.type;
+  constructor(exp) {
+    this.exp = exp;
+    this.type = undefined;
+  }
+  analyze(context) {
+    this.exp.analyze(context);
+    this.type = this.exp.type;
+    return this;
+  }
+  optimize() {
+    if (this.exp.constructor === BinaryExpression) {
+      return this.exp.optimize();
     }
-    analyze(context) {
-        this.exp.analyze(context);
-        this.type = this.exp.type;
-        return this;
-    }
-    optimize() {
-        if(this.exp.constructor === BinaryExpression) {
-            return this.exp.optimize();
-        }
-        return this;
-    }
-    toString(indent = 0) {
-        return `${this.exp.toString(indent)}`;
-    }
+    return this;
+  }
+  toString(indent = 0) {
+    return `${this.exp.toString(indent)}`;
+  }
 };

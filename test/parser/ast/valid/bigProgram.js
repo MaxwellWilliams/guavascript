@@ -1,5 +1,4 @@
-module.exports.getAst = function() {
-    return `(Program
+module.exports.getAst = () => `(Program
   (Block
     (Class
       (id Test)
@@ -327,4 +326,3 @@ module.exports.getAst = function() {
     )
   )
 )`;
-};

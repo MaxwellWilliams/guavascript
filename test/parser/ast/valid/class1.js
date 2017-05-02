@@ -1,5 +1,4 @@
-module.exports.getAst = function() {
-    return `(Program
+module.exports.getAst = () => `(Program
   (Block
     (Class
       (id Ball)
@@ -48,4 +47,3 @@ module.exports.getAst = function() {
     )
   )
 )`;
-};

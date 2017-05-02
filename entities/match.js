@@ -1,15 +1,15 @@
 module.exports = class Match {
-    constructor(matchee) {
-        this.matchee = matchee;
-    }
-    analyze(context) {
-        return this;
-    }
-    optimize() {
-        this.matchee = this.matchee.optimize();
-        return this;
-    }
-    toString(indent = 0) {
-        return `${this.matchee.toString(indent)}`;
-    }
+  constructor(matchee) {
+    this.matchee = matchee;
+  }
+  analyze(context) {
+    return this;
+  }
+  optimize() {
+    this.matchee = this.matchee.optimize();
+    return this;
+  }
+  toString(indent = 0) {
+    return `${this.matchee.toString(indent)}`;
+  }
 };

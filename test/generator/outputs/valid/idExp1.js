@@ -1,7 +1,3 @@
-module.exports.getProgram = function() {
-	return `console.log(1 + " hello, world! " + true + " " + 3.14);`;
-};
+module.exports.getProgram = () => 'console.log(1 + " hello, world! " + true + " " + 3.14);';
 
-module.exports.getOutput = function() {
-  return `1 hello, world! true 3.14\n`;
-};
+module.exports.getOutput = () => '1 hello, world! true 3.14\n';

@@ -1,9 +1,5 @@
-module.exports.getProgram = function() {
-  return `var pi_1 = 3.1415926;
+module.exports.getProgram = () => `var pi_1 = 3.1415926;
 console.log(pi_1);`;
-};
 
 
-module.exports.getOutput = function() {
-  return `3.1415926\n`;
-};
+module.exports.getOutput = () => '3.1415926\n';
